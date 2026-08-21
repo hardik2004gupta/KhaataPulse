@@ -1,0 +1,128 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── CSS Custom Properties — CLAUDE.md §29 ───────────────────────────────── */
+:root {
+  --bg-primary: #07090D;
+  --bg-secondary: #0C1017;
+  --surface: #11161F;
+  --surface-elevated: #161E2A;
+  --surface-hover: #1C2535;
+  --border: #1E2D3D;
+  --border-subtle: #172030;
+
+  --accent-recovery: #10B981;
+  --accent-recovery-dim: #064E3B;
+  --accent-recovery-text: #34D399;
+
+  --accent-warning: #F59E0B;
+  --accent-warning-dim: #78350F;
+  --accent-warning-text: #FCD34D;
+
+  --accent-critical: #EF4444;
+  --accent-critical-dim: #7F1D1D;
+  --accent-critical-text: #FCA5A5;
+
+  --accent-ai: #8B5CF6;
+  --accent-ai-dim: #2E1065;
+  --accent-ai-text: #C4B5FD;
+
+  --text-primary: #F1F5F9;
+  --text-secondary: #94A3B8;
+  --text-muted: #475569;
+  --text-faint: #334155;
+}
+
+/* ── Base ────────────────────────────────────────────────────────────────── */
+html, body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: 'Inter', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── Tabular numerals for financial data ─────────────────────────────────── */
+.tabular {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+
+/* ── Monospace for audit/code ─────────────────────────────────────────────── */
+.mono {
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+}
+
+/* ── Scrollbar styling ───────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-secondary); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+/* ── Subtle grid background ──────────────────────────────────────────────── */
+.bg-grid {
+  background-image: radial-gradient(circle, #1E2D3D 1px, transparent 1px);
+  background-size: 28px 28px;
+}
+
+/* ── Glow effects ────────────────────────────────────────────────────────── */
+.glow-recovery { box-shadow: 0 0 24px rgba(16,185,129,0.12); }
+.glow-warning  { box-shadow: 0 0 24px rgba(245,158,11,0.12); }
+.glow-critical { box-shadow: 0 0 24px rgba(239,68,68,0.12); }
+.glow-ai       { box-shadow: 0 0 24px rgba(139,92,246,0.12); }
+
+/* ── Animations ──────────────────────────────────────────────────────────── */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes slideInRight {
+  from { transform: translateX(100%); }
+  to   { transform: translateX(0); }
+}
+@keyframes pulse-glow {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.5; }
+}
+@keyframes scan-line {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.animate-fade-in    { animation: fadeIn 0.35s ease-out; }
+.animate-slide-in   { animation: slideInRight 0.25s ease-out; }
+.animate-pulse-glow { animation: pulse-glow 2s ease-in-out infinite; }
+
+/* ── Drawer overlay ──────────────────────────────────────────────────────── */
+.drawer-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(7,9,13,0.7);
+  backdrop-filter: blur(4px);
+  z-index: 40;
+}
+.drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100%;
+  width: min(680px, 95vw);
+  background: var(--surface);
+  border-left: 1px solid var(--border);
+  z-index: 50;
+  overflow-y: auto;
+}
+
+/* ── Step connector ──────────────────────────────────────────────────────── */
+.step-connector::before {
+  content: '';
+  position: absolute;
+  left: 11px;
+  top: 28px;
+  bottom: -8px;
+  width: 1px;
+  background: var(--border);
+}

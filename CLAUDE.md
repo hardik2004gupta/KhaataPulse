@@ -919,8 +919,41 @@ Completed:
                                             multi-seed endpoint, error handling, field contracts
         tests/db/test_models.py             Updated: Phase 4 tables verified present
 
-Current Phase:  4
+  - Phase 5: Frontend Command Center
+      frontend/                              Next.js 14 App Router, TypeScript, Tailwind CSS
+      frontend/next.config.ts               output: "standalone", /api/* → BACKEND_URL rewrite
+      frontend/tailwind.config.ts           All CLAUDE.md §29 design tokens
+      frontend/app/globals.css              CSS custom properties, animation keyframes
+      frontend/app/layout.tsx              Root layout, Google Fonts (Inter + JetBrains Mono)
+      frontend/app/page.tsx                Command Center — HeroKPI, PolicyMatrix,
+                                            RevenueDelta, HeroCasePanel, LiveEventStream
+      frontend/app/evaluation/page.tsx      Evaluation page — EvaluationRunner, EvaluationResults,
+                                            MultiSeedMatrix
+      frontend/app/cases/page.tsx           Risk Queue — RiskQueue + CaseDetailDrawer
+      frontend/lib/types/index.ts           Full TypeScript types matching backend schemas
+      frontend/lib/api/client.ts            ApiError, api.get(), api.post() via /api/* proxy
+      frontend/lib/api/evaluation.ts        evaluationApi — runEvaluation, runMultiSeed, getRun
+      frontend/lib/api/demo.ts              demoApi — getHeroCase, runSimulation
+      frontend/lib/api/cases.ts             casesApi — listCases, getCase
+      frontend/lib/utils/format.ts          formatINR (L/Cr), formatPct, formatPP, formatCause,
+                                            formatAction, formatDateTime
+      frontend/components/ui/              MetricCard, PolicyBadge, RiskIndicator, StatusBadge,
+                                            Skeleton, EmptyState
+      frontend/components/dashboard/       NavBar, HeroKPI, PolicyMatrix
+      frontend/components/revenue/         RevenueDelta (horizontal bar visualization)
+      frontend/components/simulation/      LiveEventStream (animated 6-step pipeline)
+      frontend/components/risk/            DiagnosisPanel, PolicyGuardViz, AuditTimeline,
+                                            RiskQueue, CaseDetailDrawer
+      frontend/components/evaluation/      EvaluationRunner, EvaluationResults, MultiSeedMatrix
+      frontend/Dockerfile                  Multi-stage standalone build
+      frontend/.dockerignore
+      docker-compose.yml                    Added frontend service (port 3000)
+      backend/app/api/routes/demo.py        GET /demo/hero, POST /demo/simulate (no-DB mode)
+      backend/app/api/routes/cases.py       GET /cases/, GET /cases/{case_id}
+      Security: BACKEND_URL server-side only; no hidden state in frontend; no hardcoded metrics
+
+Current Phase:  5
 Status:         Complete
 
-Next Phase:     Phase 5 — Frontend Command Center
+Next Phase:     Phase 6 — Integration + Demo Mode + Final Polish
 ```
