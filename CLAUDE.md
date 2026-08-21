@@ -952,8 +952,35 @@ Completed:
       backend/app/api/routes/cases.py       GET /cases/, GET /cases/{case_id}
       Security: BACKEND_URL server-side only; no hidden state in frontend; no hardcoded metrics
 
-Current Phase:  5
+Current Phase:  6
 Status:         Complete
 
-Next Phase:     Phase 6 — Integration + Demo Mode + Final Polish
+  - Phase 6: Integration + Demo Mode + Final Polish
+      backend/tests/integration/               Phase 6 end-to-end integration tests
+        test_e2e_pipeline.py                   18 tests — 18 passed (0 failures)
+          TestGoldenPath (4 tests)             Full 9-node pipeline: all outputs verified,
+                                               no hidden state in agent state,
+                                               optimizer descending ENR order,
+                                               all node outputs present
+          TestPolicyGuardBypass (3 tests)      BLOCKED policy → 'blocked' execution,
+                                               guard/execution status consistency,
+                                               kill switch blocks at policy_guard boundary
+          TestBlockedAction (1 test)           Kill switch ON → BLOCKED pipeline end-to-end
+          TestEscalatedAction (1 test)         Amount >= ₹10k → ESCALATED pipeline end-to-end
+          TestIdempotency (2 tests)            Duplicate key rejected (with real DB),
+                                               different keys both execute
+          TestAuditIntegrity (3 tests)         recorded_outcome summary fields verified,
+                                               audit service is append-only,
+                                               log_audit_event returns None in no-db mode
+          TestSameCohortInvariant (4 tests)    EvaluationWorld deterministic records,
+                                               same seed → same incremental recovery,
+                                               policies cannot access PotentialOutcomes,
+                                               multi-seed (42, 123, 456) all valid
+      backend/app/api/routes/demo.py           Fixed: ESCALATED action_executed status
+                                               correctly set to "escalated" (not "executed")
+      backend/app/evaluation/runner.py         Fixed: get_run_from_db returns EvaluationRunResult
+                                               shape (matches POST response) for frontend type safety
+      Total test count (excl. Docker-only):   254 passed, 6 skipped (0 failures)
+
+All 35 Definition of Done checklist items from §35 have been implemented and verified.
 ```

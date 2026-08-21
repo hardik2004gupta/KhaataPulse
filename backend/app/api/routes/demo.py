@@ -211,7 +211,11 @@ def _build_hero_case() -> dict[str, Any]:
             "payload": {
                 "action_type": final_action,
                 "idempotency_key": f"demo_{best_obs.customer_id}",
-                "status": "executed" if final_action not in ("blocked",) else "blocked",
+                "status": (
+                    "blocked" if decision.status == "BLOCKED"
+                    else "escalated" if decision.status == "ESCALATED"
+                    else "executed"
+                ),
             },
         },
     ]
@@ -283,7 +287,11 @@ def _build_hero_case() -> dict[str, Any]:
         },
         "execution": {
             "action_type": final_action,
-            "status": "executed" if final_action not in ("blocked",) else "blocked",
+            "status": (
+                "blocked" if decision.status == "BLOCKED"
+                else "escalated" if decision.status == "ESCALATED"
+                else "executed"
+            ),
             "idempotency_key": f"demo_{best_obs.customer_id}",
         },
         "audit_events": audit_events,
@@ -360,8 +368,8 @@ def simulate_pipeline():
         },
         {
             "step": "action_executed",
-            "label": "Action Executed",
-            "description": f"Simulated gateway: {hero['execution']['action_type'].replace('_', ' ').title()}",
+            "label": "Action Executed" if hero["execution"]["status"] == "executed" else "Action " + hero["execution"]["status"].title(),
+            "description": f"Simulated gateway: {hero['execution']['action_type'].replace('_', ' ').title()} — {hero['execution']['status']}",
             "actor": "action_service",
             "data": hero["execution"],
         },

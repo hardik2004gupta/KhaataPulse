@@ -18,18 +18,27 @@ export function EvaluationRunner({ onResult }: EvaluationRunnerProps) {
   const run = async () => {
     setState("loading");
     setError(null);
-    setPollMsg("Starting evaluation…");
+    setPollMsg("Running evaluation…");
 
     try {
-      const { run_id } = await evaluationApi.runEvaluation(seed, cohortSize);
-      setRunId(run_id);
-      setPollMsg("Evaluation running…");
+      // POST runs synchronously and returns completed result immediately.
+      // If backend ever moves to async, the GET polling path below handles it.
+      const response = await evaluationApi.runEvaluation(seed, cohortSize);
+      setRunId(response.run_id);
 
-      // Poll for results
+      if (response.status === "completed" && response.results) {
+        onResult(response.results);
+        setState("idle");
+        setPollMsg("");
+        return;
+      }
+
+      // Async fallback: poll GET until completed or failed (max 120s)
+      setPollMsg("Evaluation running…");
       let attempts = 0;
       while (attempts < 60) {
         await new Promise<void>((r) => setTimeout(r, 2000));
-        const data = await evaluationApi.getRun(run_id);
+        const data = await evaluationApi.getRun(response.run_id);
         if (data.status === "completed" && data.results) {
           onResult(data.results);
           setState("idle");

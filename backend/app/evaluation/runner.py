@@ -202,16 +202,23 @@ def get_multi_seed_summary(results: list[EvaluationRunResult]) -> dict:
 
 
 def get_run_from_db(run_id: str, db: Session) -> Optional[dict]:
-    """Retrieve a completed evaluation run from DB."""
+    """
+    Retrieve a completed evaluation run from DB.
+
+    Returns the same shape as EvaluationRunResult.as_dict() wrapped in an outer
+    envelope {run_id, status, results} — matching the POST /evaluation/run response
+    so the frontend can use the same type for both GET and POST.
+    """
     run = db.query(EvaluationRun).filter_by(run_id=run_id).first()
     if run is None:
         return None
 
-    results = {r.policy_name: r for r in run.results}
+    db_results = {r.policy_name: r for r in run.results}
 
-    def _result_dict(r) -> dict:
+    def _policy_dict(r) -> dict:
         return {
             "policy_name": r.policy_name,
+            "policy_version": r.policy_version if hasattr(r, "policy_version") else "",
             "recovered_amount": str(r.recovered_amount),
             "total_at_risk_amount": str(r.total_at_risk_amount),
             "recovery_rate": float(r.recovery_rate),
@@ -225,23 +232,28 @@ def get_run_from_db(run_id: str, db: Session) -> Optional[dict]:
             "llm_fallback_count": r.llm_fallback_count,
         }
 
-    return {
+    incremental_recovery = (
+        str(db_results["khaatapulse"].incremental_recovery)
+        if "khaatapulse" in db_results and db_results["khaatapulse"].incremental_recovery is not None
+        else "0"
+    )
+
+    # Build results dict matching EvaluationRunResult.as_dict() — same shape as POST response
+    results_dict = {
         "run_id": run.run_id,
         "seed": run.seed,
         "cohort_size": run.cohort_size,
-        "status": run.status,
         "simulator_version": run.simulator_version,
         "model_version": run.model_version,
         "policy_version": run.policy_version,
-        "started_at": run.started_at.isoformat() if run.started_at else None,
-        "completed_at": run.completed_at.isoformat() if run.completed_at else None,
-        "error_message": run.error_message,
-        "results": {
-            name: _result_dict(r) for name, r in results.items()
-        },
-        "incremental_recovery": (
-            str(results["khaatapulse"].incremental_recovery)
-            if "khaatapulse" in results and results["khaatapulse"].incremental_recovery is not None
-            else None
-        ),
+        "incremental_recovery": incremental_recovery,
+        "static_dunning": _policy_dict(db_results["static_dunning"]) if "static_dunning" in db_results else {},
+        "smart_retry": _policy_dict(db_results["smart_retry"]) if "smart_retry" in db_results else {},
+        "khaatapulse": _policy_dict(db_results["khaatapulse"]) if "khaatapulse" in db_results else {},
+    }
+
+    return {
+        "run_id": run.run_id,
+        "status": run.status,
+        "results": results_dict,
     }
