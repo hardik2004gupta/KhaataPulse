@@ -798,8 +798,56 @@ Each phase has intentional boundaries. When starting a phase, read this contract
 ## Implementation Status
 
 ```
-Current Phase:  0
-Status:         Engineering Contract Established
-Completed:      CLAUDE.md created from full PDF specification
-Next Phase:     Phase 1 — Simulator + Database Foundation
+Current Phase:  2
+Status:         Complete
+Completed:
+  - Phase 0: CLAUDE.md engineering contract established
+  - Phase 1: Simulator + Database Foundation
+      backend/app/core/config.py          Settings with all env vars
+      backend/app/core/logging.py         Structured JSON logging
+      backend/app/db/base.py              SQLAlchemy Base
+      backend/app/db/session.py           Engine + get_db dependency
+      backend/app/db/models/             ORM models (customers, subscriptions,
+                                          payments, events, sim_runs, sim_outcomes)
+      backend/app/simulator/latent_state.py  CustomerLatentState (HIDDEN)
+      backend/app/simulator/outcomes.py      PotentialOutcomes (HIDDEN)
+      backend/app/simulator/events.py        Observable event generator
+      backend/app/simulator/generator.py     Deterministic world generator
+      backend/app/simulator/world.py         WorldInternal / ObservableWorld boundary
+      backend/app/simulator/persistence.py   DB persistence with isolation guarantees
+      backend/app/schemas/simulator.py        API schemas (no hidden data)
+      backend/app/api/routes/simulator.py    POST /simulation/generate, GET /simulation/runs
+      backend/app/main.py                    FastAPI app
+      backend/alembic/                       Alembic migrations (001_initial_schema)
+      backend/tests/                         63 tests — 63 passed (0 failures)
+        tests/simulator/test_simulator.py    Determinism, cohort size, isolation, events
+        tests/db/test_models.py              ORM, referential integrity, constraints
+      backend/pytest.ini                     Test configuration
+      docker-compose.yml                     postgres:16 + backend services
+      .env.example                           All required env vars documented
+  - Phase 2: Risk Sieve + LangGraph Agent
+      backend/app/risk/features.py        RiskFeatures (frozen dataclass), FeatureBuilder
+                                          12 observable features, FEATURE_NAMES list
+      backend/app/risk/model.py           RiskPredictor (LogisticRegression + StandardScaler)
+                                          Observable-only training labels, top-3 explainability
+                                          RiskSignal, RiskPrediction, get_risk_predictor()
+      backend/app/risk/service.py         RiskService, RoutingDecision, config-driven threshold
+      backend/app/agent/schemas.py        RecoveryProposal Pydantic model (CLAUDE.md §11)
+      backend/app/agent/state.py          RecoveryReasoningState TypedDict (no hidden fields)
+      backend/app/agent/reasoning.py      BaseReasoningModel, StubReasoningModel,
+                                          AnthropicReasoningModel, ReasoningContext
+      backend/app/agent/fallback.py       smart_retry_proposal (deterministic LLM fallback)
+      backend/app/agent/nodes.py          All 9 nodes: classify_context, generate_diagnosis,
+                                          generate_action_proposal, validate_proposal +
+                                          Phase 3 stubs (rank_actions, policy_check,
+                                          execute_action, record_outcome)
+      backend/app/agent/graph.py          build_recovery_graph(), make_initial_state()
+      backend/app/api/routes/risk.py      POST /risk/predict, POST /risk/reason
+      backend/tests/                      155 tests — 155 passed (0 failures)
+        tests/risk/test_features.py       Feature engineering, isolation, array contract
+        tests/risk/test_model.py          Model training, reproducibility, routing, explainability
+        tests/agent/test_graph.py         Node ordering, structured output, validation,
+                                          LLM failure/fallback, agent isolation
+
+Next Phase:     Phase 3 — Economic Optimizer + Policy Guard + Action Execution + Audit
 ```
