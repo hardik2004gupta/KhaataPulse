@@ -5,6 +5,7 @@ from app.core.config import get_settings
 from app.core.logging import configure_logging
 from app.api.routes import simulator as simulator_router
 from app.api.routes import risk as risk_router
+from app.api.routes import evaluation as evaluation_router
 
 settings = get_settings()
 configure_logging()
@@ -25,6 +26,7 @@ app.add_middleware(
 
 app.include_router(simulator_router.router)
 app.include_router(risk_router.router)
+app.include_router(evaluation_router.router)
 
 
 @app.get("/health")

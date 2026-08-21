@@ -884,6 +884,43 @@ Completed:
                                             cooldown), ESCALATED (amount_threshold)
         tests/agent/test_graph.py           Updated: Phase 3 nodes produce real outputs
         tests/db/test_models.py             Updated: Phase 3 tables verified present
+  - Phase 4: Evaluation Engine + Multi-Seed Validation
+      backend/app/db/models/evaluation.py   EvaluationRun + EvaluationResult ORM models
+      backend/app/evaluation/__init__.py    Package init
+      backend/app/evaluation/metrics.py     PolicyEvaluationResult, EvaluationRunResult
+                                            dataclasses — all fields dynamic (no hardcoded values)
+      backend/app/evaluation/policies.py    RecoveryPolicy ABC + three implementations:
+                                            StaticDunningPolicy — failure count → action
+                                            SmartRetryPolicy   — failure code → action
+                                            KhaataPulsePolicy  — Risk Sieve → Stub LLM →
+                                              Optimizer → Policy Guard (no-db mode)
+      backend/app/evaluation/evaluator.py   EvaluationWorld (isolates PotentialOutcomes),
+                                            evaluate_policy_on_world(),
+                                            run_same_cohort_evaluation() — world generated
+                                            ONCE, all three policies see same world, same
+                                            potential outcomes (CLAUDE.md §17 invariant)
+      backend/app/evaluation/runner.py      run_evaluation(), run_multi_seed_evaluation(),
+                                            get_multi_seed_summary(), get_run_from_db()
+                                            Persistence: EvaluationRun + EvaluationResult
+      backend/app/api/routes/evaluation.py  POST /evaluation/run
+                                            POST /evaluation/run/multi-seed
+                                            GET  /evaluation/run/{run_id}
+                                            GET  /evaluation/runs
+      backend/app/main.py                   Evaluation router registered
+      backend/app/db/models/__init__.py     EvaluationRun, EvaluationResult exported
+      backend/alembic/versions/003_...      Migration: evaluation_runs, evaluation_results
+      backend/tests/                        267 tests — 267 passed, 6 skipped (0 failures)
+        tests/evaluation/test_evaluator.py  Same-cohort invariant, EvaluationWorld isolation,
+                                            false positives, incremental recovery, reproducibility,
+                                            recovery rate bounds
+        tests/evaluation/test_runner.py     Multi-seed (42, 123, 456), no-db mode, DB persistence
+                                            (skipped without Docker), re-run overwrite
+        tests/evaluation/test_api.py        POST /evaluation/run, GET /evaluation/run/{id},
+                                            multi-seed endpoint, error handling, field contracts
+        tests/db/test_models.py             Updated: Phase 4 tables verified present
 
-Next Phase:     Phase 4 — Evaluation Engine + Multi-Seed Validation
+Current Phase:  4
+Status:         Complete
+
+Next Phase:     Phase 5 — Frontend Command Center
 ```
