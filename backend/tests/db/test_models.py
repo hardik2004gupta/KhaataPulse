@@ -72,17 +72,21 @@ class TestTableCreation:
         from sqlalchemy import inspect
         insp = inspect(engine)
         tables = set(insp.get_table_names())
-        expected = {"customers", "subscriptions", "payments", "events", "sim_runs", "sim_outcomes"}
-        assert expected.issubset(tables)
+        # Phase 1 tables
+        p1 = {"customers", "subscriptions", "payments", "events", "sim_runs", "sim_outcomes"}
+        # Phase 3 tables
+        p3 = {"recovery_cases", "actions", "audit_events"}
+        assert p1.issubset(tables), f"Missing Phase 1 tables: {p1 - tables}"
+        assert p3.issubset(tables), f"Missing Phase 3 tables: {p3 - tables}"
 
     def test_no_unexpected_tables(self, engine):
         from sqlalchemy import inspect
         insp = inspect(engine)
         tables = set(insp.get_table_names())
-        # Phase 1 must not include agent/evaluation tables
-        forbidden = {"recovery_cases", "actions", "audit_events", "evaluation_results"}
+        # Phase 4 evaluation tables must not be present yet
+        forbidden = {"evaluation_results", "evaluation_runs"}
         overlap = forbidden & tables
-        assert not overlap, f"Forbidden Phase 2+ tables found: {overlap}"
+        assert not overlap, f"Forbidden Phase 4+ tables found: {overlap}"
 
 
 # ── Customer model ────────────────────────────────────────────────────────────

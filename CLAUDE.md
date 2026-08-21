@@ -798,7 +798,7 @@ Each phase has intentional boundaries. When starting a phase, read this contract
 ## Implementation Status
 
 ```
-Current Phase:  2
+Current Phase:  3
 Status:         Complete
 Completed:
   - Phase 0: CLAUDE.md engineering contract established
@@ -808,7 +808,8 @@ Completed:
       backend/app/db/base.py              SQLAlchemy Base
       backend/app/db/session.py           Engine + get_db dependency
       backend/app/db/models/             ORM models (customers, subscriptions,
-                                          payments, events, sim_runs, sim_outcomes)
+                                          payments, events, sim_runs, sim_outcomes,
+                                          recovery_cases, actions, audit_events)
       backend/app/simulator/latent_state.py  CustomerLatentState (HIDDEN)
       backend/app/simulator/outcomes.py      PotentialOutcomes (HIDDEN)
       backend/app/simulator/events.py        Observable event generator
@@ -818,7 +819,8 @@ Completed:
       backend/app/schemas/simulator.py        API schemas (no hidden data)
       backend/app/api/routes/simulator.py    POST /simulation/generate, GET /simulation/runs
       backend/app/main.py                    FastAPI app
-      backend/alembic/                       Alembic migrations (001_initial_schema)
+      backend/alembic/                       Alembic migrations (001_initial_schema,
+                                             002_phase3_recovery_audit)
       backend/tests/                         63 tests — 63 passed (0 failures)
         tests/simulator/test_simulator.py    Determinism, cohort size, isolation, events
         tests/db/test_models.py              ORM, referential integrity, constraints
@@ -833,21 +835,55 @@ Completed:
                                           RiskSignal, RiskPrediction, get_risk_predictor()
       backend/app/risk/service.py         RiskService, RoutingDecision, config-driven threshold
       backend/app/agent/schemas.py        RecoveryProposal Pydantic model (CLAUDE.md §11)
-      backend/app/agent/state.py          RecoveryReasoningState TypedDict (no hidden fields)
       backend/app/agent/reasoning.py      BaseReasoningModel, StubReasoningModel,
                                           AnthropicReasoningModel, ReasoningContext
       backend/app/agent/fallback.py       smart_retry_proposal (deterministic LLM fallback)
-      backend/app/agent/nodes.py          All 9 nodes: classify_context, generate_diagnosis,
-                                          generate_action_proposal, validate_proposal +
-                                          Phase 3 stubs (rank_actions, policy_check,
-                                          execute_action, record_outcome)
-      backend/app/agent/graph.py          build_recovery_graph(), make_initial_state()
       backend/app/api/routes/risk.py      POST /risk/predict, POST /risk/reason
       backend/tests/                      155 tests — 155 passed (0 failures)
         tests/risk/test_features.py       Feature engineering, isolation, array contract
         tests/risk/test_model.py          Model training, reproducibility, routing, explainability
         tests/agent/test_graph.py         Node ordering, structured output, validation,
                                           LLM failure/fallback, agent isolation
+  - Phase 3: Economic Optimizer + Policy Guard + Action Execution + Audit
+      backend/app/optimizer/eligibility.py  cause → eligible action types mapping
+      backend/app/optimizer/enr.py          ENR formula, estimated probability tables,
+                                            ActionRanking frozen dataclass
+      backend/app/optimizer/ranker.py       rank_eligible_actions() — deterministic by ENR
+      backend/app/policy/guard.py           PolicyGuard — pure deterministic, all rules:
+                                            kill_switch, dispute_hold, legal_hold, opt_out,
+                                            idempotency, contact_limit (3/7d), cooldown (24h),
+                                            amount_threshold (≥₹10k → ESCALATED)
+                                            PolicyDecision(APPROVED|BLOCKED|ESCALATED, checks)
+      backend/app/actions/service.py        ActionService — typed, idempotent simulated gateway
+                                            ActionRequest, ActionResult, duplicate rejection
+      backend/app/audit/service.py          AuditService — append-only log_audit_event()
+                                            All 8 required event types supported
+      backend/app/agent/state.py            RecoveryReasoningState — added Phase 3 fields:
+                                            ltv, dispute_hold, legal_hold, opt_out,
+                                            eligible_actions, action_rankings, selected_action,
+                                            policy_decision, execution_result, recorded_outcome,
+                                            case_id
+      backend/app/agent/nodes.py            All 9 nodes fully implemented:
+                                            make_rank_actions() — economic optimizer
+                                            make_policy_check(db) — policy guard
+                                            make_execute_action(db) — action service
+                                            make_record_outcome(db) — audit + case closure
+      backend/app/agent/graph.py            build_recovery_graph(reasoning_model, db)
+                                            make_initial_state() — includes Phase 3 fields
+      backend/app/core/config.py            Added action costs (config-driven):
+                                            action_cost_silent_retry/smart_link/grace_period/
+                                            human_escalation
+      backend/alembic/versions/002_...      Migration: recovery_cases, actions, audit_events,
+                                            + customer hold flags (dispute_hold, legal_hold, opt_out)
+      backend/tests/                        212 tests — 212 passed (0 failures)
+        tests/optimizer/test_enr.py         ENR formula, probability estimation, eligibility,
+                                            ranking determinism, action cost effects
+        tests/policy/test_guard.py          All Policy Guard rules independently tested:
+                                            APPROVED, BLOCKED (kill_switch, dispute_hold,
+                                            legal_hold, opt_out, idempotency, contact_limit,
+                                            cooldown), ESCALATED (amount_threshold)
+        tests/agent/test_graph.py           Updated: Phase 3 nodes produce real outputs
+        tests/db/test_models.py             Updated: Phase 3 tables verified present
 
-Next Phase:     Phase 3 — Economic Optimizer + Policy Guard + Action Execution + Audit
+Next Phase:     Phase 4 — Evaluation Engine + Multi-Seed Validation
 ```

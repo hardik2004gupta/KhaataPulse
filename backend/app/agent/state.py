@@ -30,18 +30,31 @@ class RecoveryReasoningState(TypedDict):
     # Support message text
     support_context: str
 
+    # Customer LTV (observable business metric — known to the agent)
+    ltv: float
+
+    # Customer hold flags (observable from CRM)
+    dispute_hold: bool
+    legal_hold: bool
+    opt_out: bool
+
     # ── Node outputs ──────────────────────────────────────────────────────────
     context_classification: Optional[str]   # set by classify_context
-    diagnosis: Optional[dict]              # set by generate_diagnosis
-    recovery_proposal: Optional[dict]      # set by generate_action_proposal
-    validated_proposal: Optional[dict]     # set by validate_proposal (final)
+    diagnosis: Optional[dict]               # set by generate_diagnosis
+    recovery_proposal: Optional[dict]       # set by generate_action_proposal
+    validated_proposal: Optional[dict]      # set by validate_proposal (final)
 
     # Fallback tracking
     used_fallback: bool
     fallback_reason: Optional[str]
 
-    # ── Phase 3 stubs (always None in Phase 2) ────────────────────────────────
-    ranked_actions: Optional[list]
-    policy_decision: Optional[dict]
-    execution_result: Optional[dict]
-    recorded_outcome: Optional[dict]
+    # ── Phase 3 outputs ───────────────────────────────────────────────────────
+    eligible_actions: Optional[list]        # list of eligible action type strings
+    action_rankings: Optional[list]         # list of ActionRanking dicts (sorted by ENR)
+    selected_action: Optional[str]          # best action by ENR
+
+    ranked_actions: Optional[list]          # deprecated alias kept for test compatibility
+    policy_decision: Optional[dict]         # PolicyDecision as dict
+    execution_result: Optional[dict]        # ActionResult as dict
+    recorded_outcome: Optional[dict]        # recovery case summary
+    case_id: Optional[int]                  # recovery_cases.id (set during execution)

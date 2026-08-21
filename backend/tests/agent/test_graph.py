@@ -55,6 +55,10 @@ SAMPLE_STATE_KWARGS = dict(
         {"event_type": "support_message", "message": "I am having trouble with my payment."},
     ],
     support_context="I am having trouble with my payment.",
+    ltv=50000.0,
+    dispute_hold=False,
+    legal_hold=False,
+    opt_out=False,
 )
 
 
@@ -131,12 +135,15 @@ class TestNodeOutputs:
         )
         assert 0.0 <= proposal.confidence <= 1.0
 
-    def test_phase3_stubs_are_none(self, stub_graph, initial_state):
+    def test_phase3_nodes_produce_real_outputs(self, stub_graph, initial_state):
         result = stub_graph.invoke(initial_state)
-        assert result["ranked_actions"] is None
-        assert result["policy_decision"] is None
-        assert result["execution_result"] is None
-        assert result["recorded_outcome"] is None
+        # Phase 3 nodes now produce real outputs (not None)
+        assert result["action_rankings"] is not None
+        assert isinstance(result["action_rankings"], list)
+        assert result["policy_decision"] is not None
+        assert "status" in result["policy_decision"]
+        assert result["execution_result"] is not None
+        assert result["recorded_outcome"] is not None
 
 
 # ── Classify context determinism ──────────────────────────────────────────────

@@ -23,6 +23,12 @@ class Settings(BaseSettings):
     risk_threshold: float = 0.30          # P(failure) >= threshold → LangGraph
     risk_model_version: str = "logistic-v1"
 
+    # Action costs (INR) — config-driven per CLAUDE.md §25
+    action_cost_silent_retry: int = 0
+    action_cost_smart_link: int = 50
+    action_cost_grace_period: int = 100
+    action_cost_human_escalation: int = 500
+
     # Simulator
     default_cohort_size: int = 3000
     simulator_version: str = "v1"
