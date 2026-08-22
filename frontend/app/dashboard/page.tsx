@@ -91,18 +91,28 @@ export default function CommandCenter() {
             detail="The evaluation service could not be reached. Confirm the backend is running, then retry."
             onRetry={runEval}
           />
+        ) : evalLoading ? (
+          /* A same-cohort run takes several seconds. Say what is happening
+             rather than leaving three skeleton blocks unexplained. Both figures
+             are the request parameters, not authored results. */
+          <LoadingPanel
+            title="Running Same-Cohort Evaluation"
+            detail={`Evaluating ${DASHBOARD_COHORT.toLocaleString(
+              "en-IN",
+            )} accounts across 3 recovery policies — static dunning, smart retry, and KhaataPulse — against one shared world (seed ${DASHBOARD_SEED}).`}
+          />
         ) : (
           <>
             {/* ── Money ──────────────────────────────────────────────────── */}
-            <HeroKPIGrid result={evalResult} loading={evalLoading} />
+            <HeroKPIGrid result={evalResult} loading={false} />
 
             <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1.15fr_1fr]">
-              <RevenueExposure result={evalResult} loading={evalLoading} />
-              <IncrementalHero result={evalResult} loading={evalLoading} />
+              <RevenueExposure result={evalResult} loading={false} />
+              <IncrementalHero result={evalResult} loading={false} />
             </div>
 
             {/* ── Policy ─────────────────────────────────────────────────── */}
-            <PolicyComparison result={evalResult} loading={evalLoading} />
+            <PolicyComparison result={evalResult} loading={false} />
           </>
         )}
 

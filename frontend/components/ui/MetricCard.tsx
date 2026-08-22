@@ -19,10 +19,12 @@ const accentMap = {
   neutral:  { text: "text-text-primary",  glow: "",              border: "border-border"      },
 };
 
+/* Value type scales down on narrow viewports so a long ₹ figure never
+   overflows a two-up grid at 390px. */
 const sizeMap = {
-  sm: { value: "text-2xl", label: "text-xs" },
-  md: { value: "text-3xl", label: "text-xs" },
-  lg: { value: "text-5xl", label: "text-sm" },
+  sm: { value: "text-xl sm:text-2xl", label: "text-[10px]" },
+  md: { value: "text-2xl sm:text-3xl", label: "text-[10px]" },
+  lg: { value: "text-4xl sm:text-5xl", label: "text-[11px]" },
 };
 
 export function MetricCard({
@@ -39,24 +41,24 @@ export function MetricCard({
 
   return (
     <div
-      className={`
-        relative bg-surface border ${ac.border} rounded-lg p-5
-        ${ac.glow} transition-all duration-300
-        ${className}
-      `}
+      className={`relative rounded-panel border bg-surface p-5 ${ac.border} ${ac.glow} transition-colors duration-base ${className}`}
     >
-      <p className={`${sz.label} font-medium tracking-widest uppercase text-text-muted mb-2`}>
+      <p
+        className={`mono ${sz.label} mb-2 uppercase tracking-eyebrow text-text-muted`}
+      >
         {label}
       </p>
       {loading ? (
-        <div className="h-10 w-3/4 bg-surface-elevated rounded animate-pulse" />
+        <div className="h-10 w-3/4 animate-pulse rounded bg-surface-elevated" />
       ) : (
-        <p className={`${sz.value} font-bold tabular ${ac.text} leading-none`}>
+        // `animate-fade-in` carries `animation-fill-mode: both`, so the value
+        // is never painted at its pre-animation opacity on first frame.
+        <p className={`tabular animate-fade-in ${sz.value} font-bold leading-none ${ac.text}`}>
           {value}
         </p>
       )}
       {subValue && !loading && (
-        <p className="text-xs text-text-muted mt-2">{subValue}</p>
+        <p className="tabular mt-2 text-xs text-text-muted">{subValue}</p>
       )}
     </div>
   );

@@ -11,11 +11,17 @@ interface HeroCasePanelProps {
   hero: HeroCase;
 }
 
-const EXEC_TONE: Record<string, string> = {
-  executed: "text-recovery-text",
-  escalated: "text-warning-text",
-  blocked: "text-critical-text",
+/* Motion communicates the terminal state of the case: a recovery sweep on
+   execution, a short critical interruption on a block, a steady amber hold
+   while a human is required. Each class is defined in globals.css and is
+   neutralised by the reduced-motion block there. */
+const EXEC_TONE: Record<string, { text: string; motion: string }> = {
+  executed: { text: "text-recovery-text", motion: "outcome-executed" },
+  escalated: { text: "text-warning-text", motion: "outcome-escalated" },
+  blocked: { text: "text-critical-text", motion: "outcome-blocked" },
 };
+
+const EXEC_FALLBACK = { text: "text-text-secondary", motion: "" };
 
 function Field({ label, value }: { label: string; value: React.ReactNode }) {
   return (
@@ -28,7 +34,7 @@ function Field({ label, value }: { label: string; value: React.ReactNode }) {
 
 export function HeroCasePanel({ hero }: HeroCasePanelProps) {
   const lastPayment = hero.payments[hero.payments.length - 1];
-  const execTone = EXEC_TONE[hero.execution.status] ?? "text-text-secondary";
+  const exec = EXEC_TONE[hero.execution.status] ?? EXEC_FALLBACK;
 
   return (
     <section className="flex h-full flex-col rounded-panel border border-border bg-surface">
@@ -97,19 +103,24 @@ export function HeroCasePanel({ hero }: HeroCasePanelProps) {
           {/* ── Outcome ──────────────────────────────────────────────────── */}
           <div className="mt-auto border-t border-border-subtle pt-4">
             <Eyebrow>Outcome</Eyebrow>
-            <div className="mt-3 flex items-baseline justify-between gap-3">
-              <span className="text-[13px] text-text-secondary">
-                {formatAction(hero.execution.action_type)}
-              </span>
-              <span
-                className={`mono text-[11px] font-semibold uppercase tracking-eyebrow ${execTone}`}
-              >
-                {hero.execution.status}
-              </span>
+            <div
+              key={hero.execution.idempotency_key}
+              className={`relative mt-3 overflow-hidden rounded-panel px-3 py-2 ${exec.motion}`}
+            >
+              <div className="flex items-baseline justify-between gap-3">
+                <span className="text-[13px] text-text-secondary">
+                  {formatAction(hero.execution.action_type)}
+                </span>
+                <span
+                  className={`mono text-[11px] font-semibold uppercase tracking-eyebrow ${exec.text}`}
+                >
+                  {hero.execution.status}
+                </span>
+              </div>
+              <p className="mono mt-2 truncate text-[10px] text-text-faint">
+                {hero.execution.idempotency_key}
+              </p>
             </div>
-            <p className="mono mt-2 truncate text-[10px] text-text-faint">
-              {hero.execution.idempotency_key}
-            </p>
 
             <Link
               href="/dashboard/time-machine"

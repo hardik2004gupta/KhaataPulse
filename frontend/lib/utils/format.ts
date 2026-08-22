@@ -69,6 +69,41 @@ export function formatRiskLevel(level: string): string {
   return level.charAt(0) + level.slice(1).toLowerCase();
 }
 
+/* ── Risk colour ────────────────────────────────────────────────────────────
+   Colour tracks the score itself, not the label attached to it, so the same
+   number always reads the same way wherever it is rendered. Thresholds mirror
+   the risk sieve's routing boundary (0.30) and its critical band (0.70).      */
+
+export type RiskTone = "recovery" | "warning" | "critical";
+
+export function riskTone(score: number): RiskTone {
+  if (score >= 0.7) return "critical";
+  if (score >= 0.3) return "warning";
+  return "recovery";
+}
+
+const RISK_TEXT_CLASS: Record<RiskTone, string> = {
+  recovery: "text-recovery-text",
+  warning: "text-warning-text",
+  critical: "text-critical-text",
+};
+
+const RISK_BAR_CLASS: Record<RiskTone, string> = {
+  recovery: "bg-recovery",
+  warning: "bg-warning",
+  critical: "bg-critical",
+};
+
+/** Semantic text colour for a risk score. */
+export function riskTextClass(score: number): string {
+  return RISK_TEXT_CLASS[riskTone(score)];
+}
+
+/** Semantic fill colour for a risk score. */
+export function riskBarClass(score: number): string {
+  return RISK_BAR_CLASS[riskTone(score)];
+}
+
 /** Format ISO timestamp to HH:MM:SS */
 export function formatTime(iso: string): string {
   try {

@@ -1,6 +1,7 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useState } from "react";
+import type { AnimationEvent, CSSProperties } from "react";
 import { demoApi } from "@/lib/api/demo";
 import type { SimulationStep, SimulationResponse } from "@/lib/types";
 import { Eyebrow } from "@/components/ui/StateViews";
@@ -19,35 +20,32 @@ const STEP_STYLES: Record<string, { dot: string; text: string; border: string }>
 
 const FALLBACK = { dot: "bg-text-muted", text: "text-text-secondary", border: "border-border" };
 
-/** Compact horizontal progress rail across the six pipeline stages. */
-function StageRail({ steps, done }: { steps: SimulationStep[]; done: number }) {
+/**
+ * Compact horizontal progress rail across the six pipeline stages.
+ * Each node lights up on the same 400ms CSS cadence as its step card.
+ */
+function StageRail({ steps }: { steps: SimulationStep[] }) {
   return (
     <ol className="flex items-center gap-1 overflow-x-auto pb-1">
       {steps.map((s, i) => {
         const style = STEP_STYLES[s.step] ?? FALLBACK;
-        const reached = i < done;
-        const active = i === done;
         return (
           <li key={s.step} className="flex min-w-0 flex-1 items-center gap-1">
-            <div className="flex min-w-0 flex-col items-start gap-1.5">
+            <div
+              style={{ "--step-index": i } as CSSProperties}
+              className="rail-node flex min-w-0 flex-col items-start gap-1.5"
+            >
+              <span className={`h-1.5 w-1.5 shrink-0 rounded-full ${style.dot}`} />
               <span
-                className={`h-1.5 w-1.5 shrink-0 rounded-full transition-all duration-base ${
-                  reached ? style.dot : active ? `${style.dot} animate-pulse-glow` : "bg-border"
-                }`}
-              />
-              <span
-                className={`mono truncate text-[9px] uppercase tracking-eyebrow transition-colors duration-base ${
-                  reached ? style.text : "text-text-faint"
-                }`}
+                className={`mono truncate text-[9px] uppercase tracking-eyebrow ${style.text}`}
               >
                 {s.step}
               </span>
             </div>
             {i < steps.length - 1 && (
               <span
-                className={`mt-[-14px] h-px flex-1 transition-colors duration-base ${
-                  reached ? "bg-border" : "bg-border-subtle"
-                }`}
+                style={{ "--step-index": i } as CSSProperties}
+                className="rail-link mt-[-14px] h-px flex-1 bg-border"
               />
             )}
           </li>
@@ -57,14 +55,24 @@ function StageRail({ steps, done }: { steps: SimulationStep[]; done: number }) {
   );
 }
 
-function StepCard({ step, index }: { step: SimulationStep; index: number }) {
+function StepCard({
+  step,
+  index,
+  onSettled,
+}: {
+  step: SimulationStep;
+  index: number;
+  /** Fired by the final card once its reveal animation finishes. */
+  onSettled?: (e: AnimationEvent<HTMLLIElement>) => void;
+}) {
   const style = STEP_STYLES[step.step] ?? FALLBACK;
   const policyStatus = (step.data as { status?: string })?.status;
 
   return (
     <li
-      className={`animate-rise-in rounded-panel border-l-2 ${style.border} bg-surface-elevated/40 px-4 py-3`}
-      style={{ animationDelay: `${index * 40}ms` }}
+      style={{ "--step-index": index } as CSSProperties}
+      onAnimationEnd={onSettled}
+      className={`pipeline-step rounded-panel border-l-2 ${style.border} bg-surface-elevated/40 px-4 py-3`}
     >
       <div className="flex items-baseline justify-between gap-3">
         <span className={`mono truncate text-[11px] font-semibold ${style.text}`}>
@@ -91,43 +99,34 @@ function StepCard({ step, index }: { step: SimulationStep; index: number }) {
 export function LiveEventStream() {
   const [state, setState] = useState<"idle" | "loading" | "streaming" | "done" | "error">("idle");
   const [simulation, setSimulation] = useState<SimulationResponse | null>(null);
-  const [visibleCount, setVisibleCount] = useState(0);
   const [error, setError] = useState<string | null>(null);
-  const timers = useRef<number[]>([]);
-
-  const clearTimers = () => {
-    timers.current.forEach((t) => window.clearTimeout(t));
-    timers.current = [];
-  };
-
-  useEffect(() => clearTimers, []);
+  /** Remounts the step list so a re-run replays the reveal from the start. */
+  const [runToken, setRunToken] = useState(0);
 
   const runSimulation = useCallback(async () => {
-    clearTimers();
     setState("loading");
     setSimulation(null);
-    setVisibleCount(0);
     setError(null);
 
     try {
       const result = await demoApi.runSimulation();
       setSimulation(result);
+      setRunToken((t) => t + 1);
+      /* Stage reveal is owned entirely by CSS (`.pipeline-step`, 400ms apart).
+         Completion is signalled by the last card's animationend rather than a
+         timer chain, so a reduced-motion reader — whose animations collapse to
+         near-zero — reaches the finished state immediately. */
       setState("streaming");
-
-      result.steps.forEach((_, i) => {
-        const id = window.setTimeout(
-          () => {
-            setVisibleCount(i + 1);
-            if (i === result.steps.length - 1) setState("done");
-          },
-          550 * (i + 1),
-        );
-        timers.current.push(id);
-      });
     } catch (e) {
       setError(e instanceof Error ? e.message : "Simulation failed");
       setState("error");
     }
+  }, []);
+
+  const handleFinalStep = useCallback((e: AnimationEvent<HTMLLIElement>) => {
+    // Ignore animations bubbling up from nested payload controls.
+    if (e.target !== e.currentTarget) return;
+    setState("done");
   }, []);
 
   const busy = state === "loading" || state === "streaming";
@@ -217,23 +216,39 @@ export function LiveEventStream() {
             </div>
 
             {/* Stage rail */}
-            <div className="py-4">
-              <StageRail steps={simulation.steps} done={visibleCount} />
+            <div className="py-4" key={`rail-${runToken}`}>
+              <StageRail steps={simulation.steps} />
             </div>
 
-            {/* Revealed steps */}
-            <ol className="space-y-2">
-              {simulation.steps.slice(0, visibleCount).map((step, i) => (
-                <StepCard key={step.step} step={step} index={i} />
+            {/* Stages reveal in sequence — see `.pipeline-step` in globals.css */}
+            <ol className="space-y-2" key={`steps-${runToken}`}>
+              {simulation.steps.map((step, i) => (
+                <StepCard
+                  key={step.step}
+                  step={step}
+                  index={i}
+                  onSettled={
+                    i === simulation.steps.length - 1 ? handleFinalStep : undefined
+                  }
+                />
               ))}
             </ol>
 
-            {state === "streaming" && (
-              <p className="mono mt-3 flex items-center gap-2 text-[10px] uppercase tracking-eyebrow text-text-muted">
-                <span className="inline-block h-1.5 w-1.5 rounded-full bg-ai animate-pulse-glow" />
-                Processing stage {visibleCount + 1} of {simulation.steps.length}
-              </p>
-            )}
+            <p
+              className={`mono mt-3 flex items-center gap-2 text-[10px] uppercase tracking-eyebrow ${
+                state === "done" ? "text-recovery-text" : "text-text-muted"
+              }`}
+              aria-live="polite"
+            >
+              <span
+                className={`inline-block h-1.5 w-1.5 rounded-full ${
+                  state === "done" ? "bg-recovery" : "bg-ai animate-pulse-glow"
+                }`}
+              />
+              {state === "done"
+                ? `Pipeline complete · ${simulation.steps.length} stages`
+                : "Executing pipeline…"}
+            </p>
           </div>
         )}
       </div>

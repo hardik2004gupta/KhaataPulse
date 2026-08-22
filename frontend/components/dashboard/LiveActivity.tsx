@@ -42,8 +42,8 @@ export function LiveActivity({ events, loading }: LiveActivityProps) {
             ))}
           </div>
         ) : events.length === 0 ? (
-          <p className="py-8 text-center text-xs text-text-muted">
-            No audit events on the current case.
+          <p className="mono py-8 text-center text-[10px] uppercase tracking-eyebrow text-text-muted">
+            Pipeline awaiting activity
           </p>
         ) : (
           <ul className="divide-y divide-border-subtle">

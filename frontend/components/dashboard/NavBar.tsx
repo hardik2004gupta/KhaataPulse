@@ -26,10 +26,7 @@ export function NavBar() {
   }, [pathname]);
 
   return (
-    <header
-      className="sticky top-0 z-nav border-b border-border/60 backdrop-blur-xl"
-      style={{ backgroundColor: "rgba(7,9,13,0.85)" }}
-    >
+    <header className="surface-chrome-nav sticky top-0 z-nav border-b border-border/60 backdrop-blur-xl">
       <div className="mx-auto flex h-16 max-w-shell items-center gap-6 px-5 sm:px-8 lg:gap-10">
         {/* ── Brand ─────────────────────────────────────────────────────── */}
         <Link href="/" className="group flex shrink-0 items-baseline gap-3">

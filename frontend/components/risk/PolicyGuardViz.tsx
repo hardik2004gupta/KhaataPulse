@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import type { CSSProperties } from "react";
 import type { PolicyDecision } from "@/lib/types";
 import { Eyebrow } from "@/components/ui/StateViews";
 import { formatAction } from "@/lib/utils/format";
@@ -62,19 +62,14 @@ export function PolicyGuardViz({ decision }: PolicyGuardVizProps) {
     ...entries.filter(([k]) => !CHECK_ORDER.includes(k)),
   ];
 
-  // Gates settle one after another — the checkpoint reads as sequential.
-  const [revealed, setRevealed] = useState(0);
-  useEffect(() => {
-    setRevealed(0);
-    const timers = ordered.map((_, i) =>
-      window.setTimeout(() => setRevealed(i + 1), 90 * (i + 1)),
-    );
-    return () => timers.forEach((t) => window.clearTimeout(t));
-    // Re-run whenever the decision identity changes.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [decision.status, decision.action_type, ordered.length]);
-
   const verdict = VERDICT[decision.status] ?? VERDICT.BLOCKED;
+
+  /* The checkpoint sequence is expressed entirely as CSS animation-delay
+     (--gate-index / --gate-count). No JS timers are involved, so a reader who
+     asked for reduced motion gets the full result immediately — see the
+     prefers-reduced-motion block in globals.css. Remounting on the decision
+     identity replays the sequence when a different case is opened. */
+  const runKey = `${decision.status}-${decision.action_type}-${ordered.length}`;
 
   return (
     <div>
@@ -86,43 +81,41 @@ export function PolicyGuardViz({ decision }: PolicyGuardVizProps) {
       </div>
 
       {/* ── Sequential gates ─────────────────────────────────────────────── */}
-      <ol className="mt-3">
-        {ordered.map(([key, passed], i) => {
-          const shown = i < revealed;
-          return (
-            <li
-              key={key}
-              className={`flex items-center gap-3 border-l border-border-subtle py-1.5 pl-3 transition-all duration-base ${
-                shown ? "opacity-100" : "translate-x-1 opacity-0"
+      <ol className="mt-3" key={runKey}>
+        {ordered.map(([key, passed], i) => (
+          <li
+            key={key}
+            style={{ "--gate-index": i } as CSSProperties}
+            className={`flex items-center gap-3 border-l border-border-subtle py-1.5 pl-3 ${
+              passed ? "gate-pass" : "gate-fail"
+            }`}
+          >
+            <span className="mono tabular w-5 shrink-0 text-[10px] text-text-faint">
+              {String(i + 1).padStart(2, "0")}
+            </span>
+            <span
+              className={`mono min-w-0 flex-1 truncate text-[11px] uppercase tracking-eyebrow ${
+                passed ? "text-text-secondary" : "text-critical-text"
               }`}
             >
-              <span className="mono w-5 shrink-0 text-[10px] text-text-faint">
-                {String(i + 1).padStart(2, "0")}
-              </span>
-              <span
-                className={`mono min-w-0 flex-1 truncate text-[11px] uppercase tracking-wider ${
-                  passed ? "text-text-secondary" : "text-critical-text"
-                }`}
-              >
-                {CHECK_LABELS[key] ?? key.replace(/_/g, " ")}
-              </span>
-              <span
-                className={`mono shrink-0 text-[10px] font-semibold ${
-                  passed ? "text-recovery-text" : "text-critical-text"
-                }`}
-              >
-                {passed ? "✓ PASS" : "✕ FAIL"}
-              </span>
-            </li>
-          );
-        })}
+              {CHECK_LABELS[key] ?? key.replace(/_/g, " ")}
+            </span>
+            <span
+              className={`mono shrink-0 text-[10px] font-semibold uppercase tracking-eyebrow ${
+                passed ? "text-recovery-text" : "text-critical-text"
+              }`}
+            >
+              {passed ? "✓ Pass" : "✕ Fail"}
+            </span>
+          </li>
+        ))}
       </ol>
 
       {/* ── Verdict ──────────────────────────────────────────────────────── */}
       <div
-        className={`mt-4 rounded-panel border ${verdict.border} ${verdict.bg} px-4 py-3 transition-opacity duration-base ${
-          revealed >= ordered.length ? "opacity-100" : "opacity-0"
-        }`}
+        key={`${runKey}-verdict`}
+        style={{ "--gate-count": ordered.length } as CSSProperties}
+        className={`gate-verdict mt-4 rounded-panel border ${verdict.border} ${verdict.bg} px-4 py-3`}
       >
         <div className="flex items-center justify-between gap-3">
           <span className="mono text-[10px] uppercase tracking-eyebrow text-text-faint">
@@ -132,17 +125,17 @@ export function PolicyGuardViz({ decision }: PolicyGuardVizProps) {
             {formatAction(decision.action_type)}
           </span>
         </div>
-        <p className={`mono mt-1.5 text-xl font-bold tracking-wider ${verdict.text}`}>
+        <p className={`mono mt-1.5 text-xl font-bold tracking-eyebrow ${verdict.text}`}>
           {verdict.glyph} {decision.status}
         </p>
 
         {decision.block_reason && (
-          <p className="mono mt-2 text-[10px] uppercase tracking-wider text-critical-text">
+          <p className="mono mt-2 text-[10px] uppercase tracking-eyebrow text-critical-text">
             {decision.block_reason}
           </p>
         )}
         {decision.status === "ESCALATED" && !decision.block_reason && (
-          <p className="mono mt-2 text-[10px] uppercase tracking-wider text-warning-text">
+          <p className="mono mt-2 text-[10px] uppercase tracking-eyebrow text-warning-text">
             Amount threshold — human approval required
           </p>
         )}

@@ -6,7 +6,7 @@ import type { HeroCase, LoadingState } from "@/lib/types";
 import { CommandShell } from "@/components/shell/CommandShell";
 import { EventTimeline, buildTimeline } from "@/components/timemachine/EventTimeline";
 import { ErrorPanel, LoadingPanel, Eyebrow } from "@/components/ui/StateViews";
-import { formatINR, formatDateTime } from "@/lib/utils/format";
+import { formatINR, formatDateTime, riskTextClass } from "@/lib/utils/format";
 
 export default function TimeMachinePage() {
   const [state, setState] = useState<LoadingState>("loading");
@@ -29,12 +29,8 @@ export default function TimeMachinePage() {
 
   const entries = useMemo(() => (hero ? buildTimeline(hero) : []), [hero]);
 
-  const riskTone =
-    hero?.risk.risk_level === "HIGH"
-      ? "text-critical-text"
-      : hero?.risk.risk_level === "MEDIUM"
-        ? "text-warning-text"
-        : "text-recovery-text";
+  // Colour follows the score against the sieve's thresholds, not the label.
+  const riskTone = riskTextClass(hero?.risk.risk_score ?? 0);
 
   return (
     <CommandShell>

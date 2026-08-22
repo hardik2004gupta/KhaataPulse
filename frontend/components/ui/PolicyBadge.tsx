@@ -16,10 +16,13 @@ const statusIcons: Record<PolicyStatus, string> = {
 
 export function PolicyBadge({ status }: { status: PolicyStatus }) {
   const styles = statusStyles[status] ?? "bg-surface text-text-secondary border-border";
-  const icon   = statusIcons[status] ?? "?";
+  const icon = statusIcons[status] ?? "?";
   return (
-    <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 text-xs font-semibold border rounded-full mono ${styles}`}>
-      <span>{icon}</span>
+    <span
+      className={`mono inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-eyebrow ${styles}`}
+    >
+      {/* The glyph reinforces the colour; the status word carries the meaning. */}
+      <span aria-hidden="true">{icon}</span>
       {status}
     </span>
   );

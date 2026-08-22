@@ -6,23 +6,25 @@ export function Skeleton({ className = "" }: { className?: string }) {
   );
 }
 
+/** Mirrors MetricCard: eyebrow label, metric value, sub-value. */
 export function MetricSkeleton() {
   return (
-    <div className="bg-surface border border-border rounded-lg p-5">
-      <Skeleton className="h-3 w-24 mb-3" />
-      <Skeleton className="h-9 w-32" />
-      <Skeleton className="h-2 w-20 mt-2" />
+    <div className="rounded-panel border border-border bg-surface p-5">
+      <Skeleton className="mb-3 h-3 w-24" />
+      <Skeleton className="h-8 w-32 sm:h-9" />
+      <Skeleton className="mt-2 h-2 w-20" />
     </div>
   );
 }
 
+/** Mirrors one RiskQueue row: customer, risk, amount, diagnosis, timestamp. */
 export function RowSkeleton() {
   return (
-    <div className="flex items-center gap-4 px-4 py-3 border-b border-border">
+    <div className="flex h-10 items-center gap-4 border-b border-border-subtle px-4">
       <Skeleton className="h-4 w-32" />
       <Skeleton className="h-4 w-12" />
       <Skeleton className="h-4 w-24" />
-      <Skeleton className="h-4 w-16 ml-auto" />
+      <Skeleton className="ml-auto h-4 w-16" />
     </div>
   );
 }

@@ -405,6 +405,236 @@ body {
   animation: node-arrive 420ms var(--ease-out) both;
 }
 
+/* ═══════════════════════════════════════════════════════════════════════════
+   Semantic surfaces — every colour value lives here, never in a component.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Translucent chrome for the sticky telemetry bar. */
+.surface-chrome {
+  background-color: rgba(7, 9, 13, 0.9);
+}
+
+/* Slightly lighter chrome for the landing page's marketing nav, which sits
+   over the ambient background rather than over dense instrumentation. */
+.surface-chrome-nav {
+  background-color: rgba(7, 9, 13, 0.85);
+}
+
+/* Directional wash behind a signed financial figure. */
+.wash-recovery {
+  background: radial-gradient(120% 100% at 0% 100%, rgba(16, 185, 129, 0.1) 0%, transparent 60%);
+}
+.wash-critical {
+  background: radial-gradient(120% 100% at 0% 100%, rgba(239, 68, 68, 0.1) 0%, transparent 60%);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Policy Guard — a security checkpoint, evaluated as a sequence.
+   Stagger is expressed as a CSS delay driven by --gate-index, so the
+   reduced-motion block below neutralises it without any JS involvement.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+@keyframes gate-arrive {
+  from {
+    opacity: 0;
+    transform: translateX(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Approved gate — a green glow that swells once, then settles. */
+@keyframes gate-pass-glow {
+  0% {
+    box-shadow: inset 1px 0 0 0 rgba(16, 185, 129, 0);
+  }
+  40% {
+    box-shadow: inset 2px 0 0 0 rgba(16, 185, 129, 0.9), 0 0 14px -4px rgba(16, 185, 129, 0.5);
+  }
+  100% {
+    box-shadow: inset 1px 0 0 0 rgba(16, 185, 129, 0);
+  }
+}
+
+/* Failed gate — a short, sharp red interruption. */
+@keyframes gate-fail-pulse {
+  0% {
+    background-color: rgba(239, 68, 68, 0);
+  }
+  25% {
+    background-color: rgba(239, 68, 68, 0.18);
+  }
+  60% {
+    background-color: rgba(239, 68, 68, 0);
+  }
+  80% {
+    background-color: rgba(239, 68, 68, 0.1);
+  }
+  100% {
+    background-color: rgba(239, 68, 68, 0);
+  }
+}
+
+.gate {
+  animation: gate-arrive var(--dur-base) var(--ease-out) both;
+  animation-delay: calc(var(--gate-index, 0) * 60ms);
+}
+
+.gate-pass {
+  animation:
+    gate-arrive var(--dur-base) var(--ease-out) both,
+    gate-pass-glow var(--dur-slow) var(--ease-out) both;
+  animation-delay: calc(var(--gate-index, 0) * 60ms), calc(var(--gate-index, 0) * 60ms + 120ms);
+}
+
+.gate-fail {
+  animation:
+    gate-arrive var(--dur-base) var(--ease-out) both,
+    gate-fail-pulse 420ms var(--ease-in-out) both;
+  animation-delay: calc(var(--gate-index, 0) * 60ms), calc(var(--gate-index, 0) * 60ms + 120ms);
+}
+
+/* Verdict lands only once every gate has settled. */
+.gate-verdict {
+  animation: fade-in 320ms var(--ease-out) both;
+  animation-delay: calc(var(--gate-count, 0) * 60ms + 160ms);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Proportional bars — confidence, exposure decomposition, risk strips.
+   The bar grows to its measured value (--bar-width) as a CSS animation, so a
+   reduced-motion reader is shown the final proportion on first paint.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+@keyframes bar-fill {
+  from {
+    width: 0%;
+  }
+  to {
+    width: var(--bar-width, 0%);
+  }
+}
+
+.bar-grow {
+  width: var(--bar-width, 0%);
+  animation: bar-fill var(--dur-slow) var(--ease-out) both;
+}
+
+/* Ambient breath while the reasoner is still working. */
+.bar-grow-pending {
+  width: var(--bar-width, 0%);
+  animation:
+    bar-fill var(--dur-slow) var(--ease-out) both,
+    pulse-glow 1.8s var(--ease-in-out) infinite;
+  animation-delay: 0ms, var(--dur-slow);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Live pipeline — six stages activate in sequence, 400ms apart.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+@keyframes step-activate {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes rail-arrive {
+  from {
+    opacity: 0.2;
+    transform: scale(0.5);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.pipeline-step {
+  animation: step-activate 320ms var(--ease-out) both;
+  animation-delay: calc(var(--step-index, 0) * 400ms);
+}
+
+.rail-node {
+  animation: rail-arrive 300ms var(--ease-out) both;
+  animation-delay: calc(var(--step-index, 0) * 400ms);
+}
+
+.rail-link {
+  animation: fade-in 300ms var(--ease-out) both;
+  animation-delay: calc(var(--step-index, 0) * 400ms + 180ms);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Outcome — the terminal state of one recovery case.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+@keyframes outcome-sweep {
+  0% {
+    background-position: -60% 0;
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+  }
+  100% {
+    background-position: 160% 0;
+    opacity: 0;
+  }
+}
+
+@keyframes outcome-interrupt {
+  0% {
+    background-color: rgba(239, 68, 68, 0);
+  }
+  25% {
+    background-color: rgba(239, 68, 68, 0.16);
+  }
+  55% {
+    background-color: rgba(239, 68, 68, 0);
+  }
+  80% {
+    background-color: rgba(239, 68, 68, 0.1);
+  }
+  100% {
+    background-color: rgba(239, 68, 68, 0);
+  }
+}
+
+/* Recovery confirmed — a single glow sweeps left to right. */
+.outcome-executed::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(16, 185, 129, 0.18) 50%,
+    transparent 100%
+  );
+  background-size: 55% 100%;
+  background-repeat: no-repeat;
+  animation: outcome-sweep 800ms var(--ease-out) 1 both;
+}
+
+/* Blocked — a brief critical interruption. */
+.outcome-blocked {
+  animation: outcome-interrupt 520ms var(--ease-in-out) 1 both;
+}
+
+/* Escalated — a steady amber hold, awaiting a human. */
+.outcome-escalated {
+  box-shadow: 0 0 18px -6px rgba(245, 158, 11, 0.45);
+}
+
 /* ── Glow ────────────────────────────────────────────────────────────────── */
 .glow-recovery {
   box-shadow: 0 0 24px rgba(16, 185, 129, 0.12);
@@ -488,7 +718,12 @@ body {
   *::after {
     animation-duration: 0.001ms !important;
     animation-iteration-count: 1 !important;
+    /* Staggered reveals (policy gates, pipeline stages) express their sequence
+       purely as animation-delay. Clearing it here is what makes those
+       sequences land instantly rather than trickling in silently. */
+    animation-delay: 0ms !important;
     transition-duration: 0.001ms !important;
+    transition-delay: 0ms !important;
     scroll-behavior: auto !important;
   }
 

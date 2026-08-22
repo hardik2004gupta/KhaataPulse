@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect } from "react";
 import { usePathname } from "next/navigation";
 
 interface NavItem {
@@ -104,6 +105,16 @@ interface SidebarProps {
 }
 
 export function Sidebar({ open, onClose }: SidebarProps) {
+  // Escape dismisses the mobile navigation sheet.
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [open, onClose]);
+
   return (
     <>
       {/* ── Desktop rail ──────────────────────────────────────────────────── */}
@@ -122,9 +133,11 @@ export function Sidebar({ open, onClose }: SidebarProps) {
           aria-hidden="true"
         />
       )}
+      {/* `invisible` while closed keeps the off-screen links out of the tab
+         order — an aria-hidden container must never hold focusable children. */}
       <aside
         className={`fixed left-0 top-12 z-drawer flex h-[calc(100vh-3rem)] w-[220px] flex-col justify-between border-r border-border bg-bg-secondary transition-transform duration-base ease-out lg:hidden ${
-          open ? "translate-x-0" : "-translate-x-full"
+          open ? "visible translate-x-0" : "invisible -translate-x-full"
         }`}
         aria-hidden={!open}
       >

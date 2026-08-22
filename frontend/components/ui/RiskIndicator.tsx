@@ -1,45 +1,53 @@
 "use client";
 
+import { riskBarClass, riskTextClass } from "@/lib/utils/format";
+
 type Level = "LOW" | "MEDIUM" | "HIGH";
 
-const levelStyles: Record<Level, { bar: string; text: string; label: string }> = {
-  LOW:    { bar: "bg-recovery",  text: "text-recovery-text", label: "LOW" },
-  MEDIUM: { bar: "bg-warning",   text: "text-warning-text",  label: "MED" },
-  HIGH:   { bar: "bg-critical",  text: "text-critical-text", label: "HIGH" },
+const LEVEL_LABEL: Record<Level, string> = {
+  LOW: "LOW",
+  MEDIUM: "MED",
+  HIGH: "HIGH",
 };
 
 interface RiskIndicatorProps {
-  score: number;      // 0.0–1.0
+  score: number; // 0.0–1.0
   level: Level;
   compact?: boolean;
 }
 
+/**
+ * Colour is driven by the score itself (riskTone thresholds), not the label,
+ * so the same number always reads the same way. The level is always spelled
+ * out in text as well — colour never carries meaning on its own.
+ */
 export function RiskIndicator({ score, level, compact = false }: RiskIndicatorProps) {
-  const styles = levelStyles[level] ?? levelStyles.MEDIUM;
+  const bar = riskBarClass(score);
+  const text = riskTextClass(score);
+  const label = LEVEL_LABEL[level] ?? level;
   const pct = Math.round(score * 100);
 
   if (compact) {
     return (
-      <span className={`inline-flex items-center gap-1.5 font-semibold tabular text-sm ${styles.text}`}>
-        <span className={`inline-block w-2 h-2 rounded-full ${styles.bar}`} />
+      <span className={`tabular inline-flex items-center gap-1.5 text-sm font-semibold ${text}`}>
+        <span aria-hidden="true" className={`inline-block h-2 w-2 rounded-full ${bar}`} />
         {pct}%
+        <span className="mono text-[10px] uppercase tracking-eyebrow">{label}</span>
       </span>
     );
   }
 
   return (
     <div className="flex items-center gap-3">
-      <div className="flex-1 h-1.5 bg-surface-elevated rounded-full overflow-hidden">
+      <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-surface-elevated">
         <div
-          className={`h-full rounded-full ${styles.bar} transition-all duration-700`}
+          className={`h-full rounded-full ${bar} transition-[width] duration-slow ease-out`}
           style={{ width: `${pct}%` }}
         />
       </div>
-      <span className={`mono text-xs font-semibold tabular w-8 text-right ${styles.text}`}>
-        {pct}%
-      </span>
-      <span className={`mono text-xs font-bold ${styles.text} w-10`}>
-        {styles.label}
+      <span className={`mono tabular w-8 text-right text-xs font-semibold ${text}`}>{pct}%</span>
+      <span className={`mono w-10 text-xs font-bold uppercase tracking-eyebrow ${text}`}>
+        {label}
       </span>
     </div>
   );

@@ -1,14 +1,21 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import type { CSSProperties } from "react";
 import type { DiagnosisInfo, RiskInfo, ActionRanking } from "@/lib/types";
 import { Eyebrow } from "@/components/ui/StateViews";
-import { formatCause, formatAction, formatINR } from "@/lib/utils/format";
+import {
+  formatCause,
+  formatAction,
+  formatINR,
+  riskTextClass,
+} from "@/lib/utils/format";
 
 interface DiagnosisPanelProps {
   risk: RiskInfo;
   diagnosis: DiagnosisInfo;
   actionRankings: ActionRanking[];
+  /** Set while the reasoner is still working — the bar breathes until it settles. */
+  isLoading?: boolean;
 }
 
 const LEVEL_TONE: Record<string, string> = {
@@ -29,30 +36,36 @@ function RiskLevelBadge({ level }: { level: string }) {
   );
 }
 
-/** Animated fill — communicates model certainty, settles once and stays. */
-function ConfidenceBar({ value }: { value: number }) {
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => {
-    const id = window.setTimeout(() => setMounted(true), 80);
-    return () => window.clearTimeout(id);
-  }, []);
-
+/**
+ * Animated fill — communicates model certainty, settles once and stays.
+ * The fill is a CSS animation keyed off --bar-width rather than a JS-driven
+ * width change, so reduced-motion readers see the final value immediately.
+ */
+export function ConfidenceBar({
+  value,
+  isLoading = false,
+}: {
+  value: number;
+  isLoading?: boolean;
+}) {
   const pct = Math.round(value * 100);
-  const strong = value > 0.7;
+  // Below half the diagnosis is tentative; at or above it the reasoner is
+  // speaking with the confidence the AI accent denotes.
+  const confident = value >= 0.5;
 
   return (
     <div className="flex items-center gap-3">
       <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-bg-primary">
         <div
-          className={`h-full rounded-full transition-[width] duration-slow ease-out ${
-            strong ? "bg-recovery" : "bg-warning"
-          }`}
-          style={{ width: mounted ? `${pct}%` : "0%" }}
+          style={{ "--bar-width": `${pct}%` } as CSSProperties}
+          className={`h-full rounded-full ${
+            isLoading ? "bar-grow-pending" : "bar-grow"
+          } ${confident ? "bg-ai" : "bg-warning"}`}
         />
       </div>
       <span
         className={`mono tabular text-xs font-semibold ${
-          strong ? "text-recovery-text" : "text-warning-text"
+          confident ? "text-ai-text" : "text-warning-text"
         }`}
       >
         {pct}%
@@ -61,7 +74,12 @@ function ConfidenceBar({ value }: { value: number }) {
   );
 }
 
-export function DiagnosisPanel({ risk, diagnosis, actionRankings }: DiagnosisPanelProps) {
+export function DiagnosisPanel({
+  risk,
+  diagnosis,
+  actionRankings,
+  isLoading = false,
+}: DiagnosisPanelProps) {
   const maxImpact = Math.max(...risk.top_signals.map((s) => Math.abs(s.impact)), 0.0001);
 
   return (
@@ -75,13 +93,9 @@ export function DiagnosisPanel({ risk, diagnosis, actionRankings }: DiagnosisPan
 
         <div className="mt-3 flex items-baseline gap-3">
           <span
-            className={`tabular text-4xl font-bold leading-none tracking-tightest ${
-              risk.risk_level === "HIGH"
-                ? "text-critical-text"
-                : risk.risk_level === "MEDIUM"
-                  ? "text-warning-text"
-                  : "text-recovery-text"
-            }`}
+            className={`tabular text-3xl font-bold leading-none tracking-tightest sm:text-4xl ${riskTextClass(
+              risk.risk_score,
+            )}`}
           >
             {Math.round(risk.risk_score * 100)}
             <span className="text-lg">%</span>
@@ -133,7 +147,7 @@ export function DiagnosisPanel({ risk, diagnosis, actionRankings }: DiagnosisPan
           <p className="mono mb-1.5 text-[10px] uppercase tracking-eyebrow text-text-faint">
             Confidence
           </p>
-          <ConfidenceBar value={diagnosis.confidence} />
+          <ConfidenceBar value={diagnosis.confidence} isLoading={isLoading} />
         </div>
 
         <p className="mt-3 border-t border-ai/15 pt-3 text-[11px] italic leading-relaxed text-text-muted">

@@ -3,10 +3,18 @@
 import { useCallback, useEffect, useState } from "react";
 import { casesApi } from "@/lib/api/cases";
 import type { RecoveryCase } from "@/lib/types";
-import { formatINR, formatDateTime, formatCause, formatAction } from "@/lib/utils/format";
+import {
+  formatINR,
+  formatDateTime,
+  formatCause,
+  formatAction,
+  riskBarClass,
+  riskTextClass,
+} from "@/lib/utils/format";
 import { PolicyBadge } from "@/components/ui/PolicyBadge";
 import { RowSkeleton } from "@/components/ui/Skeleton";
 import { ErrorPanel } from "@/components/ui/StateViews";
+import { EmptyState } from "@/components/ui/EmptyState";
 
 interface RiskQueueProps {
   onSelect: (case_: RecoveryCase) => void;
@@ -17,33 +25,26 @@ interface RiskQueueProps {
   onFailed?: () => void;
 }
 
-const RISK_STRIP: Record<string, string> = {
-  HIGH: "bg-critical",
-  MEDIUM: "bg-warning",
-  LOW: "bg-text-muted",
-};
-
-const RISK_TEXT: Record<string, string> = {
-  HIGH: "text-critical-text",
-  MEDIUM: "text-warning-text",
-  LOW: "text-text-muted",
-};
-
 const COLUMNS = ["Customer", "Risk", "Amount", "Diagnosis", "Action", "Policy", "Created"];
 
+/**
+ * Colour tracks the score against the sieve's own thresholds, and the level is
+ * always spelled out beside it — the strip colour never carries meaning alone.
+ */
 function RiskCell({ score, level }: { score: number; level: string }) {
   const pct = Math.round(score * 100);
   return (
     <span className="flex items-center gap-2">
-      <span className="h-1 w-10 overflow-hidden rounded-full bg-bg-primary">
+      <span aria-hidden="true" className="h-1 w-10 overflow-hidden rounded-full bg-bg-primary">
         <span
-          className={`block h-full rounded-full ${RISK_STRIP[level] ?? "bg-text-muted"}`}
+          className={`block h-full rounded-full ${riskBarClass(score)}`}
           style={{ width: `${pct}%` }}
         />
       </span>
-      <span className={`mono tabular text-[11px] font-semibold ${RISK_TEXT[level] ?? ""}`}>
+      <span className={`mono tabular text-[11px] font-semibold ${riskTextClass(score)}`}>
         {pct}%
       </span>
+      <span className="mono text-[9px] uppercase tracking-eyebrow text-text-faint">{level}</span>
     </span>
   );
 }
@@ -111,14 +112,10 @@ export function RiskQueue({
           ))}
         </div>
       ) : cases.length === 0 ? (
-        <div className="flex flex-col items-center justify-center gap-2 px-6 py-16 text-center">
-          <span className="mono text-[10px] uppercase tracking-eyebrow text-text-secondary">
-            No At-Risk Accounts
-          </span>
-          <p className="max-w-prose text-xs text-text-muted">
-            The risk sieve currently reports no cases requiring intervention.
-          </p>
-        </div>
+        <EmptyState
+          title="No high-risk accounts in current cohort"
+          description="The risk sieve routed no accounts into the recovery pipeline for this run."
+        />
       ) : (
         <>
           {/* ── Desktop console ─────────────────────────────────────────── */}
@@ -145,6 +142,11 @@ export function RiskQueue({
                     key={c.id}
                     onClick={() => onSelect(c)}
                     tabIndex={0}
+                    role="button"
+                    aria-label={`Open case ${c.id}${
+                      c.customer_name ? ` — ${c.customer_name}` : ""
+                    }`}
+                    aria-pressed={selected}
                     onKeyDown={(e) => {
                       if (e.key === "Enter" || e.key === " ") {
                         e.preventDefault();
@@ -157,8 +159,9 @@ export function RiskQueue({
                   >
                     <td className="relative px-4 py-0">
                       <span
+                        aria-hidden="true"
                         className={`absolute left-0 top-0 h-full w-0.5 ${
-                          selected ? "bg-ai" : (RISK_STRIP[c.risk_level] ?? "bg-text-muted")
+                          selected ? "bg-ai" : riskBarClass(c.risk_score)
                         }`}
                       />
                       <span className="flex min-w-0 items-baseline gap-2">
@@ -201,7 +204,7 @@ export function RiskQueue({
                       )}
                     </td>
 
-                    <td className="mono px-4 text-right text-[10px] text-text-faint">
+                    <td className="mono tabular px-4 text-right text-[10px] text-text-faint">
                       {formatDateTime(c.created_at)}
                     </td>
                   </tr>
@@ -217,12 +220,14 @@ export function RiskQueue({
                 <button
                   type="button"
                   onClick={() => onSelect(c)}
+                  aria-label={`Open case ${c.id}${
+                    c.customer_name ? ` — ${c.customer_name}` : ""
+                  }`}
                   className="relative w-full px-4 py-3 text-left transition-colors duration-base hover:bg-surface-elevated/60"
                 >
                   <span
-                    className={`absolute left-0 top-0 h-full w-0.5 ${
-                      RISK_STRIP[c.risk_level] ?? "bg-text-muted"
-                    }`}
+                    aria-hidden="true"
+                    className={`absolute left-0 top-0 h-full w-0.5 ${riskBarClass(c.risk_score)}`}
                   />
                   <div className="flex items-baseline justify-between gap-3">
                     <span className="truncate text-[13px] font-medium text-text-primary">

@@ -7,11 +7,18 @@ import type {
   ActionRanking,
   PolicyDecision,
 } from "@/lib/types";
-import { formatINR, formatDateTime, formatCause, formatAction } from "@/lib/utils/format";
+import {
+  formatINR,
+  formatDateTime,
+  formatCause,
+  formatAction,
+  riskTextClass,
+} from "@/lib/utils/format";
 import { PolicyBadge } from "@/components/ui/PolicyBadge";
 import { Eyebrow } from "@/components/ui/StateViews";
 import { AuditTimeline } from "./AuditTimeline";
 import { PolicyGuardViz } from "./PolicyGuardViz";
+import { ConfidenceBar } from "./DiagnosisPanel";
 import { casesApi } from "@/lib/api/cases";
 
 interface CaseDetailResponse extends RecoveryCase {
@@ -141,9 +148,14 @@ export function CaseDetailDrawer({ case_, onClose }: CaseDetailDrawerProps) {
     <>
       {open && <div className="drawer-overlay" onClick={onClose} aria-hidden="true" />}
 
+      {/* `invisible` while closed keeps the drawer's controls out of the tab
+         order — an aria-hidden container must never hold focusable children. */}
       <aside
+        role="dialog"
+        aria-modal={open}
+        aria-label="Recovery case detail"
         className={`drawer transition-transform duration-base ease-out ${
-          open ? "translate-x-0" : "translate-x-full"
+          open ? "visible translate-x-0" : "invisible translate-x-full"
         }`}
         aria-hidden={!open}
       >
@@ -198,7 +210,14 @@ export function CaseDetailDrawer({ case_, onClose }: CaseDetailDrawerProps) {
                       )
                     }
                   />
-                  <Stat label="Created" value={formatDateTime(data.created_at)} />
+                  <Stat
+                    label="Created"
+                    value={
+                      <span className="mono tabular text-xs">
+                        {formatDateTime(data.created_at)}
+                      </span>
+                    }
+                  />
                 </dl>
               </section>
 
@@ -207,13 +226,9 @@ export function CaseDetailDrawer({ case_, onClose }: CaseDetailDrawerProps) {
                 <Eyebrow>Risk</Eyebrow>
                 <div className="mt-3 flex items-baseline gap-3">
                   <span
-                    className={`tabular text-3xl font-bold leading-none tracking-tightest ${
-                      data.risk_level === "HIGH"
-                        ? "text-critical-text"
-                        : data.risk_level === "MEDIUM"
-                          ? "text-warning-text"
-                          : "text-recovery-text"
-                    }`}
+                    className={`tabular text-3xl font-bold leading-none tracking-tightest ${riskTextClass(
+                      data.risk_score,
+                    )}`}
                   >
                     {Math.round(data.risk_score * 100)}
                     <span className="text-base">%</span>
@@ -236,23 +251,7 @@ export function CaseDetailDrawer({ case_, onClose }: CaseDetailDrawerProps) {
                     <p className="mono mb-1.5 text-[10px] uppercase tracking-eyebrow text-text-faint">
                       Confidence
                     </p>
-                    <div className="flex items-center gap-3">
-                      <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-bg-primary">
-                        <div
-                          className={`h-full rounded-full ${
-                            confidence > 0.7 ? "bg-recovery" : "bg-warning"
-                          }`}
-                          style={{ width: `${Math.round(confidence * 100)}%` }}
-                        />
-                      </div>
-                      <span
-                        className={`mono tabular text-xs font-semibold ${
-                          confidence > 0.7 ? "text-recovery-text" : "text-warning-text"
-                        }`}
-                      >
-                        {Math.round(confidence * 100)}%
-                      </span>
-                    </div>
+                    <ConfidenceBar value={confidence} />
                   </div>
                 )}
 
@@ -355,8 +354,22 @@ export function CaseDetailDrawer({ case_, onClose }: CaseDetailDrawerProps) {
               <section className="border-t border-border-subtle pt-5">
                 <Eyebrow>Outcome</Eyebrow>
                 <dl className="mt-3 grid grid-cols-2 gap-4">
-                  <Stat label="Status" value={data.outcome_status ?? "pending"} />
-                  <Stat label="Closed" value={formatDateTime(data.closed_at)} />
+                  <Stat
+                    label="Status"
+                    value={
+                      <span className="mono text-[11px] uppercase tracking-eyebrow">
+                        {data.outcome_status ?? "pending"}
+                      </span>
+                    }
+                  />
+                  <Stat
+                    label="Closed"
+                    value={
+                      <span className="mono tabular text-xs">
+                        {formatDateTime(data.closed_at)}
+                      </span>
+                    }
+                  />
                 </dl>
               </section>
 

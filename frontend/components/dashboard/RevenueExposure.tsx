@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import type { CSSProperties } from "react";
 import { useRouter } from "next/navigation";
 import type { EvaluationRunResult } from "@/lib/types";
 import { Eyebrow } from "@/components/ui/StateViews";
@@ -30,12 +30,6 @@ interface Segment {
  */
 export function RevenueExposure({ result, loading }: RevenueExposureProps) {
   const router = useRouter();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    const id = window.setTimeout(() => setMounted(true), 60);
-    return () => window.clearTimeout(id);
-  }, []);
 
   if (loading) {
     return (
@@ -134,10 +128,11 @@ export function RevenueExposure({ result, loading }: RevenueExposureProps) {
                 : undefined
             }
             title={`${s.label} — ${formatINR(s.amount)}`}
-            className={`${s.bar} h-full transition-[width] duration-slow ease-out ${
+            aria-label={s.onClick ? `${s.label} — ${formatINR(s.amount)}` : undefined}
+            className={`bar-grow ${s.bar} h-full ${
               s.onClick ? "cursor-pointer hover:brightness-125" : ""
             }`}
-            style={{ width: mounted ? `${s.pct}%` : "0%" }}
+            style={{ "--bar-width": `${s.pct}%` } as CSSProperties}
           />
         ))}
       </div>

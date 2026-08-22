@@ -53,12 +53,9 @@ export function IncrementalHero({ result, loading }: IncrementalHeroProps) {
       {/* Directional wash — reinforces sign without decorating. */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0"
-        style={{
-          background: positive
-            ? "radial-gradient(120% 100% at 0% 100%, rgba(16,185,129,0.10) 0%, transparent 60%)"
-            : "radial-gradient(120% 100% at 0% 100%, rgba(239,68,68,0.10) 0%, transparent 60%)",
-        }}
+        className={`pointer-events-none absolute inset-0 ${
+          positive ? "wash-recovery" : "wash-critical"
+        }`}
       />
 
       <div className="relative">
@@ -88,7 +85,7 @@ export function IncrementalHero({ result, loading }: IncrementalHeroProps) {
             >
               {formatPP(rateLift)}
             </dd>
-            <dd className="mono mt-0.5 text-[10px] text-text-faint">
+            <dd className="mono tabular mt-0.5 text-[10px] text-text-faint">
               {formatPct(sr.recovery_rate)} → {formatPct(kp.recovery_rate)}
             </dd>
           </div>
@@ -105,7 +102,7 @@ export function IncrementalHero({ result, loading }: IncrementalHeroProps) {
               {contactDelta >= 0 ? "−" : "+"}
               {Math.abs(contactDelta).toLocaleString("en-IN")}
             </dd>
-            <dd className="mono mt-0.5 text-[10px] text-text-faint">
+            <dd className="mono tabular mt-0.5 text-[10px] text-text-faint">
               {sr.contacts_sent.toLocaleString("en-IN")} →{" "}
               {kp.contacts_sent.toLocaleString("en-IN")} sent
             </dd>

@@ -2,6 +2,7 @@
 import type { EvaluationRunResult } from "@/lib/types";
 import { formatINR, formatPct, formatCount } from "@/lib/utils/format";
 import { Skeleton } from "@/components/ui/Skeleton";
+import { Eyebrow } from "@/components/ui/StateViews";
 
 interface EvaluationResultsProps {
   result: EvaluationRunResult | null;
@@ -11,8 +12,10 @@ interface EvaluationResultsProps {
 export function EvaluationResults({ result, loading }: EvaluationResultsProps) {
   if (loading) {
     return (
-      <div className="bg-surface border border-border rounded-lg p-6 space-y-4">
-        {Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className="h-8 w-full" />)}
+      <div className="space-y-4 rounded-panel border border-border bg-surface p-6">
+        {Array.from({ length: 4 }).map((_, i) => (
+          <Skeleton key={i} className="h-8 w-full" />
+        ))}
       </div>
     );
   }
@@ -21,52 +24,83 @@ export function EvaluationResults({ result, loading }: EvaluationResultsProps) {
 
   const { static_dunning: sd, smart_retry: sr, khaatapulse: kp } = result;
   const incr = result.incremental_recovery ? parseFloat(result.incremental_recovery) : 0;
+  const positive = incr >= 0;
+
+  const ROWS: { label: string; value: (p: typeof kp) => string }[] = [
+    { label: "Recovered", value: (p) => formatINR(p.recovered_amount) },
+    { label: "Rate", value: (p) => formatPct(p.recovery_rate) },
+    { label: "Contacts", value: (p) => formatCount(p.contacts_sent) },
+    { label: "Escalations", value: (p) => p.human_escalations.toLocaleString("en-IN") },
+    { label: "Policy Blocks", value: (p) => p.policy_blocks.toLocaleString("en-IN") },
+  ];
 
   return (
     <div className="space-y-6">
-      {/* Headline incremental recovery */}
-      <div className="bg-recovery-dim/30 border border-recovery/30 rounded-lg p-6 text-center">
-        <p className="text-xs text-text-muted uppercase tracking-widest font-semibold mb-2">
-          Incremental Recovery
-        </p>
-        <p className={`text-4xl font-bold tabular ${incr >= 0 ? "text-recovery-text" : "text-critical-text"}`}>
-          {incr >= 0 ? "+" : ""}{formatINR(String(incr))}
-        </p>
-        <p className="text-xs text-text-faint mt-2">
-          KhaataPulse − Smart Retry · seed={result.seed} · n={result.cohort_size.toLocaleString()}
-        </p>
+      {/* Headline incremental recovery — the primary KPI of the run. */}
+      <div
+        className={`relative overflow-hidden rounded-panel border p-6 text-center ${
+          positive
+            ? "border-recovery/30 bg-recovery-dim/30 glow-recovery"
+            : "border-critical/30 bg-critical-dim/30 glow-critical"
+        }`}
+      >
+        <div
+          aria-hidden="true"
+          className={`pointer-events-none absolute inset-0 ${
+            positive ? "wash-recovery" : "wash-critical"
+          }`}
+        />
+        <div className="relative">
+          <Eyebrow tone={positive ? "recovery" : "critical"}>Incremental Recovery</Eyebrow>
+          <p
+            className={`tabular mt-3 text-3xl font-bold tracking-tightest sm:text-4xl ${
+              positive ? "text-recovery-text" : "text-critical-text"
+            }`}
+          >
+            {positive ? "+" : ""}
+            {formatINR(String(incr))}
+          </p>
+          <p className="mono tabular mt-2 text-[10px] uppercase tracking-eyebrow text-text-faint">
+            KhaataPulse − Smart Retry · seed {result.seed} · n{" "}
+            {result.cohort_size.toLocaleString("en-IN")}
+          </p>
+        </div>
       </div>
 
       {/* Per-policy cards */}
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         {[
           { label: "Static Dunning", data: sd, accent: "text-text-muted", bg: "" },
-          { label: "Smart Retry",    data: sr, accent: "text-warning-text", bg: "border-warning/20" },
-          { label: "KhaataPulse",    data: kp, accent: "text-recovery-text", bg: "border-recovery/30 bg-recovery-dim/20" },
+          {
+            label: "Smart Retry",
+            data: sr,
+            accent: "text-warning-text",
+            bg: "border-warning/20",
+          },
+          {
+            label: "KhaataPulse",
+            data: kp,
+            accent: "text-recovery-text",
+            bg: "border-recovery/30 bg-recovery-dim/20",
+          },
         ].map(({ label, data, accent, bg }) => (
-          <div key={label} className={`bg-surface border border-border rounded-lg p-4 ${bg}`}>
-            <p className={`text-sm font-semibold mb-3 ${accent}`}>{label}</p>
+          <div key={label} className={`rounded-panel border border-border bg-surface p-4 ${bg}`}>
+            <p className={`mono mb-3 text-[10px] uppercase tracking-eyebrow ${accent}`}>{label}</p>
             <dl className="space-y-2">
-              <div className="flex justify-between text-sm">
-                <dt className="text-text-muted">Recovered</dt>
-                <dd className="tabular font-bold text-text-primary">{formatINR(data.recovered_amount)}</dd>
-              </div>
-              <div className="flex justify-between text-sm">
-                <dt className="text-text-muted">Rate</dt>
-                <dd className="tabular text-text-secondary">{formatPct(data.recovery_rate)}</dd>
-              </div>
-              <div className="flex justify-between text-sm">
-                <dt className="text-text-muted">Contacts</dt>
-                <dd className="tabular text-text-secondary">{formatCount(data.contacts_sent)}</dd>
-              </div>
-              <div className="flex justify-between text-sm">
-                <dt className="text-text-muted">Escalations</dt>
-                <dd className="tabular text-text-secondary">{data.human_escalations}</dd>
-              </div>
-              <div className="flex justify-between text-sm">
-                <dt className="text-text-muted">Policy Blocks</dt>
-                <dd className="tabular text-text-secondary">{data.policy_blocks}</dd>
-              </div>
+              {ROWS.map((row) => (
+                <div key={row.label} className="flex justify-between gap-3 text-sm">
+                  <dt className="text-text-muted">{row.label}</dt>
+                  <dd
+                    className={`tabular ${
+                      row.label === "Recovered"
+                        ? "font-bold text-text-primary"
+                        : "text-text-secondary"
+                    }`}
+                  >
+                    {row.value(data)}
+                  </dd>
+                </div>
+              ))}
             </dl>
           </div>
         ))}

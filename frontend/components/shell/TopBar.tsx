@@ -30,7 +30,7 @@ function Clock() {
   }, []);
 
   return (
-    <span className="mono tabular text-[10px] tracking-wider text-text-muted">
+    <span className="mono tabular text-[10px] text-text-muted" aria-label="Current time">
       {now ?? "--:--:--"}
     </span>
   );
@@ -64,10 +64,7 @@ export function TopBar({ evalResult = null, navOpen, onToggleNav }: TopBarProps)
     : "NO EVALUATION";
 
   return (
-    <header
-      className="sticky top-0 z-nav h-12 border-b border-border/60 backdrop-blur-xl"
-      style={{ backgroundColor: "rgba(7,9,13,0.9)" }}
-    >
+    <header className="surface-chrome sticky top-0 z-nav h-12 border-b border-border/60 backdrop-blur-xl">
       <div className="flex h-full items-center gap-4 px-4 sm:px-5">
         {/* ── Nav toggle (tablet + mobile) ──────────────────────────────── */}
         <button

@@ -20,7 +20,9 @@ function resolveStyle(status: string): string {
 
 export function StatusBadge({ status }: StatusBadgeProps) {
   return (
-    <span className={`inline-flex items-center px-2 py-0.5 text-xs font-semibold border rounded mono ${resolveStyle(status)}`}>
+    <span
+      className={`mono inline-flex items-center rounded border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-eyebrow ${resolveStyle(status)}`}
+    >
       {status}
     </span>
   );

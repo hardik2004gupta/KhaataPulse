@@ -13,7 +13,7 @@ interface HeroKPIGridProps {
 export function HeroKPIGrid({ result, loading }: HeroKPIGridProps) {
   if (loading) {
     return (
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {Array.from({ length: 6 }).map((_, i) => (
           <MetricSkeleton key={i} />
         ))}
@@ -24,7 +24,9 @@ export function HeroKPIGrid({ result, loading }: HeroKPIGridProps) {
   if (!result) {
     return (
       <div className="rounded-panel border border-border bg-surface px-5 py-8 text-center">
-        <p className="text-xs text-text-muted">Run evaluation to populate metrics.</p>
+        <p className="mono text-[10px] uppercase tracking-eyebrow text-text-muted">
+          Run evaluation to populate metrics
+        </p>
       </div>
     );
   }
@@ -36,7 +38,7 @@ export function HeroKPIGrid({ result, loading }: HeroKPIGridProps) {
   const contactDelta = sr.contacts_sent - kp.contacts_sent;
 
   return (
-    <div className="grid grid-cols-2 gap-3 lg:grid-cols-3">
+    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
       {/* Incremental recovery is deliberately absent here — it owns the
           dominant hero panel below and must not compete with itself. */}
       <MetricCard
@@ -45,7 +47,7 @@ export function HeroKPIGrid({ result, loading }: HeroKPIGridProps) {
         subValue={`of ${formatINR(kp.total_at_risk_amount)} at risk`}
         accent="recovery"
         size="lg"
-        className="col-span-2 lg:col-span-1 lg:row-span-2"
+        className="sm:col-span-2 lg:col-span-1 lg:row-span-2"
       />
       <MetricCard
         label="KP Recovery Rate"
