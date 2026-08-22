@@ -1,18 +1,59 @@
 "use client";
-import { useEffect, useState, useCallback } from "react";
+
+import { useCallback, useEffect, useState } from "react";
 import { casesApi } from "@/lib/api/cases";
 import type { RecoveryCase } from "@/lib/types";
 import { formatINR, formatDateTime, formatCause, formatAction } from "@/lib/utils/format";
-import { RiskIndicator } from "@/components/ui/RiskIndicator";
 import { PolicyBadge } from "@/components/ui/PolicyBadge";
 import { RowSkeleton } from "@/components/ui/Skeleton";
-import { EmptyState } from "@/components/ui/EmptyState";
+import { ErrorPanel } from "@/components/ui/StateViews";
 
 interface RiskQueueProps {
   onSelect: (case_: RecoveryCase) => void;
+  selectedId?: number | null;
+  /** Lets the page render the case count in its header. */
+  onLoaded?: (total: number) => void;
+  /** Reported when the queue cannot be reached, so the header can say so. */
+  onFailed?: () => void;
 }
 
-export function RiskQueue({ onSelect }: RiskQueueProps) {
+const RISK_STRIP: Record<string, string> = {
+  HIGH: "bg-critical",
+  MEDIUM: "bg-warning",
+  LOW: "bg-text-muted",
+};
+
+const RISK_TEXT: Record<string, string> = {
+  HIGH: "text-critical-text",
+  MEDIUM: "text-warning-text",
+  LOW: "text-text-muted",
+};
+
+const COLUMNS = ["Customer", "Risk", "Amount", "Diagnosis", "Action", "Policy", "Created"];
+
+function RiskCell({ score, level }: { score: number; level: string }) {
+  const pct = Math.round(score * 100);
+  return (
+    <span className="flex items-center gap-2">
+      <span className="h-1 w-10 overflow-hidden rounded-full bg-bg-primary">
+        <span
+          className={`block h-full rounded-full ${RISK_STRIP[level] ?? "bg-text-muted"}`}
+          style={{ width: `${pct}%` }}
+        />
+      </span>
+      <span className={`mono tabular text-[11px] font-semibold ${RISK_TEXT[level] ?? ""}`}>
+        {pct}%
+      </span>
+    </span>
+  );
+}
+
+export function RiskQueue({
+  onSelect,
+  selectedId = null,
+  onLoaded,
+  onFailed,
+}: RiskQueueProps) {
   const [cases, setCases] = useState<RecoveryCase[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -23,103 +64,193 @@ export function RiskQueue({ onSelect }: RiskQueueProps) {
     try {
       const res = await casesApi.listCases(50);
       setCases(res.cases);
+      onLoaded?.(res.total);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Failed to load cases");
+      onFailed?.();
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [onLoaded, onFailed]);
 
-  useEffect(() => { load(); }, [load]);
+  useEffect(() => {
+    load();
+  }, [load]);
+
+  if (error) {
+    return (
+      <ErrorPanel
+        title="Risk Queue Unavailable"
+        detail="The case service could not be reached. Confirm the backend and database are running, then retry."
+        onRetry={load}
+      />
+    );
+  }
 
   return (
-    <div>
-      <div className="flex items-center justify-between mb-3">
-        <p className="text-xs font-semibold uppercase tracking-wider text-text-muted">
+    <div className="overflow-hidden rounded-panel border border-border bg-surface">
+      {/* ── Console header ───────────────────────────────────────────────── */}
+      <div className="flex items-center justify-between border-b border-border px-4 py-2.5">
+        <span className="mono text-[10px] uppercase tracking-eyebrow text-text-muted">
           Recovery Queue
-        </p>
+        </span>
         <button
+          type="button"
           onClick={load}
           disabled={loading}
-          className="text-xs text-text-muted hover:text-text-secondary transition-colors mono"
+          className="mono text-[10px] uppercase tracking-eyebrow text-text-faint transition-colors duration-base hover:text-text-secondary disabled:opacity-50"
         >
-          ↺ refresh
+          ↺ Refresh
         </button>
       </div>
 
-      <div className="bg-surface border border-border rounded-lg overflow-hidden">
-        {loading ? (
-          <div className="divide-y divide-border">
-            {Array.from({ length: 6 }).map((_, i) => <RowSkeleton key={i} />)}
-          </div>
-        ) : error ? (
-          <EmptyState
-            title="Could not load cases"
-            description={error}
-            action={
-              <button
-                onClick={load}
-                className="px-3 py-1.5 text-xs rounded border border-border text-text-secondary hover:text-text-primary transition-colors"
-              >
-                Retry
-              </button>
-            }
-          />
-        ) : cases.length === 0 ? (
-          <EmptyState
-            title="No recovery cases"
-            description="Run a simulation to create recovery cases."
-          />
-        ) : (
-          <div className="divide-y divide-border">
-            {cases.map((c) => (
-              <button
-                key={c.id}
-                onClick={() => onSelect(c)}
-                className="w-full text-left px-4 py-3 hover:bg-surface-elevated transition-colors group"
-              >
-                <div className="flex items-center justify-between gap-3">
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-baseline gap-2 mb-1">
-                      <span className="font-medium text-text-primary text-sm truncate">
-                        {c.customer_name ?? `Case #${c.id}`}
+      {loading ? (
+        <div>
+          {Array.from({ length: 8 }).map((_, i) => (
+            <RowSkeleton key={i} />
+          ))}
+        </div>
+      ) : cases.length === 0 ? (
+        <div className="flex flex-col items-center justify-center gap-2 px-6 py-16 text-center">
+          <span className="mono text-[10px] uppercase tracking-eyebrow text-text-secondary">
+            No At-Risk Accounts
+          </span>
+          <p className="max-w-prose text-xs text-text-muted">
+            The risk sieve currently reports no cases requiring intervention.
+          </p>
+        </div>
+      ) : (
+        <>
+          {/* ── Desktop console ─────────────────────────────────────────── */}
+          <table className="hidden w-full border-collapse md:table">
+            <thead>
+              <tr className="border-b border-border">
+                {COLUMNS.map((c) => (
+                  <th
+                    key={c}
+                    className={`mono px-4 py-2 text-[9px] uppercase tracking-eyebrow text-text-faint ${
+                      c === "Amount" || c === "Created" ? "text-right" : "text-left"
+                    }`}
+                  >
+                    {c}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {cases.map((c) => {
+                const selected = selectedId === c.id;
+                return (
+                  <tr
+                    key={c.id}
+                    onClick={() => onSelect(c)}
+                    tabIndex={0}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        onSelect(c);
+                      }
+                    }}
+                    className={`h-10 cursor-pointer border-b border-border-subtle transition-colors duration-base last:border-b-0 ${
+                      selected ? "bg-surface-elevated" : "hover:bg-surface-elevated/60"
+                    }`}
+                  >
+                    <td className="relative px-4 py-0">
+                      <span
+                        className={`absolute left-0 top-0 h-full w-0.5 ${
+                          selected ? "bg-ai" : (RISK_STRIP[c.risk_level] ?? "bg-text-muted")
+                        }`}
+                      />
+                      <span className="flex min-w-0 items-baseline gap-2">
+                        <span className="truncate text-[13px] font-medium text-text-primary">
+                          {c.customer_name ?? `Case #${c.id}`}
+                        </span>
+                        <span className="mono shrink-0 text-[9px] uppercase tracking-eyebrow text-text-faint">
+                          #{c.id}
+                        </span>
                       </span>
-                      {c.customer_segment && (
-                        <span className="text-xs text-text-muted shrink-0">{c.customer_segment}</span>
-                      )}
-                    </div>
-                    <div className="flex items-center gap-3 text-xs text-text-muted flex-wrap">
-                      <span className="mono">#{c.id}</span>
-                      {c.diagnosis && (
-                        <span>{formatCause(c.diagnosis as Parameters<typeof formatCause>[0])}</span>
-                      )}
-                      {c.proposed_action && (
-                        <span className="text-ai-text">{formatAction(c.proposed_action as Parameters<typeof formatAction>[0])}</span>
-                      )}
-                      {c.created_at && (
-                        <span className="text-text-faint">{formatDateTime(c.created_at)}</span>
-                      )}
-                    </div>
-                  </div>
+                    </td>
 
-                  <div className="flex items-center gap-3 shrink-0">
-                    {c.subscription_amount && (
-                      <span className="tabular text-sm font-semibold text-text-secondary">
-                        {formatINR(c.subscription_amount)}
+                    <td className="px-4">
+                      <RiskCell score={c.risk_score} level={c.risk_level} />
+                    </td>
+
+                    <td className="tabular px-4 text-right text-[13px] text-text-secondary">
+                      {c.subscription_amount ? formatINR(c.subscription_amount) : "—"}
+                    </td>
+
+                    <td className="px-4 text-[12px] text-text-secondary">
+                      {c.diagnosis ? formatCause(c.diagnosis) : "—"}
+                    </td>
+
+                    <td className="px-4 text-[12px] text-ai-text">
+                      {c.selected_action
+                        ? formatAction(c.selected_action)
+                        : c.proposed_action
+                          ? formatAction(c.proposed_action)
+                          : "—"}
+                    </td>
+
+                    <td className="px-4">
+                      {c.policy_status ? (
+                        <PolicyBadge
+                          status={c.policy_status as "APPROVED" | "BLOCKED" | "ESCALATED"}
+                        />
+                      ) : (
+                        <span className="text-xs text-text-faint">—</span>
+                      )}
+                    </td>
+
+                    <td className="mono px-4 text-right text-[10px] text-text-faint">
+                      {formatDateTime(c.created_at)}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+
+          {/* ── Mobile cards ────────────────────────────────────────────── */}
+          <ul className="divide-y divide-border-subtle md:hidden">
+            {cases.map((c) => (
+              <li key={c.id}>
+                <button
+                  type="button"
+                  onClick={() => onSelect(c)}
+                  className="relative w-full px-4 py-3 text-left transition-colors duration-base hover:bg-surface-elevated/60"
+                >
+                  <span
+                    className={`absolute left-0 top-0 h-full w-0.5 ${
+                      RISK_STRIP[c.risk_level] ?? "bg-text-muted"
+                    }`}
+                  />
+                  <div className="flex items-baseline justify-between gap-3">
+                    <span className="truncate text-[13px] font-medium text-text-primary">
+                      {c.customer_name ?? `Case #${c.id}`}
+                    </span>
+                    <span className="tabular shrink-0 text-[13px] text-text-secondary">
+                      {c.subscription_amount ? formatINR(c.subscription_amount) : "—"}
+                    </span>
+                  </div>
+                  <div className="mt-2 flex flex-wrap items-center gap-3">
+                    <RiskCell score={c.risk_score} level={c.risk_level} />
+                    {c.diagnosis && (
+                      <span className="text-[11px] text-text-muted">
+                        {formatCause(c.diagnosis)}
                       </span>
                     )}
-                    <RiskIndicator score={c.risk_score} level={c.risk_level ?? "LOW"} compact />
                     {c.policy_status && (
-                      <PolicyBadge status={c.policy_status as "APPROVED" | "BLOCKED" | "ESCALATED"} />
+                      <PolicyBadge
+                        status={c.policy_status as "APPROVED" | "BLOCKED" | "ESCALATED"}
+                      />
                     )}
-                    <span className="text-text-faint group-hover:text-text-muted transition-colors text-sm">›</span>
                   </div>
-                </div>
-              </button>
+                </button>
+              </li>
             ))}
-          </div>
-        )}
-      </div>
+          </ul>
+        </>
+      )}
     </div>
   );
 }

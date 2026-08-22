@@ -6,6 +6,15 @@ const nextConfig = {
   output: "standalone",
   async rewrites() {
     return [
+      // FastAPI serves collection routes only at a trailing slash (`/cases/`),
+      // but Next's `:path*` capture drops it. Without this explicit rule the
+      // backend answers 307 with an absolute `${BACKEND_URL}/cases/`, which
+      // fails in the browser and leaks the internal origin that must stay
+      // server-side (CLAUDE.md §20/§21).
+      {
+        source: "/api/cases",
+        destination: `${API_URL}/cases/`,
+      },
       {
         source: "/api/:path*",
         destination: `${API_URL}/:path*`,

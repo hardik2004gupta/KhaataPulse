@@ -1,47 +1,41 @@
 "use client";
+
 import { useState } from "react";
 import type { EvaluationRunResult } from "@/lib/types";
-import { NavBar } from "@/components/dashboard/NavBar";
+import { CommandShell } from "@/components/shell/CommandShell";
 import { EvaluationRunner } from "@/components/evaluation/EvaluationRunner";
 import { EvaluationResults } from "@/components/evaluation/EvaluationResults";
 import { MultiSeedMatrix } from "@/components/evaluation/MultiSeedMatrix";
 
 export default function EvaluationPage() {
   const [result, setResult] = useState<EvaluationRunResult | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [loading] = useState(false);
 
   const handleResult = (r: EvaluationRunResult) => {
     setResult(r);
-    setLoading(false);
   };
 
   return (
-    <div className="min-h-screen bg-bg-primary">
-      <NavBar />
-
-      <main className="max-w-screen-xl mx-auto px-6 py-8 space-y-10">
-        {/* Header */}
-        <div>
-          <h1 className="text-2xl font-bold text-text-primary">Policy Evaluation Engine</h1>
-          <p className="text-text-muted text-sm mt-1">
-            Same cohort · same world · same potential outcomes — only the recovery policy changes
+    <CommandShell evalResult={result}>
+      <div className="mx-auto max-w-shell space-y-8 px-5 py-7 sm:px-7">
+        <header className="border-b border-border-subtle pb-6">
+          <h1 className="text-2xl font-bold tracking-tightest text-text-primary">
+            Policy Stress Test
+          </h1>
+          <p className="mt-1.5 max-w-prose text-[13px] text-text-secondary">
+            Same cohort · same world · same potential outcomes — only the recovery policy
+            changes.
           </p>
-        </div>
+        </header>
 
-        {/* Evaluation runner */}
         <EvaluationRunner onResult={handleResult} />
 
-        {/* Results */}
-        {(result || loading) && (
-          <EvaluationResults result={result} loading={loading} />
-        )}
+        {(result || loading) && <EvaluationResults result={result} loading={loading} />}
 
-        {/* Separator */}
-        <div className="border-t border-border" />
+        <div className="border-t border-border-subtle" />
 
-        {/* Multi-seed validation */}
         <MultiSeedMatrix />
-      </main>
-    </div>
+      </div>
+    </CommandShell>
   );
 }

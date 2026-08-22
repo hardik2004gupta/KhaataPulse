@@ -449,13 +449,16 @@ body {
   z-index: var(--z-overlay);
 }
 
+/* Slide state is owned by the component (Tailwind translate utilities) so the
+   drawer can animate both directions — this rule intentionally sets no
+   `transform`, which would otherwise win on specificity order. */
 .drawer {
   position: fixed;
   top: 0;
   right: 0;
   height: 100%;
-  width: min(680px, 95vw);
-  background: var(--surface);
+  width: min(520px, 100vw);
+  background: var(--bg-secondary);
   border-left: 1px solid var(--border);
   z-index: var(--z-drawer);
   overflow-y: auto;

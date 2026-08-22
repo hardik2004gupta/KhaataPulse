@@ -1,105 +1,59 @@
 "use client";
-import { useEffect, useState, useCallback } from "react";
+
+import { useCallback, useEffect, useState } from "react";
 import { evaluationApi } from "@/lib/api/evaluation";
 import { demoApi } from "@/lib/api/demo";
 import type { EvaluationRunResult, HeroCase, LoadingState } from "@/lib/types";
-import { NavBar } from "@/components/dashboard/NavBar";
-import { HeroKPI } from "@/components/dashboard/HeroKPI";
-import { PolicyMatrix } from "@/components/dashboard/PolicyMatrix";
-import { RevenueDelta } from "@/components/revenue/RevenueDelta";
+import { CommandShell } from "@/components/shell/CommandShell";
+import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
+import { HeroKPIGrid } from "@/components/dashboard/HeroKPIGrid";
+import { IncrementalHero } from "@/components/dashboard/IncrementalHero";
+import { RevenueExposure } from "@/components/dashboard/RevenueExposure";
+import { PolicyComparison } from "@/components/dashboard/PolicyComparison";
+import { HeroCasePanel } from "@/components/dashboard/HeroCasePanel";
+import { LiveActivity } from "@/components/dashboard/LiveActivity";
 import { LiveEventStream } from "@/components/simulation/LiveEventStream";
-import { DiagnosisPanel } from "@/components/risk/DiagnosisPanel";
-import { PolicyGuardViz } from "@/components/risk/PolicyGuardViz";
 import { AuditTimeline } from "@/components/risk/AuditTimeline";
-import { formatINR } from "@/lib/utils/format";
+import { ErrorPanel, LoadingPanel, Eyebrow } from "@/components/ui/StateViews";
 
-function HeroCasePanel({ hero }: { hero: HeroCase }) {
-  return (
-    <section>
-      <div className="mb-4">
-        <p className="text-xs font-semibold tracking-widest uppercase text-text-muted mb-0.5">
-          Hero Case — Deterministic Seed 42
-        </p>
-        <p className="text-xs text-text-faint">
-          Highest-risk customer from the demo cohort — full pipeline executed
-        </p>
-      </div>
-
-      <div className="bg-surface border border-border rounded-lg overflow-hidden">
-        {/* Customer bar */}
-        <div className="px-5 py-4 border-b border-border bg-surface-elevated flex items-center justify-between">
-          <div>
-            <p className="font-semibold text-text-primary">{hero.customer.name}</p>
-            <p className="text-xs text-text-muted mono mt-0.5">
-              {hero.customer.segment} · LTV {formatINR(String(hero.customer.ltv))}
-            </p>
-          </div>
-          <div className="text-right">
-            <p className="tabular font-bold text-xl text-text-primary">
-              {formatINR(hero.subscription.amount)}
-            </p>
-            <p className="text-xs text-text-muted">renewal exposure</p>
-          </div>
-        </div>
-
-        {/* Three-column content */}
-        <div className="grid grid-cols-3 divide-x divide-border">
-          <div className="p-5">
-            <DiagnosisPanel
-              risk={hero.risk}
-              diagnosis={hero.diagnosis}
-              actionRankings={hero.action_rankings}
-            />
-          </div>
-          <div className="p-5">
-            <PolicyGuardViz decision={hero.policy_decision} />
-          </div>
-          <div className="p-5 overflow-y-auto max-h-96">
-            <AuditTimeline events={hero.audit_events} />
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
+const DASHBOARD_SEED = 42;
+const DASHBOARD_COHORT = 3000;
+const POLL_INTERVAL_MS = 2000;
+const POLL_MAX_ATTEMPTS = 60;
 
 export default function CommandCenter() {
   const [evalState, setEvalState] = useState<LoadingState>("loading");
   const [evalResult, setEvalResult] = useState<EvaluationRunResult | null>(null);
+  const [runId, setRunId] = useState<string | null>(null);
 
   const [heroState, setHeroState] = useState<LoadingState>("loading");
   const [hero, setHero] = useState<HeroCase | null>(null);
 
-  // Fetch hero case
-  useEffect(() => {
-    demoApi
-      .getHeroCase()
-      .then(setHero)
-      .catch(() => {
-        /* hero unavailable without backend — non-fatal */
-      })
-      .finally(() => setHeroState("idle"));
-  }, []);
-
-  // Run seed-42 evaluation for the dashboard
+  // ── Evaluation ───────────────────────────────────────────────────────────
   const runEval = useCallback(async () => {
     setEvalState("loading");
     try {
-      const { run_id } = await evaluationApi.runEvaluation(42, 3000);
+      const response = await evaluationApi.runEvaluation(DASHBOARD_SEED, DASHBOARD_COHORT);
+      setRunId(response.run_id);
 
-      let attempts = 0;
-      while (attempts < 60) {
-        await new Promise<void>((r) => setTimeout(r, 2000));
-        const data = await evaluationApi.getRun(run_id);
+      // The backend may complete synchronously — use the POST body when it does.
+      if (response.status === "completed" && response.results) {
+        setEvalResult(response.results);
+        setEvalState("success");
+        return;
+      }
+
+      for (let attempt = 0; attempt < POLL_MAX_ATTEMPTS; attempt++) {
+        await new Promise<void>((r) => setTimeout(r, POLL_INTERVAL_MS));
+        const data = await evaluationApi.getRun(response.run_id);
         if (data.status === "completed" && data.results) {
           setEvalResult(data.results);
-          setEvalState("idle");
+          setEvalState("success");
           return;
         }
         if (data.status === "failed") throw new Error("Evaluation failed");
-        attempts++;
       }
-      throw new Error("Timeout");
+      throw new Error("Evaluation timed out");
     } catch {
       setEvalState("error");
     }
@@ -109,36 +63,89 @@ export default function CommandCenter() {
     runEval();
   }, [runEval]);
 
+  // ── Hero case ────────────────────────────────────────────────────────────
+  const loadHero = useCallback(async () => {
+    setHeroState("loading");
+    try {
+      const data = await demoApi.getHeroCase();
+      setHero(data);
+      setHeroState("success");
+    } catch {
+      setHeroState("error");
+    }
+  }, []);
+
+  useEffect(() => {
+    loadHero();
+  }, [loadHero]);
+
+  const evalLoading = evalState === "loading";
+
   return (
-    <div className="min-h-screen bg-bg-primary">
-      <NavBar />
+    <CommandShell evalResult={evalResult}>
+      <div className="mx-auto max-w-shell space-y-10 px-5 py-7 sm:px-7">
+        <DashboardHeader evalResult={evalResult} runId={runId} state={evalState} />
 
-      <main className="max-w-screen-xl mx-auto px-6 py-8 space-y-10">
-        {/* 1 — Hero KPIs */}
-        <HeroKPI result={evalResult} loading={evalState === "loading"} />
+        {evalState === "error" ? (
+          <ErrorPanel
+            detail="The evaluation service could not be reached. Confirm the backend is running, then retry."
+            onRetry={runEval}
+          />
+        ) : (
+          <>
+            {/* ── Money ──────────────────────────────────────────────────── */}
+            <HeroKPIGrid result={evalResult} loading={evalLoading} />
 
-        {/* 2 — Policy Comparison */}
-        <PolicyMatrix result={evalResult} loading={evalState === "loading"} />
+            <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1.15fr_1fr]">
+              <RevenueExposure result={evalResult} loading={evalLoading} />
+              <IncrementalHero result={evalResult} loading={evalLoading} />
+            </div>
 
-        {/* 3 — Revenue Time Machine */}
-        <RevenueDelta result={evalResult} loading={evalState === "loading"} />
-
-        {/* 4 — Hero Case */}
-        {(heroState === "loading" || hero) && (
-          <section>
-            {heroState === "loading" ? (
-              <div className="bg-surface border border-border rounded-lg h-48 flex items-center justify-center">
-                <p className="text-text-muted text-sm animate-pulse">Loading hero case…</p>
-              </div>
-            ) : hero ? (
-              <HeroCasePanel hero={hero} />
-            ) : null}
-          </section>
+            {/* ── Policy ─────────────────────────────────────────────────── */}
+            <PolicyComparison result={evalResult} loading={evalLoading} />
+          </>
         )}
 
-        {/* 5 — Live Pipeline Simulation */}
+        {/* ── Case + activity ──────────────────────────────────────────────── */}
+        <div className="grid grid-cols-1 gap-4 xl:grid-cols-[1.6fr_1fr]">
+          {heroState === "loading" ? (
+            <LoadingPanel
+              title="Reconstructing Risk Profile"
+              detail="Scoring the demo cohort and replaying the recovery pipeline."
+            />
+          ) : hero ? (
+            <HeroCasePanel hero={hero} />
+          ) : (
+            <ErrorPanel
+              title="Hero Case Unavailable"
+              detail="The demo service could not be reached."
+              onRetry={loadHero}
+            />
+          )}
+
+          <LiveActivity
+            events={hero?.audit_events ?? []}
+            loading={heroState === "loading"}
+          />
+        </div>
+
+        {/* ── Live webhook ─────────────────────────────────────────────────── */}
         <LiveEventStream />
-      </main>
-    </div>
+
+        {/* ── Governance ───────────────────────────────────────────────────── */}
+        <section id="audit" className="scroll-mt-16">
+          <Eyebrow>Governance</Eyebrow>
+          <div className="mt-4 rounded-panel border border-border bg-surface p-5">
+            {heroState === "loading" ? (
+              <p className="mono py-6 text-center text-[10px] uppercase tracking-eyebrow text-text-muted">
+                Replaying policy decision…
+              </p>
+            ) : (
+              <AuditTimeline events={hero?.audit_events ?? []} />
+            )}
+          </div>
+        </section>
+      </div>
+    </CommandShell>
   );
 }

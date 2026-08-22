@@ -1,51 +1,57 @@
 "use client";
-import type { AuditEvent } from "@/lib/types";
-import { formatDateTime } from "@/lib/utils/format";
-import { useState } from "react";
 
-const EVENT_STYLES: Record<string, { dot: string; label: string }> = {
-  risk_detected:        { dot: "bg-warning",   label: "text-warning-text"  },
-  diagnosis_generated:  { dot: "bg-ai",        label: "text-ai-text"       },
-  action_proposed:      { dot: "bg-ai",        label: "text-ai-text"       },
-  policy_check:         { dot: "bg-text-muted", label: "text-text-secondary" },
-  action_executed:      { dot: "bg-recovery",  label: "text-recovery-text" },
-  payment_received:     { dot: "bg-recovery",  label: "text-recovery-text" },
-  case_closed:          { dot: "bg-text-muted", label: "text-text-muted"   },
-  llm_fallback:         { dot: "bg-critical",  label: "text-critical-text" },
+import type { AuditEvent } from "@/lib/types";
+import { Eyebrow } from "@/components/ui/StateViews";
+import { formatDateTime } from "@/lib/utils/format";
+import { PayloadViewer } from "./PayloadViewer";
+
+const EVENT_STYLES: Record<string, { dot: string; label: string; ring: string }> = {
+  risk_detected: { dot: "bg-warning", label: "text-warning-text", ring: "ring-warning/25" },
+  diagnosis_generated: { dot: "bg-ai", label: "text-ai-text", ring: "ring-ai/25" },
+  action_proposed: { dot: "bg-ai", label: "text-ai-text", ring: "ring-ai/25" },
+  policy_check: { dot: "bg-text-muted", label: "text-text-secondary", ring: "ring-border" },
+  action_executed: { dot: "bg-recovery", label: "text-recovery-text", ring: "ring-recovery/25" },
+  payment_received: { dot: "bg-recovery", label: "text-recovery-text", ring: "ring-recovery/25" },
+  case_closed: { dot: "bg-text-muted", label: "text-text-muted", ring: "ring-border" },
+  llm_fallback: { dot: "bg-critical", label: "text-critical-text", ring: "ring-critical/25" },
 };
 
-function AuditEventRow({ event }: { event: AuditEvent }) {
-  const [open, setOpen] = useState(false);
-  const style = EVENT_STYLES[event.event_type] ?? { dot: "bg-text-muted", label: "text-text-secondary" };
+const FALLBACK = { dot: "bg-text-muted", label: "text-text-secondary", ring: "ring-border" };
+
+function AuditEventRow({ event, last }: { event: AuditEvent; last: boolean }) {
+  const style = EVENT_STYLES[event.event_type] ?? FALLBACK;
 
   return (
-    <div className="flex gap-3">
+    <li className="flex gap-3">
+      {/* Rail */}
       <div className="flex flex-col items-center">
-        <div className={`w-2 h-2 rounded-full shrink-0 mt-1.5 ${style.dot}`} />
-        <div className="w-px flex-1 bg-border mt-1" />
+        <span
+          className={`mt-1.5 h-2 w-2 shrink-0 rounded-full ring-4 ${style.dot} ${style.ring}`}
+        />
+        {!last && <span className="mt-1 w-px flex-1 bg-border-subtle" />}
       </div>
-      <div className="flex-1 pb-4">
-        <div className="flex items-baseline justify-between gap-2">
-          <span className={`mono text-xs font-semibold ${style.label}`}>{event.event_type}</span>
-          <span className="mono text-xs text-text-faint shrink-0">{formatDateTime(event.timestamp)}</span>
+
+      {/* Body */}
+      <div className={`min-w-0 flex-1 ${last ? "pb-1" : "pb-5"}`}>
+        <div className="flex items-baseline justify-between gap-3">
+          <span className={`mono truncate text-[11px] font-semibold ${style.label}`}>
+            {event.event_type}
+          </span>
+          <span className="mono tabular shrink-0 text-[10px] text-text-faint">
+            {formatDateTime(event.timestamp)}
+          </span>
         </div>
-        <p className="text-xs text-text-muted mt-0.5">{event.actor}</p>
-        {event.idempotency_key && (
-          <p className="mono text-xs text-text-faint mt-0.5">{event.idempotency_key}</p>
-        )}
-        <button
-          onClick={() => setOpen(!open)}
-          className="mt-1 text-xs text-text-faint hover:text-text-muted transition-colors mono"
-        >
-          {open ? "▾ hide payload" : "▸ show payload"}
-        </button>
-        {open && (
-          <pre className="mt-2 text-xs mono text-text-secondary bg-bg-secondary border border-border rounded p-3 overflow-x-auto max-h-48">
-            {JSON.stringify(event.payload, null, 2)}
-          </pre>
-        )}
+
+        <p className="mono mt-0.5 text-[10px] uppercase tracking-eyebrow text-text-muted">
+          {event.actor}
+          {event.idempotency_key ? (
+            <span className="text-text-faint"> · {event.idempotency_key}</span>
+          ) : null}
+        </p>
+
+        <PayloadViewer payload={event.payload} />
       </div>
-    </div>
+    </li>
   );
 }
 
@@ -55,18 +61,32 @@ interface AuditTimelineProps {
 
 export function AuditTimeline({ events }: AuditTimelineProps) {
   if (events.length === 0) {
-    return <p className="text-xs text-text-muted text-center py-6">No audit events recorded.</p>;
+    return (
+      <div>
+        <Eyebrow>Audit Trail</Eyebrow>
+        <p className="py-6 text-center text-xs text-text-muted">No audit events recorded.</p>
+      </div>
+    );
   }
+
   return (
     <div>
-      <p className="text-xs font-semibold uppercase tracking-wider text-text-muted mb-4">
-        Audit Trail — {events.length} events
-      </p>
-      <div className="space-y-0">
-        {events.map((ev) => (
-          <AuditEventRow key={ev.id} event={ev} />
-        ))}
+      <div className="flex items-baseline justify-between gap-3">
+        <Eyebrow>Audit Trail</Eyebrow>
+        <span className="mono text-[10px] uppercase tracking-eyebrow text-text-faint">
+          {events.length} events · immutable
+        </span>
       </div>
+
+      <ol className="mt-4">
+        {events.map((ev, i) => (
+          <AuditEventRow
+            key={ev.id ?? `${ev.event_type}-${i}`}
+            event={ev}
+            last={i === events.length - 1}
+          />
+        ))}
+      </ol>
     </div>
   );
 }
