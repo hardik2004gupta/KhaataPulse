@@ -1,109 +1,454 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* ── CSS Custom Properties — CLAUDE.md §29 ───────────────────────────────── */
+/* ═══════════════════════════════════════════════════════════════════════════
+   KhaataPulse — Design System
+   Dark financial terminal. Colour communicates semantic state, not decoration.
+   CLAUDE.md §29
+   ═══════════════════════════════════════════════════════════════════════════ */
+
 :root {
-  --bg-primary: #07090D;
-  --bg-secondary: #0C1017;
-  --surface: #11161F;
-  --surface-elevated: #161E2A;
-  --surface-hover: #1C2535;
-  --border: #1E2D3D;
+  /* ── Surfaces ─────────────────────────────────────────────────────────── */
+  --bg-primary: #07090d;
+  --bg-secondary: #0c1017;
+  --surface: #11161f;
+  --surface-elevated: #161e2a;
+  --surface-hover: #1c2535;
+
+  /* ── Borders ──────────────────────────────────────────────────────────── */
+  --border: #1e2d3d;
   --border-subtle: #172030;
 
-  --accent-recovery: #10B981;
-  --accent-recovery-dim: #064E3B;
-  --accent-recovery-text: #34D399;
-
-  --accent-warning: #F59E0B;
-  --accent-warning-dim: #78350F;
-  --accent-warning-text: #FCD34D;
-
-  --accent-critical: #EF4444;
-  --accent-critical-dim: #7F1D1D;
-  --accent-critical-text: #FCA5A5;
-
-  --accent-ai: #8B5CF6;
-  --accent-ai-dim: #2E1065;
-  --accent-ai-text: #C4B5FD;
-
-  --text-primary: #F1F5F9;
-  --text-secondary: #94A3B8;
+  /* ── Text ─────────────────────────────────────────────────────────────── */
+  --text-primary: #f1f5f9;
+  --text-secondary: #94a3b8;
   --text-muted: #475569;
   --text-faint: #334155;
+
+  /* ── Semantic accents ─────────────────────────────────────────────────── */
+  --accent-recovery: #10b981;
+  --accent-recovery-dim: #064e3b;
+  --accent-recovery-text: #34d399;
+
+  --accent-warning: #f59e0b;
+  --accent-warning-dim: #78350f;
+  --accent-warning-text: #fcd34d;
+
+  --accent-critical: #ef4444;
+  --accent-critical-dim: #7f1d1d;
+  --accent-critical-text: #fca5a5;
+
+  --accent-ai: #6366f1;
+  --accent-ai-dim: #1e1b4b;
+  --accent-ai-text: #a5b4fc;
+
+  /* ── Motion ───────────────────────────────────────────────────────────── */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-fast: 160ms;
+  --dur-base: 260ms;
+  --dur-slow: 600ms;
+
+  /* ── Z-index scale ────────────────────────────────────────────────────── */
+  --z-ambient: 0;
+  --z-content: 10;
+  --z-nav: 50;
+  --z-overlay: 60;
+  --z-drawer: 70;
 }
 
-/* ── Base ────────────────────────────────────────────────────────────────── */
-html, body {
+/* ═══════════════════════════════════════════════════════════════════════════
+   Base
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+* {
+  border-color: var(--border-subtle);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+html,
+body {
   background-color: var(--bg-primary);
   color: var(--text-primary);
-  font-family: 'Inter', system-ui, sans-serif;
+  font-family: var(--font-inter), Inter, system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
-/* ── Tabular numerals for financial data ─────────────────────────────────── */
+body {
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+::selection {
+  background: rgba(99, 102, 241, 0.28);
+  color: var(--text-primary);
+}
+
+:focus-visible {
+  outline: 1px solid var(--accent-ai);
+  outline-offset: 2px;
+}
+
+/* ── Financial numerals ──────────────────────────────────────────────────── */
 .tabular {
   font-variant-numeric: tabular-nums;
   font-feature-settings: "tnum";
 }
 
-/* ── Monospace for audit/code ─────────────────────────────────────────────── */
+/* ── Monospace — audit ids, timestamps, technical metadata ───────────────── */
 .mono {
-  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-family: var(--font-jetbrains-mono), "JetBrains Mono", "Fira Code", ui-monospace, monospace;
 }
 
-/* ── Scrollbar styling ───────────────────────────────────────────────────── */
-::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: var(--bg-secondary); }
-::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+/* ── Scrollbar ───────────────────────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
 
-/* ── Subtle grid background ──────────────────────────────────────────────── */
+/* ═══════════════════════════════════════════════════════════════════════════
+   Ambient background — CSS only, no canvas, no JS animation loops.
+   Fixed behind all content, never interactive.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.ambient-root {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-ambient);
+  pointer-events: none;
+  overflow: hidden;
+  contain: strict;
+}
+
+.ambient-root > * {
+  position: absolute;
+  inset: 0;
+}
+
+/* ── Layer 1 — base wash ─────────────────────────────────────────────────── */
+.ambient-base {
+  background:
+    radial-gradient(120% 80% at 50% 0%, rgba(12, 16, 23, 0.9) 0%, transparent 60%),
+    var(--bg-primary);
+}
+
+/* ── Layer 2 — structural grid ───────────────────────────────────────────── */
+.ambient-grid {
+  background-image:
+    repeating-linear-gradient(
+      0deg,
+      rgba(30, 45, 61, 0.12) 0px,
+      rgba(30, 45, 61, 0.12) 1px,
+      transparent 1px,
+      transparent 40px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      rgba(30, 45, 61, 0.12) 0px,
+      rgba(30, 45, 61, 0.12) 1px,
+      transparent 1px,
+      transparent 40px
+    );
+  mask-image: radial-gradient(100% 70% at 50% 30%, #000 0%, transparent 85%);
+  -webkit-mask-image: radial-gradient(100% 70% at 50% 30%, #000 0%, transparent 85%);
+}
+
+/* ── Layer 3 — atmospheric light ─────────────────────────────────────────── */
+.ambient-blob {
+  will-change: transform;
+}
+
+.ambient-blob-ai {
+  background: radial-gradient(
+    42rem 34rem at 12% 8%,
+    rgba(99, 102, 241, 0.035) 0%,
+    rgba(99, 102, 241, 0.014) 42%,
+    transparent 72%
+  );
+  animation: drift-ai 52s var(--ease-in-out) infinite;
+}
+
+.ambient-blob-recovery {
+  background: radial-gradient(
+    46rem 36rem at 88% 92%,
+    rgba(16, 185, 129, 0.035) 0%,
+    rgba(16, 185, 129, 0.014) 42%,
+    transparent 72%
+  );
+  animation: drift-recovery 60s var(--ease-in-out) infinite;
+}
+
+.ambient-blob-warning {
+  background: radial-gradient(
+    32rem 26rem at 92% 46%,
+    rgba(245, 158, 11, 0.02) 0%,
+    rgba(245, 158, 11, 0.008) 45%,
+    transparent 72%
+  );
+  animation: drift-warning 44s var(--ease-in-out) infinite;
+}
+
+@keyframes drift-ai {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(3.5%, 2.5%, 0) scale(1.06);
+  }
+}
+
+@keyframes drift-recovery {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(-3%, -3%, 0) scale(1.05);
+  }
+}
+
+@keyframes drift-warning {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(-2.5%, 3%, 0) scale(1.04);
+  }
+}
+
+/* ── Layer 4 — horizon edge ──────────────────────────────────────────────── */
+.ambient-horizon {
+  background: linear-gradient(180deg, transparent 0%, transparent 78%, rgba(7, 9, 13, 0.85) 100%);
+}
+
+/* ── Layer 5 — scan ──────────────────────────────────────────────────────── */
+.ambient-scan {
+  inset: auto 0 auto 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(99, 102, 241, 0.12) 20%,
+    rgba(99, 102, 241, 0.12) 80%,
+    transparent 100%
+  );
+  animation: scan-drift 25s linear infinite;
+  will-change: transform, opacity;
+}
+
+@keyframes scan-drift {
+  0% {
+    transform: translateY(0vh);
+    opacity: 0;
+  }
+  6% {
+    opacity: 1;
+  }
+  70% {
+    opacity: 1;
+  }
+  82% {
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(100vh);
+    opacity: 0;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Motion — communicates system state, never decoration
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slide-in-right {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes pulse-glow {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.45;
+  }
+}
+
+@keyframes scan-line {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* Signal travelling between pipeline nodes. Node coordinates are supplied
+   as custom properties by HeroVisualization. */
+@keyframes signal-travel {
+  0% {
+    transform: translate(var(--sig-from-x, 0px), var(--sig-y, 0px));
+    opacity: 0;
+  }
+  18% {
+    opacity: 1;
+  }
+  82% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate(var(--sig-to-x, 0px), var(--sig-y, 0px));
+    opacity: 0;
+  }
+}
+
+/* Connection between nodes energising as the signal passes through. */
+@keyframes link-energise {
+  0% {
+    stroke-dashoffset: 120;
+    opacity: 0;
+  }
+  25% {
+    opacity: 1;
+  }
+  100% {
+    stroke-dashoffset: 0;
+    opacity: 0.9;
+  }
+}
+
+@keyframes node-arrive {
+  0% {
+    transform: scale(0.92);
+  }
+  55% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.35s var(--ease-out) both;
+}
+.animate-rise-in {
+  animation: rise-in 0.5s var(--ease-out) both;
+}
+.animate-slide-in {
+  animation: slide-in-right 0.25s var(--ease-out);
+}
+.animate-pulse-glow {
+  animation: pulse-glow 2.4s var(--ease-in-out) infinite;
+}
+
+.signal-dot {
+  animation-name: signal-travel;
+  animation-timing-function: var(--ease-in-out);
+  animation-fill-mode: both;
+  animation-duration: 600ms;
+}
+
+.link-active {
+  stroke-dasharray: 120;
+  animation: link-energise 600ms var(--ease-in-out) both;
+}
+
+.node-arrive {
+  transform-origin: center;
+  transform-box: fill-box;
+  animation: node-arrive 420ms var(--ease-out) both;
+}
+
+/* ── Glow ────────────────────────────────────────────────────────────────── */
+.glow-recovery {
+  box-shadow: 0 0 24px rgba(16, 185, 129, 0.12);
+}
+.glow-warning {
+  box-shadow: 0 0 24px rgba(245, 158, 11, 0.12);
+}
+.glow-critical {
+  box-shadow: 0 0 24px rgba(239, 68, 68, 0.12);
+}
+.glow-ai {
+  box-shadow: 0 0 24px rgba(99, 102, 241, 0.12);
+}
+
+.svg-glow-recovery {
+  filter: drop-shadow(0 0 6px rgba(16, 185, 129, 0.55));
+}
+.svg-glow-warning {
+  filter: drop-shadow(0 0 6px rgba(245, 158, 11, 0.55));
+}
+.svg-glow-critical {
+  filter: drop-shadow(0 0 6px rgba(239, 68, 68, 0.5));
+}
+.svg-glow-ai {
+  filter: drop-shadow(0 0 6px rgba(99, 102, 241, 0.55));
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Legacy surfaces retained from the command centre (drawer, connectors)
+   ═══════════════════════════════════════════════════════════════════════════ */
+
 .bg-grid {
-  background-image: radial-gradient(circle, #1E2D3D 1px, transparent 1px);
+  background-image: radial-gradient(circle, #1e2d3d 1px, transparent 1px);
   background-size: 28px 28px;
 }
 
-/* ── Glow effects ────────────────────────────────────────────────────────── */
-.glow-recovery { box-shadow: 0 0 24px rgba(16,185,129,0.12); }
-.glow-warning  { box-shadow: 0 0 24px rgba(245,158,11,0.12); }
-.glow-critical { box-shadow: 0 0 24px rgba(239,68,68,0.12); }
-.glow-ai       { box-shadow: 0 0 24px rgba(139,92,246,0.12); }
-
-/* ── Animations ──────────────────────────────────────────────────────────── */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(6px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-@keyframes slideInRight {
-  from { transform: translateX(100%); }
-  to   { transform: translateX(0); }
-}
-@keyframes pulse-glow {
-  0%, 100% { opacity: 1; }
-  50%       { opacity: 0.5; }
-}
-@keyframes scan-line {
-  0%   { transform: translateX(-100%); }
-  100% { transform: translateX(100%); }
-}
-
-.animate-fade-in    { animation: fadeIn 0.35s ease-out; }
-.animate-slide-in   { animation: slideInRight 0.25s ease-out; }
-.animate-pulse-glow { animation: pulse-glow 2s ease-in-out infinite; }
-
-/* ── Drawer overlay ──────────────────────────────────────────────────────── */
 .drawer-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(7,9,13,0.7);
+  background: rgba(7, 9, 13, 0.7);
   backdrop-filter: blur(4px);
-  z-index: 40;
+  z-index: var(--z-overlay);
 }
+
 .drawer {
   position: fixed;
   top: 0;
@@ -112,17 +457,44 @@ html, body {
   width: min(680px, 95vw);
   background: var(--surface);
   border-left: 1px solid var(--border);
-  z-index: 50;
+  z-index: var(--z-drawer);
   overflow-y: auto;
 }
 
-/* ── Step connector ──────────────────────────────────────────────────────── */
 .step-connector::before {
-  content: '';
+  content: "";
   position: absolute;
   left: 11px;
   top: 28px;
   bottom: -8px;
   width: 1px;
   background: var(--border);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Reduced motion — disable all animation, keep the static atmospheric colour
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .ambient-scan {
+    display: none;
+  }
+
+  .ambient-blob {
+    animation: none !important;
+    transform: none !important;
+  }
 }
