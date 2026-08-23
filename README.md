@@ -128,6 +128,221 @@ Every stage is visible. Every decision is explained. Nothing is a black box.
 
 ---
 
+## From Payment Signals to Revenue Recovery
+
+<div align="center">
+  <img src="media/From Payment Signals to Revenue Recovery.png" alt="From Payment Signals to Revenue Recovery" width="100%" />
+</div>
+
+KhaataPulse is designed to sit on top of Razorpay's payment infrastructure, not replace it.
+
+In a production integration, Razorpay remains responsible for payment processing, payment infrastructure, payment events, and payment execution. KhaataPulse acts as the intelligence and policy layer that determines what should happen after payment friction occurs.
+
+The architecture is intentionally separated into three responsibilities:
+
+```text
+RAZORPAY
+Payment Events + Payment Infrastructure
+        ↓
+KHAATAPULSE
+Risk + Reasoning + Economic Optimization + Policy Governance
+        ↓
+RAZORPAY
+Controlled Payment / Recovery Execution
+        ↓
+OUTCOME
+Measurement + Attribution
+        ↓
+KHAATAPULSE
+Continuous Recovery Intelligence
+```
+
+**Razorpay Knows What Happened**
+
+A production integration can consume relevant Razorpay payment signals through webhooks or APIs.
+
+For example:
+
+```text
+payment.failed
+payment.authorized
+payment.captured
+payment history
+payment context
+```
+
+These signals become observable inputs for the KhaataPulse recovery pipeline.
+
+The integration boundary is intentionally one-directional at this stage:
+
+```text
+Razorpay Payment Event
+        ↓
+Webhook / API
+        ↓
+KhaataPulse Ingestion
+        ↓
+Recovery Intelligence
+```
+
+KhaataPulse does not independently control Razorpay's payment rails or customer funds.
+
+**KhaataPulse Decides What Should Happen Next**
+
+Once payment and customer recovery signals enter KhaataPulse, they move through the same controlled decision architecture demonstrated by the MVP:
+
+```text
+01  INGEST
+    Payment + customer recovery signals
+
+        ↓
+
+02  DETECT
+    Logistic risk model identifies accounts at risk
+
+        ↓
+
+03  DIAGNOSE
+    LangGraph reasoning determines recovery context
+
+        ↓
+
+04  OPTIMIZE
+    ENR ranks interventions by expected net revenue
+
+        ↓
+
+05  GOVERN
+    Deterministic Policy Guard validates:
+    opt-out
+    dispute / legal hold
+    cooldown
+    contact limits
+    idempotency
+    amount thresholds
+
+        ↓
+
+06  RECOMMEND / EXECUTE
+    Approved recovery action
+```
+
+The most important architectural boundary remains unchanged:
+
+> **THE AI NEVER BYPASSES POLICY.**
+
+The LLM diagnoses and proposes. The economic optimizer ranks. The deterministic Policy Guard authorizes. The execution layer performs only an approved action.
+
+This preserves the same authority model already enforced inside the MVP. The Policy Guard is the only component capable of authorizing, blocking, or escalating an action.
+
+**Razorpay Remains the Execution Layer**
+
+After KhaataPulse produces an approved recovery decision, the action is handed back to the Razorpay-controlled execution layer.
+
+```text
+APPROVED ACTION
+        ↓
+RAZORPAY PAYMENT / RECOVERY OPERATION
+        ↓
+PAYMENT OUTCOME
+        ↓
+OUTCOME EVENT
+```
+
+This separation is fundamental.
+
+KhaataPulse does not become a competing payment processor. It provides the intelligence required to determine which eligible recovery action should happen, when it should happen, and why it is economically justified.
+
+Razorpay remains the system responsible for executing the underlying payment operation.
+
+**Closed-Loop Recovery**
+
+The integration becomes significantly more valuable when outcomes flow back into KhaataPulse.
+
+```text
+PAYMENT OUTCOME
+        ↓
+RECOVERY ATTRIBUTION
+        ↓
+POLICY EVALUATION
+        ↓
+FUTURE DECISIONS
+```
+
+This creates a closed-loop revenue recovery system:
+
+```text
+Payment Event
+    ↓
+Risk
+    ↓
+Diagnosis
+    ↓
+Economic Decision
+    ↓
+Policy Check
+    ↓
+Approved Action
+    ↓
+Payment Outcome
+    ↓
+Measurement
+    ↺
+Future Recovery Decisions
+```
+
+Every recovery action can therefore be evaluated against its actual business outcome.
+
+The system can measure recovered revenue, contacts avoided, human escalations, policy blocks, and incremental recovery relative to an intelligent baseline such as Smart Retry.
+
+This connects the technical decision pipeline directly to measurable economic value.
+
+---
+
+## Closed-Loop Payment Recovery Architecture
+
+<div align="center">
+  <img src="media/Closed-Loop Payment Recovery Architecture.png" alt="Closed-Loop Payment Recovery Architecture" width="100%" />
+</div>
+
+The production architecture can be rolled out progressively rather than introducing automation immediately.
+
+**Phase 01: Shadow Mode**
+
+Razorpay payment events flow into KhaataPulse. KhaataPulse evaluates risk, diagnoses the recovery context, ranks actions, and evaluates policy eligibility, but takes no automated action. This validates the intelligence layer against real payment behavior without introducing execution risk.
+
+**Phase 02: Recommendation Mode**
+
+KhaataPulse generates recovery recommendations. A human operator reviews and approves the proposed action before execution. This validates recommendation quality, policy behavior, and operational workflows using real traffic.
+
+**Phase 03: Guarded Automation**
+
+Low-risk, policy-approved recovery actions can begin executing automatically. The deterministic Policy Guard remains the authorization boundary. High-risk, ambiguous, blocked, or policy-sensitive cases remain available for escalation or human review.
+
+**Phase 04: Closed-Loop Optimization**
+
+Recovery outcomes are measured against the original payment event and recovery decision. KhaataPulse can then evaluate:
+
+- incremental recovered revenue
+- unnecessary contacts avoided
+- human operations reduced
+- recovery attribution
+- policy blocks
+- decision traceability
+- policy performance over time
+
+The result is a progressively improving recovery system with explicit governance rather than unrestricted AI autonomy.
+
+**Integration Principle**
+
+> RAZORPAY PROVIDES THE PAYMENT RAILS.
+>
+> KHAATAPULSE OPTIMIZES WHAT HAPPENS NEXT.
+
+This integration preserves Razorpay's role as the payment infrastructure and execution layer while adding a specialized intelligence layer for revenue recovery, decisioning, governance, attribution, and measurement.
+
+---
+
 ## Why This Is Different
 
 ### 01 - Reasoning, Not Rules
