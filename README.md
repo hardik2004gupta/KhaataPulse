@@ -1,17 +1,13 @@
 <div align="center">
 
-<img src="media/01_khaatapulse_brand_identity_mark.png" width="72" alt="KhaataPulse" />
+<img src="media/01_khaatapulse_brand_identity_mark.png" alt="KhaataPulse" width="700" />
 
-# KhaataPulse
-
-### AI Revenue Recovery Policy Engine
-
-**Revenue recovery, under control.**
+### **Revenue recovery, under control.**
 
 ---
 
-> **BUILT FOR RAZORPAY AI BUILDTHON 2026**
-> **TRACK: AI REVENUE RECOVERY**
+> **BUILT FOR RAZORPAY AI BUILDTHON 2026** <
+> **TRACK: AI REVENUE RECOVERY** <
 
 ---
 
