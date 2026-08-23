@@ -1,0 +1,29 @@
+services:
+  - type: web
+    name: khaatapulse-api
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    rootDir: backend
+    plan: free
+    healthCheckPath: /health
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: DATABASE_URL
+        sync: false          # set manually in Render dashboard (your Neon URL)
+      - key: ALLOWED_ORIGINS
+        sync: false          # set to your Vercel deployment URL after frontend deploy
+      - key: LLM_API_KEY
+        sync: false          # optional — demo mode works without it
+      - key: LLM_MODEL
+        value: claude-sonnet-5
+      - key: KILL_SWITCH
+        value: "false"
+      - key: AUTO_ACTION_LIMIT
+        value: "10000"
+      - key: MAX_CONTACTS_7D
+        value: "3"
+      - key: CONTACT_COOLDOWN_HOURS
+        value: "24"
+      - key: RISK_THRESHOLD
+        value: "0.30"

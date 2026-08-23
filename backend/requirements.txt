@@ -7,18 +7,14 @@ pydantic==2.10.3
 pydantic-settings==2.6.1
 python-dotenv==1.0.1
 
-# Phase 2: Risk Sieve
+# Risk Sieve
 scikit-learn>=1.5.0,<2.0.0
 numpy>=1.26.0,<3.0.0
 joblib>=1.4.0,<2.0.0
 
-# Phase 2: LangGraph Agent
+# LangGraph Agent
 langgraph>=0.2.40,<0.3.0
 langchain-core>=0.3.0,<0.4.0
 
-# Phase 2: LLM Provider
+# LLM Provider
 anthropic>=0.40.0
-
-# Testing
-pytest==8.3.4
-httpx==0.28.0
