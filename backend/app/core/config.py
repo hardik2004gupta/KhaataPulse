@@ -29,6 +29,9 @@ class Settings(BaseSettings):
     action_cost_grace_period: int = 100
     action_cost_human_escalation: int = 500
 
+    # CORS — comma-separated list of allowed frontend origins
+    allowed_origins: str = "http://localhost:3000"
+
     # Simulator
     default_cohort_size: int = 3000
     simulator_version: str = "v1"
