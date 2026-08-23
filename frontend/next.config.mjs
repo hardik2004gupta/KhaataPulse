@@ -2,8 +2,13 @@
 
 const API_URL = process.env.BACKEND_URL ?? "http://localhost:8000";
 
+// standalone output is required for Docker/Render self-hosting.
+// On Vercel, VERCEL=1 is set automatically — use Vercel's native build instead.
+const isVercel = process.env.VERCEL === "1";
+
 const nextConfig = {
-  output: "standalone",
+  ...(!isVercel && { output: "standalone" }),
+
   async rewrites() {
     return [
       // FastAPI serves collection routes only at a trailing slash (`/cases/`),
@@ -21,6 +26,7 @@ const nextConfig = {
       },
     ];
   },
+
   async headers() {
     return [
       {
