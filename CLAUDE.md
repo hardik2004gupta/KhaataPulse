@@ -798,8 +798,189 @@ Each phase has intentional boundaries. When starting a phase, read this contract
 ## Implementation Status
 
 ```
-Current Phase:  0
-Status:         Engineering Contract Established
-Completed:      CLAUDE.md created from full PDF specification
-Next Phase:     Phase 1 — Simulator + Database Foundation
+Current Phase:  3
+Status:         Complete
+Completed:
+  - Phase 0: CLAUDE.md engineering contract established
+  - Phase 1: Simulator + Database Foundation
+      backend/app/core/config.py          Settings with all env vars
+      backend/app/core/logging.py         Structured JSON logging
+      backend/app/db/base.py              SQLAlchemy Base
+      backend/app/db/session.py           Engine + get_db dependency
+      backend/app/db/models/             ORM models (customers, subscriptions,
+                                          payments, events, sim_runs, sim_outcomes,
+                                          recovery_cases, actions, audit_events)
+      backend/app/simulator/latent_state.py  CustomerLatentState (HIDDEN)
+      backend/app/simulator/outcomes.py      PotentialOutcomes (HIDDEN)
+      backend/app/simulator/events.py        Observable event generator
+      backend/app/simulator/generator.py     Deterministic world generator
+      backend/app/simulator/world.py         WorldInternal / ObservableWorld boundary
+      backend/app/simulator/persistence.py   DB persistence with isolation guarantees
+      backend/app/schemas/simulator.py        API schemas (no hidden data)
+      backend/app/api/routes/simulator.py    POST /simulation/generate, GET /simulation/runs
+      backend/app/main.py                    FastAPI app
+      backend/alembic/                       Alembic migrations (001_initial_schema,
+                                             002_phase3_recovery_audit)
+      backend/tests/                         63 tests — 63 passed (0 failures)
+        tests/simulator/test_simulator.py    Determinism, cohort size, isolation, events
+        tests/db/test_models.py              ORM, referential integrity, constraints
+      backend/pytest.ini                     Test configuration
+      docker-compose.yml                     postgres:16 + backend services
+      .env.example                           All required env vars documented
+  - Phase 2: Risk Sieve + LangGraph Agent
+      backend/app/risk/features.py        RiskFeatures (frozen dataclass), FeatureBuilder
+                                          12 observable features, FEATURE_NAMES list
+      backend/app/risk/model.py           RiskPredictor (LogisticRegression + StandardScaler)
+                                          Observable-only training labels, top-3 explainability
+                                          RiskSignal, RiskPrediction, get_risk_predictor()
+      backend/app/risk/service.py         RiskService, RoutingDecision, config-driven threshold
+      backend/app/agent/schemas.py        RecoveryProposal Pydantic model (CLAUDE.md §11)
+      backend/app/agent/reasoning.py      BaseReasoningModel, StubReasoningModel,
+                                          AnthropicReasoningModel, ReasoningContext
+      backend/app/agent/fallback.py       smart_retry_proposal (deterministic LLM fallback)
+      backend/app/api/routes/risk.py      POST /risk/predict, POST /risk/reason
+      backend/tests/                      155 tests — 155 passed (0 failures)
+        tests/risk/test_features.py       Feature engineering, isolation, array contract
+        tests/risk/test_model.py          Model training, reproducibility, routing, explainability
+        tests/agent/test_graph.py         Node ordering, structured output, validation,
+                                          LLM failure/fallback, agent isolation
+  - Phase 3: Economic Optimizer + Policy Guard + Action Execution + Audit
+      backend/app/optimizer/eligibility.py  cause → eligible action types mapping
+      backend/app/optimizer/enr.py          ENR formula, estimated probability tables,
+                                            ActionRanking frozen dataclass
+      backend/app/optimizer/ranker.py       rank_eligible_actions() — deterministic by ENR
+      backend/app/policy/guard.py           PolicyGuard — pure deterministic, all rules:
+                                            kill_switch, dispute_hold, legal_hold, opt_out,
+                                            idempotency, contact_limit (3/7d), cooldown (24h),
+                                            amount_threshold (≥₹10k → ESCALATED)
+                                            PolicyDecision(APPROVED|BLOCKED|ESCALATED, checks)
+      backend/app/actions/service.py        ActionService — typed, idempotent simulated gateway
+                                            ActionRequest, ActionResult, duplicate rejection
+      backend/app/audit/service.py          AuditService — append-only log_audit_event()
+                                            All 8 required event types supported
+      backend/app/agent/state.py            RecoveryReasoningState — added Phase 3 fields:
+                                            ltv, dispute_hold, legal_hold, opt_out,
+                                            eligible_actions, action_rankings, selected_action,
+                                            policy_decision, execution_result, recorded_outcome,
+                                            case_id
+      backend/app/agent/nodes.py            All 9 nodes fully implemented:
+                                            make_rank_actions() — economic optimizer
+                                            make_policy_check(db) — policy guard
+                                            make_execute_action(db) — action service
+                                            make_record_outcome(db) — audit + case closure
+      backend/app/agent/graph.py            build_recovery_graph(reasoning_model, db)
+                                            make_initial_state() — includes Phase 3 fields
+      backend/app/core/config.py            Added action costs (config-driven):
+                                            action_cost_silent_retry/smart_link/grace_period/
+                                            human_escalation
+      backend/alembic/versions/002_...      Migration: recovery_cases, actions, audit_events,
+                                            + customer hold flags (dispute_hold, legal_hold, opt_out)
+      backend/tests/                        212 tests — 212 passed (0 failures)
+        tests/optimizer/test_enr.py         ENR formula, probability estimation, eligibility,
+                                            ranking determinism, action cost effects
+        tests/policy/test_guard.py          All Policy Guard rules independently tested:
+                                            APPROVED, BLOCKED (kill_switch, dispute_hold,
+                                            legal_hold, opt_out, idempotency, contact_limit,
+                                            cooldown), ESCALATED (amount_threshold)
+        tests/agent/test_graph.py           Updated: Phase 3 nodes produce real outputs
+        tests/db/test_models.py             Updated: Phase 3 tables verified present
+  - Phase 4: Evaluation Engine + Multi-Seed Validation
+      backend/app/db/models/evaluation.py   EvaluationRun + EvaluationResult ORM models
+      backend/app/evaluation/__init__.py    Package init
+      backend/app/evaluation/metrics.py     PolicyEvaluationResult, EvaluationRunResult
+                                            dataclasses — all fields dynamic (no hardcoded values)
+      backend/app/evaluation/policies.py    RecoveryPolicy ABC + three implementations:
+                                            StaticDunningPolicy — failure count → action
+                                            SmartRetryPolicy   — failure code → action
+                                            KhaataPulsePolicy  — Risk Sieve → Stub LLM →
+                                              Optimizer → Policy Guard (no-db mode)
+      backend/app/evaluation/evaluator.py   EvaluationWorld (isolates PotentialOutcomes),
+                                            evaluate_policy_on_world(),
+                                            run_same_cohort_evaluation() — world generated
+                                            ONCE, all three policies see same world, same
+                                            potential outcomes (CLAUDE.md §17 invariant)
+      backend/app/evaluation/runner.py      run_evaluation(), run_multi_seed_evaluation(),
+                                            get_multi_seed_summary(), get_run_from_db()
+                                            Persistence: EvaluationRun + EvaluationResult
+      backend/app/api/routes/evaluation.py  POST /evaluation/run
+                                            POST /evaluation/run/multi-seed
+                                            GET  /evaluation/run/{run_id}
+                                            GET  /evaluation/runs
+      backend/app/main.py                   Evaluation router registered
+      backend/app/db/models/__init__.py     EvaluationRun, EvaluationResult exported
+      backend/alembic/versions/003_...      Migration: evaluation_runs, evaluation_results
+      backend/tests/                        267 tests — 267 passed, 6 skipped (0 failures)
+        tests/evaluation/test_evaluator.py  Same-cohort invariant, EvaluationWorld isolation,
+                                            false positives, incremental recovery, reproducibility,
+                                            recovery rate bounds
+        tests/evaluation/test_runner.py     Multi-seed (42, 123, 456), no-db mode, DB persistence
+                                            (skipped without Docker), re-run overwrite
+        tests/evaluation/test_api.py        POST /evaluation/run, GET /evaluation/run/{id},
+                                            multi-seed endpoint, error handling, field contracts
+        tests/db/test_models.py             Updated: Phase 4 tables verified present
+
+  - Phase 5: Frontend Command Center
+      frontend/                              Next.js 14 App Router, TypeScript, Tailwind CSS
+      frontend/next.config.ts               output: "standalone", /api/* → BACKEND_URL rewrite
+      frontend/tailwind.config.ts           All CLAUDE.md §29 design tokens
+      frontend/app/globals.css              CSS custom properties, animation keyframes
+      frontend/app/layout.tsx              Root layout, Google Fonts (Inter + JetBrains Mono)
+      frontend/app/page.tsx                Command Center — HeroKPI, PolicyMatrix,
+                                            RevenueDelta, HeroCasePanel, LiveEventStream
+      frontend/app/evaluation/page.tsx      Evaluation page — EvaluationRunner, EvaluationResults,
+                                            MultiSeedMatrix
+      frontend/app/cases/page.tsx           Risk Queue — RiskQueue + CaseDetailDrawer
+      frontend/lib/types/index.ts           Full TypeScript types matching backend schemas
+      frontend/lib/api/client.ts            ApiError, api.get(), api.post() via /api/* proxy
+      frontend/lib/api/evaluation.ts        evaluationApi — runEvaluation, runMultiSeed, getRun
+      frontend/lib/api/demo.ts              demoApi — getHeroCase, runSimulation
+      frontend/lib/api/cases.ts             casesApi — listCases, getCase
+      frontend/lib/utils/format.ts          formatINR (L/Cr), formatPct, formatPP, formatCause,
+                                            formatAction, formatDateTime
+      frontend/components/ui/              MetricCard, PolicyBadge, RiskIndicator, StatusBadge,
+                                            Skeleton, EmptyState
+      frontend/components/dashboard/       NavBar, HeroKPI, PolicyMatrix
+      frontend/components/revenue/         RevenueDelta (horizontal bar visualization)
+      frontend/components/simulation/      LiveEventStream (animated 6-step pipeline)
+      frontend/components/risk/            DiagnosisPanel, PolicyGuardViz, AuditTimeline,
+                                            RiskQueue, CaseDetailDrawer
+      frontend/components/evaluation/      EvaluationRunner, EvaluationResults, MultiSeedMatrix
+      frontend/Dockerfile                  Multi-stage standalone build
+      frontend/.dockerignore
+      docker-compose.yml                    Added frontend service (port 3000)
+      backend/app/api/routes/demo.py        GET /demo/hero, POST /demo/simulate (no-DB mode)
+      backend/app/api/routes/cases.py       GET /cases/, GET /cases/{case_id}
+      Security: BACKEND_URL server-side only; no hidden state in frontend; no hardcoded metrics
+
+Current Phase:  6
+Status:         Complete
+
+  - Phase 6: Integration + Demo Mode + Final Polish
+      backend/tests/integration/               Phase 6 end-to-end integration tests
+        test_e2e_pipeline.py                   18 tests — 18 passed (0 failures)
+          TestGoldenPath (4 tests)             Full 9-node pipeline: all outputs verified,
+                                               no hidden state in agent state,
+                                               optimizer descending ENR order,
+                                               all node outputs present
+          TestPolicyGuardBypass (3 tests)      BLOCKED policy → 'blocked' execution,
+                                               guard/execution status consistency,
+                                               kill switch blocks at policy_guard boundary
+          TestBlockedAction (1 test)           Kill switch ON → BLOCKED pipeline end-to-end
+          TestEscalatedAction (1 test)         Amount >= ₹10k → ESCALATED pipeline end-to-end
+          TestIdempotency (2 tests)            Duplicate key rejected (with real DB),
+                                               different keys both execute
+          TestAuditIntegrity (3 tests)         recorded_outcome summary fields verified,
+                                               audit service is append-only,
+                                               log_audit_event returns None in no-db mode
+          TestSameCohortInvariant (4 tests)    EvaluationWorld deterministic records,
+                                               same seed → same incremental recovery,
+                                               policies cannot access PotentialOutcomes,
+                                               multi-seed (42, 123, 456) all valid
+      backend/app/api/routes/demo.py           Fixed: ESCALATED action_executed status
+                                               correctly set to "escalated" (not "executed")
+      backend/app/evaluation/runner.py         Fixed: get_run_from_db returns EvaluationRunResult
+                                               shape (matches POST response) for frontend type safety
+      Total test count (excl. Docker-only):   254 passed, 6 skipped (0 failures)
+
+All 35 Definition of Done checklist items from §35 have been implemented and verified.
 ```

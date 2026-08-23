@@ -1,0 +1,738 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   KhaataPulse — Design System
+   Dark financial terminal. Colour communicates semantic state, not decoration.
+   CLAUDE.md §29
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+:root {
+  /* ── Surfaces ─────────────────────────────────────────────────────────── */
+  --bg-primary: #07090d;
+  --bg-secondary: #0c1017;
+  --surface: #11161f;
+  --surface-elevated: #161e2a;
+  --surface-hover: #1c2535;
+
+  /* ── Borders ──────────────────────────────────────────────────────────── */
+  --border: #1e2d3d;
+  --border-subtle: #172030;
+
+  /* ── Text ─────────────────────────────────────────────────────────────── */
+  --text-primary: #f1f5f9;
+  --text-secondary: #94a3b8;
+  --text-muted: #475569;
+  --text-faint: #334155;
+
+  /* ── Semantic accents ─────────────────────────────────────────────────── */
+  --accent-recovery: #10b981;
+  --accent-recovery-dim: #064e3b;
+  --accent-recovery-text: #34d399;
+
+  --accent-warning: #f59e0b;
+  --accent-warning-dim: #78350f;
+  --accent-warning-text: #fcd34d;
+
+  --accent-critical: #ef4444;
+  --accent-critical-dim: #7f1d1d;
+  --accent-critical-text: #fca5a5;
+
+  --accent-ai: #6366f1;
+  --accent-ai-dim: #1e1b4b;
+  --accent-ai-text: #a5b4fc;
+
+  /* ── Motion ───────────────────────────────────────────────────────────── */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-fast: 160ms;
+  --dur-base: 260ms;
+  --dur-slow: 600ms;
+
+  /* ── Z-index scale ────────────────────────────────────────────────────── */
+  --z-ambient: 0;
+  --z-content: 10;
+  --z-nav: 50;
+  --z-overlay: 60;
+  --z-drawer: 70;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Base
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+* {
+  border-color: var(--border-subtle);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+html,
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-inter), Inter, system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+::selection {
+  background: rgba(99, 102, 241, 0.28);
+  color: var(--text-primary);
+}
+
+:focus-visible {
+  outline: 1px solid var(--accent-ai);
+  outline-offset: 2px;
+}
+
+/* ── Financial numerals ──────────────────────────────────────────────────── */
+.tabular {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+
+/* ── Monospace — audit ids, timestamps, technical metadata ───────────────── */
+.mono {
+  font-family: var(--font-jetbrains-mono), "JetBrains Mono", "Fira Code", ui-monospace, monospace;
+}
+
+/* ── Scrollbar ───────────────────────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Ambient background — CSS only, no canvas, no JS animation loops.
+   Fixed behind all content, never interactive.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.ambient-root {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-ambient);
+  pointer-events: none;
+  overflow: hidden;
+  contain: strict;
+}
+
+.ambient-root > * {
+  position: absolute;
+  inset: 0;
+}
+
+/* ── Layer 1 — base wash ─────────────────────────────────────────────────── */
+.ambient-base {
+  background:
+    radial-gradient(120% 80% at 50% 0%, rgba(12, 16, 23, 0.9) 0%, transparent 60%),
+    var(--bg-primary);
+}
+
+/* ── Layer 2 — structural grid ───────────────────────────────────────────── */
+.ambient-grid {
+  background-image:
+    repeating-linear-gradient(
+      0deg,
+      rgba(30, 45, 61, 0.12) 0px,
+      rgba(30, 45, 61, 0.12) 1px,
+      transparent 1px,
+      transparent 40px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      rgba(30, 45, 61, 0.12) 0px,
+      rgba(30, 45, 61, 0.12) 1px,
+      transparent 1px,
+      transparent 40px
+    );
+  mask-image: radial-gradient(100% 70% at 50% 30%, #000 0%, transparent 85%);
+  -webkit-mask-image: radial-gradient(100% 70% at 50% 30%, #000 0%, transparent 85%);
+}
+
+/* ── Layer 3 — atmospheric light ─────────────────────────────────────────── */
+.ambient-blob {
+  will-change: transform;
+}
+
+.ambient-blob-ai {
+  background: radial-gradient(
+    42rem 34rem at 12% 8%,
+    rgba(99, 102, 241, 0.035) 0%,
+    rgba(99, 102, 241, 0.014) 42%,
+    transparent 72%
+  );
+  animation: drift-ai 52s var(--ease-in-out) infinite;
+}
+
+.ambient-blob-recovery {
+  background: radial-gradient(
+    46rem 36rem at 88% 92%,
+    rgba(16, 185, 129, 0.035) 0%,
+    rgba(16, 185, 129, 0.014) 42%,
+    transparent 72%
+  );
+  animation: drift-recovery 60s var(--ease-in-out) infinite;
+}
+
+.ambient-blob-warning {
+  background: radial-gradient(
+    32rem 26rem at 92% 46%,
+    rgba(245, 158, 11, 0.02) 0%,
+    rgba(245, 158, 11, 0.008) 45%,
+    transparent 72%
+  );
+  animation: drift-warning 44s var(--ease-in-out) infinite;
+}
+
+@keyframes drift-ai {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(3.5%, 2.5%, 0) scale(1.06);
+  }
+}
+
+@keyframes drift-recovery {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(-3%, -3%, 0) scale(1.05);
+  }
+}
+
+@keyframes drift-warning {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(-2.5%, 3%, 0) scale(1.04);
+  }
+}
+
+/* ── Layer 4 — horizon edge ──────────────────────────────────────────────── */
+.ambient-horizon {
+  background: linear-gradient(180deg, transparent 0%, transparent 78%, rgba(7, 9, 13, 0.85) 100%);
+}
+
+/* ── Layer 5 — scan ──────────────────────────────────────────────────────── */
+.ambient-scan {
+  inset: auto 0 auto 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(99, 102, 241, 0.12) 20%,
+    rgba(99, 102, 241, 0.12) 80%,
+    transparent 100%
+  );
+  animation: scan-drift 25s linear infinite;
+  will-change: transform, opacity;
+}
+
+@keyframes scan-drift {
+  0% {
+    transform: translateY(0vh);
+    opacity: 0;
+  }
+  6% {
+    opacity: 1;
+  }
+  70% {
+    opacity: 1;
+  }
+  82% {
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(100vh);
+    opacity: 0;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Motion — communicates system state, never decoration
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slide-in-right {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes pulse-glow {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.45;
+  }
+}
+
+@keyframes scan-line {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* Signal travelling between pipeline nodes. Node coordinates are supplied
+   as custom properties by HeroVisualization. */
+@keyframes signal-travel {
+  0% {
+    transform: translate(var(--sig-from-x, 0px), var(--sig-y, 0px));
+    opacity: 0;
+  }
+  18% {
+    opacity: 1;
+  }
+  82% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate(var(--sig-to-x, 0px), var(--sig-y, 0px));
+    opacity: 0;
+  }
+}
+
+/* Connection between nodes energising as the signal passes through. */
+@keyframes link-energise {
+  0% {
+    stroke-dashoffset: 120;
+    opacity: 0;
+  }
+  25% {
+    opacity: 1;
+  }
+  100% {
+    stroke-dashoffset: 0;
+    opacity: 0.9;
+  }
+}
+
+@keyframes node-arrive {
+  0% {
+    transform: scale(0.92);
+  }
+  55% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.35s var(--ease-out) both;
+}
+.animate-rise-in {
+  animation: rise-in 0.5s var(--ease-out) both;
+}
+.animate-slide-in {
+  animation: slide-in-right 0.25s var(--ease-out);
+}
+.animate-pulse-glow {
+  animation: pulse-glow 2.4s var(--ease-in-out) infinite;
+}
+
+.signal-dot {
+  animation-name: signal-travel;
+  animation-timing-function: var(--ease-in-out);
+  animation-fill-mode: both;
+  animation-duration: 600ms;
+}
+
+.link-active {
+  stroke-dasharray: 120;
+  animation: link-energise 600ms var(--ease-in-out) both;
+}
+
+.node-arrive {
+  transform-origin: center;
+  transform-box: fill-box;
+  animation: node-arrive 420ms var(--ease-out) both;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Semantic surfaces — every colour value lives here, never in a component.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Translucent chrome for the sticky telemetry bar. */
+.surface-chrome {
+  background-color: rgba(7, 9, 13, 0.9);
+}
+
+/* Slightly lighter chrome for the landing page's marketing nav, which sits
+   over the ambient background rather than over dense instrumentation. */
+.surface-chrome-nav {
+  background-color: rgba(7, 9, 13, 0.85);
+}
+
+/* Directional wash behind a signed financial figure. */
+.wash-recovery {
+  background: radial-gradient(120% 100% at 0% 100%, rgba(16, 185, 129, 0.1) 0%, transparent 60%);
+}
+.wash-critical {
+  background: radial-gradient(120% 100% at 0% 100%, rgba(239, 68, 68, 0.1) 0%, transparent 60%);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Policy Guard — a security checkpoint, evaluated as a sequence.
+   Stagger is expressed as a CSS delay driven by --gate-index, so the
+   reduced-motion block below neutralises it without any JS involvement.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+@keyframes gate-arrive {
+  from {
+    opacity: 0;
+    transform: translateX(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Approved gate — a green glow that swells once, then settles. */
+@keyframes gate-pass-glow {
+  0% {
+    box-shadow: inset 1px 0 0 0 rgba(16, 185, 129, 0);
+  }
+  40% {
+    box-shadow: inset 2px 0 0 0 rgba(16, 185, 129, 0.9), 0 0 14px -4px rgba(16, 185, 129, 0.5);
+  }
+  100% {
+    box-shadow: inset 1px 0 0 0 rgba(16, 185, 129, 0);
+  }
+}
+
+/* Failed gate — a short, sharp red interruption. */
+@keyframes gate-fail-pulse {
+  0% {
+    background-color: rgba(239, 68, 68, 0);
+  }
+  25% {
+    background-color: rgba(239, 68, 68, 0.18);
+  }
+  60% {
+    background-color: rgba(239, 68, 68, 0);
+  }
+  80% {
+    background-color: rgba(239, 68, 68, 0.1);
+  }
+  100% {
+    background-color: rgba(239, 68, 68, 0);
+  }
+}
+
+.gate {
+  animation: gate-arrive var(--dur-base) var(--ease-out) both;
+  animation-delay: calc(var(--gate-index, 0) * 60ms);
+}
+
+.gate-pass {
+  animation:
+    gate-arrive var(--dur-base) var(--ease-out) both,
+    gate-pass-glow var(--dur-slow) var(--ease-out) both;
+  animation-delay: calc(var(--gate-index, 0) * 60ms), calc(var(--gate-index, 0) * 60ms + 120ms);
+}
+
+.gate-fail {
+  animation:
+    gate-arrive var(--dur-base) var(--ease-out) both,
+    gate-fail-pulse 420ms var(--ease-in-out) both;
+  animation-delay: calc(var(--gate-index, 0) * 60ms), calc(var(--gate-index, 0) * 60ms + 120ms);
+}
+
+/* Verdict lands only once every gate has settled. */
+.gate-verdict {
+  animation: fade-in 320ms var(--ease-out) both;
+  animation-delay: calc(var(--gate-count, 0) * 60ms + 160ms);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Proportional bars — confidence, exposure decomposition, risk strips.
+   The bar grows to its measured value (--bar-width) as a CSS animation, so a
+   reduced-motion reader is shown the final proportion on first paint.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+@keyframes bar-fill {
+  from {
+    width: 0%;
+  }
+  to {
+    width: var(--bar-width, 0%);
+  }
+}
+
+.bar-grow {
+  width: var(--bar-width, 0%);
+  animation: bar-fill var(--dur-slow) var(--ease-out) both;
+}
+
+/* Ambient breath while the reasoner is still working. */
+.bar-grow-pending {
+  width: var(--bar-width, 0%);
+  animation:
+    bar-fill var(--dur-slow) var(--ease-out) both,
+    pulse-glow 1.8s var(--ease-in-out) infinite;
+  animation-delay: 0ms, var(--dur-slow);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Live pipeline — six stages activate in sequence, 400ms apart.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+@keyframes step-activate {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes rail-arrive {
+  from {
+    opacity: 0.2;
+    transform: scale(0.5);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.pipeline-step {
+  animation: step-activate 320ms var(--ease-out) both;
+  animation-delay: calc(var(--step-index, 0) * 400ms);
+}
+
+.rail-node {
+  animation: rail-arrive 300ms var(--ease-out) both;
+  animation-delay: calc(var(--step-index, 0) * 400ms);
+}
+
+.rail-link {
+  animation: fade-in 300ms var(--ease-out) both;
+  animation-delay: calc(var(--step-index, 0) * 400ms + 180ms);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Outcome — the terminal state of one recovery case.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+@keyframes outcome-sweep {
+  0% {
+    background-position: -60% 0;
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+  }
+  100% {
+    background-position: 160% 0;
+    opacity: 0;
+  }
+}
+
+@keyframes outcome-interrupt {
+  0% {
+    background-color: rgba(239, 68, 68, 0);
+  }
+  25% {
+    background-color: rgba(239, 68, 68, 0.16);
+  }
+  55% {
+    background-color: rgba(239, 68, 68, 0);
+  }
+  80% {
+    background-color: rgba(239, 68, 68, 0.1);
+  }
+  100% {
+    background-color: rgba(239, 68, 68, 0);
+  }
+}
+
+/* Recovery confirmed — a single glow sweeps left to right. */
+.outcome-executed::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(16, 185, 129, 0.18) 50%,
+    transparent 100%
+  );
+  background-size: 55% 100%;
+  background-repeat: no-repeat;
+  animation: outcome-sweep 800ms var(--ease-out) 1 both;
+}
+
+/* Blocked — a brief critical interruption. */
+.outcome-blocked {
+  animation: outcome-interrupt 520ms var(--ease-in-out) 1 both;
+}
+
+/* Escalated — a steady amber hold, awaiting a human. */
+.outcome-escalated {
+  box-shadow: 0 0 18px -6px rgba(245, 158, 11, 0.45);
+}
+
+/* ── Glow ────────────────────────────────────────────────────────────────── */
+.glow-recovery {
+  box-shadow: 0 0 24px rgba(16, 185, 129, 0.12);
+}
+.glow-warning {
+  box-shadow: 0 0 24px rgba(245, 158, 11, 0.12);
+}
+.glow-critical {
+  box-shadow: 0 0 24px rgba(239, 68, 68, 0.12);
+}
+.glow-ai {
+  box-shadow: 0 0 24px rgba(99, 102, 241, 0.12);
+}
+
+.svg-glow-recovery {
+  filter: drop-shadow(0 0 6px rgba(16, 185, 129, 0.55));
+}
+.svg-glow-warning {
+  filter: drop-shadow(0 0 6px rgba(245, 158, 11, 0.55));
+}
+.svg-glow-critical {
+  filter: drop-shadow(0 0 6px rgba(239, 68, 68, 0.5));
+}
+.svg-glow-ai {
+  filter: drop-shadow(0 0 6px rgba(99, 102, 241, 0.55));
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Legacy surfaces retained from the command centre (drawer, connectors)
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.bg-grid {
+  background-image: radial-gradient(circle, #1e2d3d 1px, transparent 1px);
+  background-size: 28px 28px;
+}
+
+.drawer-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(7, 9, 13, 0.7);
+  backdrop-filter: blur(4px);
+  z-index: var(--z-overlay);
+}
+
+/* Slide state is owned by the component (Tailwind translate utilities) so the
+   drawer can animate both directions — this rule intentionally sets no
+   `transform`, which would otherwise win on specificity order. */
+.drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100%;
+  width: min(520px, 100vw);
+  background: var(--bg-secondary);
+  border-left: 1px solid var(--border);
+  z-index: var(--z-drawer);
+  overflow-y: auto;
+}
+
+.step-connector::before {
+  content: "";
+  position: absolute;
+  left: 11px;
+  top: 28px;
+  bottom: -8px;
+  width: 1px;
+  background: var(--border);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Reduced motion — disable all animation, keep the static atmospheric colour
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    /* Staggered reveals (policy gates, pipeline stages) express their sequence
+       purely as animation-delay. Clearing it here is what makes those
+       sequences land instantly rather than trickling in silently. */
+    animation-delay: 0ms !important;
+    transition-duration: 0.001ms !important;
+    transition-delay: 0ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .ambient-scan {
+    display: none;
+  }
+
+  .ambient-blob {
+    animation: none !important;
+    transform: none !important;
+  }
+}
