@@ -1,5 +1,5 @@
-"""
-Evaluation runner — multi-seed orchestration and persistence — CLAUDE.md §17.
+﻿"""
+Evaluation runner - multi-seed orchestration and persistence - CLAUDE.md §17.
 
 EvaluationRunner:
   - Accepts seed + cohort_size
@@ -178,7 +178,7 @@ def run_multi_seed_evaluation(
 def get_multi_seed_summary(results: list[EvaluationRunResult]) -> dict:
     """
     Produce a structured summary of multi-seed results for the frontend.
-    All values are dynamically calculated — no hardcoded numbers.
+    All values are dynamically calculated - no hardcoded numbers.
     """
     positive_runs = sum(1 for r in results if r.incremental_recovery > 0)
     total_runs = len(results)
@@ -206,7 +206,7 @@ def get_run_from_db(run_id: str, db: Session) -> Optional[dict]:
     Retrieve a completed evaluation run from DB.
 
     Returns the same shape as EvaluationRunResult.as_dict() wrapped in an outer
-    envelope {run_id, status, results} — matching the POST /evaluation/run response
+    envelope {run_id, status, results} - matching the POST /evaluation/run response
     so the frontend can use the same type for both GET and POST.
     """
     run = db.query(EvaluationRun).filter_by(run_id=run_id).first()
@@ -238,7 +238,7 @@ def get_run_from_db(run_id: str, db: Session) -> Optional[dict]:
         else "0"
     )
 
-    # Build results dict matching EvaluationRunResult.as_dict() — same shape as POST response
+    # Build results dict matching EvaluationRunResult.as_dict() - same shape as POST response
     results_dict = {
         "run_id": run.run_id,
         "seed": run.seed,

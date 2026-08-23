@@ -1,5 +1,5 @@
-"""
-Risk Service — ties together FeatureBuilder, RiskPredictor, and routing.
+﻿"""
+Risk Service - ties together FeatureBuilder, RiskPredictor, and routing.
 CLAUDE.md §8: routing threshold is configuration-driven (never scattered as 0.30).
 """
 from __future__ import annotations

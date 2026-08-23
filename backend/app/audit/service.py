@@ -1,5 +1,5 @@
-"""
-Audit Service — CLAUDE.md §16.
+﻿"""
+Audit Service - CLAUDE.md §16.
 
 Produces immutable AuditEvent records. Append-only.
 The audit drawer must show events in chronological order with expandable payloads.
@@ -37,7 +37,7 @@ def log_audit_event(
         case_id:         recovery_cases.id this event belongs to.
         actor:           Module that produced the event (e.g. "risk_model", "policy_guard").
         payload:         Structured JSON payload for reconstruction.
-        idempotency_key: Optional — action idempotency key if event is tied to an action.
+        idempotency_key: Optional - action idempotency key if event is tied to an action.
         db:              DB session. If None, event is logged only (no DB persistence).
     """
     logger.info(

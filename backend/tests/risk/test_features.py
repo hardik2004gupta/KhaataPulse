@@ -1,5 +1,5 @@
-"""
-Feature engineering tests — CLAUDE.md §32.
+﻿"""
+Feature engineering tests - CLAUDE.md §32.
 
 Verifies:
   - Correct feature values from observable data
@@ -212,7 +212,7 @@ class TestFeatureIsolation:
             assert math.isfinite(v), f"Non-finite value in feature array: {v}"
 
     def test_feature_builder_only_uses_observable_customer_data(self):
-        """FeatureBuilder.build accepts ObservableCustomerData only — no latent state."""
+        """FeatureBuilder.build accepts ObservableCustomerData only - no latent state."""
         import inspect
         sig = inspect.signature(FeatureBuilder.build)
         param_names = list(sig.parameters.keys())

@@ -1,5 +1,5 @@
-"""
-Evaluation API — CLAUDE.md §20, §30.
+﻿"""
+Evaluation API - CLAUDE.md §20, §30.
 
 POST /evaluation/run   → trigger evaluation run (sync for MVP)
 GET  /evaluation/{run_id} → retrieve results
@@ -118,7 +118,7 @@ def get_evaluation_run(
     GET /evaluation/run/{run_id}
 
     Retrieve a completed evaluation run from persistence.
-    Results originate from stored evaluation data — no hardcoded metrics.
+    Results originate from stored evaluation data - no hardcoded metrics.
     """
     run_data = get_run_from_db(run_id=run_id, db=db)
     if run_data is None:

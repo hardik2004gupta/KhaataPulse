@@ -1,5 +1,5 @@
-"""
-LangGraph recovery reasoning graph — CLAUDE.md §9.
+﻿"""
+LangGraph recovery reasoning graph - CLAUDE.md §9.
 
 Full node order (all 9 required by the engineering contract):
   START → classify_context → generate_diagnosis → generate_action_proposal →
@@ -57,7 +57,7 @@ def build_recovery_graph(
     builder.add_node("generate_diagnosis", make_generate_diagnosis(reasoning_model))
     builder.add_node("generate_action_proposal", generate_action_proposal)
     builder.add_node("validate_proposal", validate_proposal)
-    # Phase 3 nodes — fully implemented
+    # Phase 3 nodes - fully implemented
     builder.add_node("rank_actions", make_rank_actions())
     builder.add_node("policy_check", make_policy_check(db=db))
     builder.add_node("execute_action", make_execute_action(db=db))

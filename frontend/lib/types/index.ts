@@ -1,4 +1,4 @@
-// KhaataPulse — TypeScript type definitions
+﻿// KhaataPulse - TypeScript type definitions
 // Matches backend API contracts exactly. No business logic duplicated here.
 
 // ── Evaluation ─────────────────────────────────────────────────────────────

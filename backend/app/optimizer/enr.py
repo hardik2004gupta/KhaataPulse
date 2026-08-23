@@ -1,5 +1,5 @@
-"""
-Expected Net Revenue formula — CLAUDE.md §13.
+﻿"""
+Expected Net Revenue formula - CLAUDE.md §13.
 
     ENR = P(payment | action) × Amount
         - P(churn  | action) × LTV
@@ -10,7 +10,7 @@ The optimizer uses ESTIMATED probabilities derived from observable data
 The evaluation harness uses ground-truth probabilities to measure policy performance.
 This keeps the architectural boundary intact (CLAUDE.md §7).
 
-All monetary calculations use Decimal to preserve precision — CLAUDE.md §19.
+All monetary calculations use Decimal to preserve precision - CLAUDE.md §19.
 """
 from __future__ import annotations
 
@@ -93,7 +93,7 @@ def estimate_probabilities(cause: str, action_type: str) -> tuple[float, float]:
     Estimate P(payment|action) and P(churn|action) from diagnosis cause + action type.
 
     Returns:
-        (p_payment, p_churn) — both clamped to [0.04, 0.97] and [0.01, 0.95]
+        (p_payment, p_churn) - both clamped to [0.04, 0.97] and [0.01, 0.95]
     """
     base_pay = _BASE_P_PAYMENT.get(cause, 0.40)
     mults = _PAYMENT_MULTIPLIERS.get(cause, {})

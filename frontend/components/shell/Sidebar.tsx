@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { useEffect } from "react";
@@ -7,7 +7,7 @@ import { usePathname } from "next/navigation";
 interface NavItem {
   href: string;
   label: string;
-  /** Accent used for the active indicator — communicates the surface's domain. */
+  /** Accent used for the active indicator - communicates the surface's domain. */
   tone: "recovery" | "warning" | "ai" | "neutral";
 }
 
@@ -134,7 +134,7 @@ export function Sidebar({ open, onClose }: SidebarProps) {
         />
       )}
       {/* `invisible` while closed keeps the off-screen links out of the tab
-         order — an aria-hidden container must never hold focusable children. */}
+         order - an aria-hidden container must never hold focusable children. */}
       <aside
         className={`fixed left-0 top-12 z-drawer flex h-[calc(100vh-3rem)] w-[220px] flex-col justify-between border-r border-border bg-bg-secondary transition-transform duration-base ease-out lg:hidden ${
           open ? "visible translate-x-0" : "invisible -translate-x-full"

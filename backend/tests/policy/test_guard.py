@@ -1,5 +1,5 @@
-"""
-Policy Guard tests — CLAUDE.md §32.
+﻿"""
+Policy Guard tests - CLAUDE.md §32.
 
 Verifies every rule independently:
   - kill_switch

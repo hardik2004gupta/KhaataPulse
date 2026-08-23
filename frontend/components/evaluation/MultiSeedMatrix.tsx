@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { useState } from "react";
 import { evaluationApi } from "@/lib/api/evaluation";
 import type { MultiSeedResponse, EvaluationRunResult, LoadingState } from "@/lib/types";
@@ -49,7 +49,7 @@ export function MultiSeedMatrix() {
         <div>
           <Eyebrow>Multi-Seed Validation</Eyebrow>
           <p className="mt-1 max-w-prose text-xs text-text-faint">
-            Seeds <span className="mono tabular">{REQUIRED_SEEDS.join(", ")}</span> — validates
+            Seeds <span className="mono tabular">{REQUIRED_SEEDS.join(", ")}</span> - validates
             result stability across independent random worlds.
           </p>
         </div>

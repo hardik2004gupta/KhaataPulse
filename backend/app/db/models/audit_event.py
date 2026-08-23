@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, JSON
+﻿from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, JSON
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
@@ -7,7 +7,7 @@ from app.db.base import Base
 
 class AuditEvent(Base):
     """
-    Immutable audit trail — CLAUDE.md §16.
+    Immutable audit trail - CLAUDE.md §16.
 
     Every meaningful decision produces one record. Append-only: rows are never
     updated or deleted. The payload preserves the structured information required

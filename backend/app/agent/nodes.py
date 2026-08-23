@@ -1,5 +1,5 @@
-"""
-LangGraph node functions — CLAUDE.md §9, §25.
+﻿"""
+LangGraph node functions - CLAUDE.md §9, §25.
 
 Node ordering (from CLAUDE.md §9):
   classify_context → generate_diagnosis → generate_action_proposal →
@@ -180,7 +180,7 @@ def make_rank_actions():
 
     def rank_actions(state: RecoveryReasoningState) -> dict:
         """
-        Economic Optimizer — CLAUDE.md §13.
+        Economic Optimizer - CLAUDE.md §13.
 
         Ranks eligible actions by Expected Net Revenue using observable inputs only.
         The optimizer uses estimated probabilities (not simulator truth).
@@ -236,7 +236,7 @@ def make_policy_check(db: Optional[Session] = None):
 
     def policy_check(state: RecoveryReasoningState) -> dict:
         """
-        Policy Guard — CLAUDE.md §14.
+        Policy Guard - CLAUDE.md §14.
 
         Pure deterministic. All rules checked. Returns APPROVED / BLOCKED / ESCALATED.
         No code path may skip this node.
@@ -284,7 +284,7 @@ def make_execute_action(db: Optional[Session] = None):
 
     def execute_action(state: RecoveryReasoningState) -> dict:
         """
-        Action Service — CLAUDE.md §15.
+        Action Service - CLAUDE.md §15.
 
         Executes the approved idempotent action. Creates recovery case + action record.
         """
@@ -364,7 +364,7 @@ def make_record_outcome(db: Optional[Session] = None):
 
     def record_outcome(state: RecoveryReasoningState) -> dict:
         """
-        Outcome Engine — records result, emits audit events, closes case.
+        Outcome Engine - records result, emits audit events, closes case.
         """
         from app.audit.service import log_audit_event
         from datetime import datetime, timezone

@@ -1,10 +1,10 @@
-"""
-World boundary — separates simulator internals from observable data.
+﻿"""
+World boundary - separates simulator internals from observable data.
 
-WorldInternal    — full world including hidden state and potential outcomes.
+WorldInternal    - full world including hidden state and potential outcomes.
                    Lives entirely inside the simulator module.
 
-ObservableWorld  — contains only what downstream systems may see.
+ObservableWorld  - contains only what downstream systems may see.
                    This is the ONLY representation that crosses the simulator boundary.
 
 CLAUDE.md §6: "observable events only" is the data that crosses from
@@ -125,7 +125,7 @@ class ObservableCustomerData:
 
 @dataclass
 class ObservableWorld:
-    """Observable slice of the world — safe for agent consumption."""
+    """Observable slice of the world - safe for agent consumption."""
     customers: list[ObservableCustomerData]
 
 

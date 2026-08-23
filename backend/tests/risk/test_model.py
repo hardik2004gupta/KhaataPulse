@@ -1,5 +1,5 @@
-"""
-Risk model tests — CLAUDE.md §32.
+﻿"""
+Risk model tests - CLAUDE.md §32.
 
 Verifies:
   - Model trains on observable data only

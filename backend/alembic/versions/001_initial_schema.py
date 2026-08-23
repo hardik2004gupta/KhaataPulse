@@ -1,4 +1,4 @@
-"""Initial schema — Phase 1: customers, subscriptions, payments, events, sim_runs, sim_outcomes
+﻿"""Initial schema - Phase 1: customers, subscriptions, payments, events, sim_runs, sim_outcomes
 
 Revision ID: 001
 Revises:
@@ -131,7 +131,7 @@ def upgrade() -> None:
         sa.Column("completed_at", sa.DateTime(timezone=True), nullable=True),
     )
 
-    # ── sim_outcomes (HIDDEN — simulator-internal) ─────────────────────────────
+    # ── sim_outcomes (HIDDEN - simulator-internal) ─────────────────────────────
     op.create_table(
         "sim_outcomes",
         sa.Column("id", sa.Integer, primary_key=True, autoincrement=True),

@@ -1,8 +1,8 @@
-"""
-Risk API — CLAUDE.md §30, §8.
+﻿"""
+Risk API - CLAUDE.md §30, §8.
 
-POST /risk/predict   — score one customer (risk sieve only)
-POST /risk/reason    — risk sieve + LangGraph reasoning (at-risk cases only)
+POST /risk/predict   - score one customer (risk sieve only)
+POST /risk/reason    - risk sieve + LangGraph reasoning (at-risk cases only)
 
 Observable data only is returned. Hidden simulator state never crosses the API.
 """
@@ -195,7 +195,7 @@ def reason(req: PredictRequest, db: Session = Depends(get_db)) -> ReasonResponse
     if assessment.routing != RoutingDecision.LANGGRAPH:
         return base
 
-    # Build observable state — no hidden fields
+    # Build observable state - no hidden fields
     support_lines = [
         e.payload.get("message", "")
         for e in obs.events

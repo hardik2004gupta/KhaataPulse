@@ -1,4 +1,4 @@
-"""
+﻿"""
 API schemas for the simulator endpoint.
 
 These schemas contain ONLY observable information.
@@ -21,7 +21,7 @@ class SimulationGenerateResponse(BaseModel):
     """
     Response from POST /simulation/generate.
 
-    Contains only run metadata — no customer data, no hidden outcomes.
+    Contains only run metadata - no customer data, no hidden outcomes.
     Customer data is available via future observable-customer API endpoints.
     """
     simulation_run_id: int

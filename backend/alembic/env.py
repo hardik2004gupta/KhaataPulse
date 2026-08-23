@@ -1,4 +1,4 @@
-import os
+﻿import os
 from logging.config import fileConfig
 
 from sqlalchemy import engine_from_config, pool
@@ -6,7 +6,7 @@ from alembic import context
 
 # Import all models so Alembic autogenerate can detect them
 from app.db.base import Base
-import app.db.models  # noqa: F401 — registers all models with Base
+import app.db.models  # noqa: F401 - registers all models with Base
 
 config = context.config
 

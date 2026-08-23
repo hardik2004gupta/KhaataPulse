@@ -1,5 +1,5 @@
-"""
-LangGraph agent tests — CLAUDE.md §32.
+﻿"""
+LangGraph agent tests - CLAUDE.md §32.
 
 Verifies:
   - All 9 nodes execute in correct order
@@ -376,7 +376,7 @@ class TestAgentIsolation:
             assert key not in hints, f"Hidden key '{key}' found in RecoveryReasoningState TypedDict"
 
     def test_make_initial_state_rejects_extra_hidden_kwargs(self):
-        """make_initial_state should not accept latent_state — verify via signature."""
+        """make_initial_state should not accept latent_state - verify via signature."""
         import inspect
         sig = inspect.signature(make_initial_state)
         assert "latent_state" not in sig.parameters

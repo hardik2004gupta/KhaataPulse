@@ -1,10 +1,10 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import { HeroVisualization } from "./HeroVisualization";
 
 export function HeroSection() {
   return (
     <section className="relative mx-auto flex min-h-[calc(100vh-4rem)] max-w-shell flex-col justify-center px-5 py-20 sm:px-8 lg:py-24">
-      {/* The pipeline diagram is 680 units wide — it only sits beside the
+      {/* The pipeline diagram is 680 units wide - it only sits beside the
           headline once the column can render its labels legibly (xl+). */}
       <div className="grid items-center gap-14 xl:grid-cols-12 xl:gap-12">
         {/* ── Statement ──────────────────────────────────────────────────── */}
@@ -24,7 +24,7 @@ export function HeroSection() {
           <p className="mt-7 max-w-prose text-[15px] leading-relaxed text-text-secondary">
             KhaataPulse detects payment friction before failure, diagnoses the root cause,
             determines the economically optimal intervention, enforces deterministic policy
-            controls, and measures recovery performance — end to end.
+            controls, and measures recovery performance - end to end.
           </p>
 
           <div className="mt-10 flex flex-wrap items-center gap-3">

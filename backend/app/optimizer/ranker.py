@@ -1,5 +1,5 @@
-"""
-Deterministic action ranker — CLAUDE.md §13.
+﻿"""
+Deterministic action ranker - CLAUDE.md §13.
 
 Given the LLM diagnosis cause, subscription amount, and customer LTV,
 ranks all eligible actions by Expected Net Revenue.

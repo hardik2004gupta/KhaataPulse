@@ -1,24 +1,24 @@
-# KhaataPulse — Engineering Contract
+﻿# KhaataPulse - Engineering Contract
 
 ## Authority Hierarchy
 
 ```
-KhaataPulse — Architectural MVP Engineering Contract.pdf   ← original specification
+KhaataPulse - Architectural MVP Engineering Contract.pdf   ← original specification
                           ↓
                       CLAUDE.md                            ← executable engineering contract
                           ↓
                   Implementation / Code
 ```
 
-`KhaataPulse — Architectural MVP Engineering Contract.pdf` is the authoritative product and architecture specification.  
+`KhaataPulse - Architectural MVP Engineering Contract.pdf` is the authoritative product and architecture specification.  
 `CLAUDE.md` translates that specification into enforceable engineering rules.  
-All future implementation must comply with both. When the PDF specifies a requirement explicitly, follow it — do not substitute with assumptions, convenience, or familiar patterns.
+All future implementation must comply with both. When the PDF specifies a requirement explicitly, follow it - do not substitute with assumptions, convenience, or familiar patterns.
 
 ---
 
 ## 1. Project Identity
 
-- **Product:** KhaataPulse — AI Revenue Recovery Policy Engine
+- **Product:** KhaataPulse - AI Revenue Recovery Policy Engine
 - **Primary Scenario:** Subscription renewal payment risk
 - **Version:** MVP 1.0 (Frozen specification)
 - **Central engineering claim:** KhaataPulse can identify payment friction before failure and evaluate whether its recovery policy produces better expected revenue outcomes than existing dunning policies, without exceeding predefined customer-contact and escalation boundaries.
@@ -139,9 +139,9 @@ Baselines → outcomes → incremental recovery
 
 The simulator represents the customer environment. It contains:
 
-- **Hidden state** — `CustomerLatentState(payment_intent, cash_flow_health, payment_rail_health, churn_sensitivity, customer_ltv)` — the agent must **never** receive this object.
-- **Observable events** — generated from latent state: `invoice_viewed`, `checkout_reopened`, `payment_method_changed`, `payment_failed`, `subscription_changed`, `support_message`, `payment_delayed`, `renewal_approaching`. These are the **only** data the agent may receive from the simulator.
-- **Potential outcomes** — for each customer and action: `P(payment | action)` and `P(churn | action)`. These are generated independently of the agent. The agent does not see them. Only the evaluation harness uses them to calculate policy performance.
+- **Hidden state** - `CustomerLatentState(payment_intent, cash_flow_health, payment_rail_health, churn_sensitivity, customer_ltv)` - the agent must **never** receive this object.
+- **Observable events** - generated from latent state: `invoice_viewed`, `checkout_reopened`, `payment_method_changed`, `payment_failed`, `subscription_changed`, `support_message`, `payment_delayed`, `renewal_approaching`. These are the **only** data the agent may receive from the simulator.
+- **Potential outcomes** - for each customer and action: `P(payment | action)` and `P(churn | action)`. These are generated independently of the agent. The agent does not see them. Only the evaluation harness uses them to calculate policy performance.
 
 Simulator violations are critical defects. Any code path that exposes hidden state or potential outcomes to the agent is forbidden.
 
@@ -311,11 +311,11 @@ policy_check(action, customer, case) -> PolicyDecision
 ```
 
 It must be:
-- **Deterministic** — same inputs always produce same output
-- **Pure** — no side effects
-- **Independently unit-testable** — tested in complete isolation
-- **Configuration-driven** — all thresholds come from environment config
-- **Non-bypassable** — no code path may skip the Policy Guard
+- **Deterministic** - same inputs always produce same output
+- **Pure** - no side effects
+- **Independently unit-testable** - tested in complete isolation
+- **Configuration-driven** - all thresholds come from environment config
+- **Non-bypassable** - no code path may skip the Policy Guard
 
 Policy rules (all configuration-driven via environment variables):
 
@@ -370,7 +370,7 @@ Required audit event types: `risk_detected`, `diagnosis_generated`, `action_prop
 
 This is one of the most important rules in the entire project.
 
-**CORRECT — same world, different policies:**
+**CORRECT - same world, different policies:**
 ```python
 world = generate_world(seed)
 static_result  = evaluate(world, static_dunning)
@@ -378,7 +378,7 @@ smart_result   = evaluate(world, smart_retry)
 kp_result      = evaluate(world, khaatapulse)
 ```
 
-**FORBIDDEN — separate worlds per policy:**
+**FORBIDDEN - separate worlds per policy:**
 ```python
 evaluate(generate_world(), static_dunning)   # WRONG
 evaluate(generate_world(), smart_retry)       # WRONG
@@ -394,7 +394,7 @@ contacts_sent, contacts_avoided, human_escalations,
 false_positives, policy_blocks
 ```
 
-**Multi-seed validation** — minimum required seeds: `42`, `123`, `456`. Recommended additional: `789`, `1337`.
+**Multi-seed validation** - minimum required seeds: `42`, `123`, `456`. Recommended additional: `789`, `1337`.
 
 Every evaluation run stores: `run_id`, `seed`, `cohort_size`, `timestamp`, `model_version`, `policy_version`, `simulator_version`, `metrics`.
 
@@ -439,18 +439,18 @@ The number must be generated dynamically. No target recovery amount may be hardc
 Minimum PostgreSQL entities:
 
 ```
-customers        — id, name, segment, ltv, subscription_id, created_at
-subscriptions    — id, customer_id, plan, amount, currency, renewal_at, status
-payments         — id, customer_id, subscription_id, amount, status, failure_code, payment_method, created_at
-events           — observable customer events (type, customer_id, payload, timestamp)
-recovery_cases   — id, customer_id, risk_score, risk_level, diagnosis, diagnosis_confidence,
+customers        - id, name, segment, ltv, subscription_id, created_at
+subscriptions    - id, customer_id, plan, amount, currency, renewal_at, status
+payments         - id, customer_id, subscription_id, amount, status, failure_code, payment_method, created_at
+events           - observable customer events (type, customer_id, payload, timestamp)
+recovery_cases   - id, customer_id, risk_score, risk_level, diagnosis, diagnosis_confidence,
                    proposed_action, selected_action, policy_status, outcome_status, created_at, closed_at
-actions          — id, case_id, customer_id, action_type, amount, currency,
+actions          - id, case_id, customer_id, action_type, amount, currency,
                    idempotency_key, timestamp, policy_result
-audit_events     — id, case_id, event_type, actor, payload, timestamp, idempotency_key
-evaluation_runs  — id, seed, cohort_size, simulator_version, model_version, policy_version,
+audit_events     - id, case_id, event_type, actor, payload, timestamp, idempotency_key
+evaluation_runs  - id, seed, cohort_size, simulator_version, model_version, policy_version,
                    status, started_at, completed_at
-evaluation_results — evaluation metrics per policy per run
+evaluation_results - evaluation metrics per policy per run
 ```
 
 Do not introduce unnecessary databases or infrastructure.
@@ -460,10 +460,10 @@ Do not introduce unnecessary databases or infrastructure.
 ## 20. API Design Principles
 
 - RESTful FastAPI endpoints
-- All policy thresholds from environment config — never scattered as magic constants
+- All policy thresholds from environment config - never scattered as magic constants
 - Evaluation endpoint is asynchronous (`POST /evaluation/run` → poll `GET /evaluation/run/{id}`)
 - Structured error responses
-- API keys server-side only — never exposed to the frontend
+- API keys server-side only - never exposed to the frontend
 
 ---
 
@@ -521,7 +521,7 @@ Use structured logging. Basic structured logging is sufficient for MVP. Do not b
 
 ## 25. Environment Configuration
 
-All policy thresholds must come from environment variables — never scattered through code:
+All policy thresholds must come from environment variables - never scattered through code:
 
 ```
 DATABASE_URL=
@@ -611,7 +611,7 @@ The frontend should make the architecture visible. KhaataPulse should visually c
 - Tablet: sidebar collapsible, comparison matrix horizontally scrollable, audit drawer full-width
 - Mobile: dashboard stacked, metrics 2-column grid, risk queue as cards, Time Machine vertical timeline
 
-**Design tokens — centralize all:**
+**Design tokens - centralize all:**
 ```
 colors, spacing, radii, typography, shadows, motion, z-index
 ```
@@ -634,16 +634,16 @@ StatusBadge, LiveEventStream, SimulationButton
 Do not create one-off implementations when a reusable domain component is appropriate.
 
 **Key screens:**
-- **Hero Dashboard** — `₹14.8L Revenue Exposure`, `₹X Recovered`, `+₹Y Incremental Recovery`, `-Z% Customer Contacts`. Incremental recovery number must visually dominate.
-- **Policy Comparison Matrix** — Static vs Smart vs KhaataPulse. Emphasize the delta, not just the totals.
-- **Revenue Time Machine** — cinematic customer state timeline; clicking events expands contextual information.
-- **AI Diagnosis Panel** — cause, confidence bar, rationale, top signals.
-- **Intervention Optimizer** — action ranked by Expected Net Revenue, showing selected action and rationale.
-- **Policy Guard visualization** — feels like a security checkpoint showing sequential checks.
-- **Audit Drawer** — enterprise event stream with expandable events and gateway payload viewer.
-- **Live Webhook interaction** — `[SIMULATE PAYMENT WEBHOOK]` button triggers real-time animation of the full pipeline.
+- **Hero Dashboard** - `₹14.8L Revenue Exposure`, `₹X Recovered`, `+₹Y Incremental Recovery`, `-Z% Customer Contacts`. Incremental recovery number must visually dominate.
+- **Policy Comparison Matrix** - Static vs Smart vs KhaataPulse. Emphasize the delta, not just the totals.
+- **Revenue Time Machine** - cinematic customer state timeline; clicking events expands contextual information.
+- **AI Diagnosis Panel** - cause, confidence bar, rationale, top signals.
+- **Intervention Optimizer** - action ranked by Expected Net Revenue, showing selected action and rationale.
+- **Policy Guard visualization** - feels like a security checkpoint showing sequential checks.
+- **Audit Drawer** - enterprise event stream with expandable events and gateway payload viewer.
+- **Live Webhook interaction** - `[SIMULATE PAYMENT WEBHOOK]` button triggers real-time animation of the full pipeline.
 
-**Motion design** — motion communicates system state, not decoration:
+**Motion design** - motion communicates system state, not decoration:
 - Risk detected: subtle amber pulse around affected account
 - AI reasoning: small animated signal lines through diagnosis panel
 - Policy check: sequential check indicators
@@ -677,7 +677,7 @@ Critical business boundaries must have tests. At minimum:
 - LLM fallback (all six failure types)
 - Expected Net Revenue calculation
 - Action ranking by ENR
-- Policy Guard — all rules (cooldown, contact limit, consent, amount threshold, dispute hold, legal hold, opt-out, kill switch, idempotency)
+- Policy Guard - all rules (cooldown, contact limit, consent, amount threshold, dispute hold, legal hold, opt-out, kill switch, idempotency)
 - Blocked actions
 - Escalated actions
 - Same-cohort evaluation integrity
@@ -714,29 +714,29 @@ Do not add infrastructure simply because it is familiar or fashionable.
 
 ## 34. Implementation Rules for Claude Code
 
-**Rule 1 — Read CLAUDE.md first.** Before modifying code, understand the engineering contract.
+**Rule 1 - Read CLAUDE.md first.** Before modifying code, understand the engineering contract.
 
-**Rule 2 — Inspect existing code.** Never overwrite working code blindly.
+**Rule 2 - Inspect existing code.** Never overwrite working code blindly.
 
-**Rule 3 — Preserve architecture.** Do not redesign the system during implementation unless explicitly instructed.
+**Rule 3 - Preserve architecture.** Do not redesign the system during implementation unless explicitly instructed.
 
-**Rule 4 — Work incrementally.** Implement one coherent subsystem at a time.
+**Rule 4 - Work incrementally.** Implement one coherent subsystem at a time.
 
-**Rule 5 — Test after implementation.** Run relevant tests before declaring a phase complete.
+**Rule 5 - Test after implementation.** Run relevant tests before declaring a phase complete.
 
-**Rule 6 — Never fake functionality.** Do not replace backend logic with frontend mock data merely to make the UI look complete.
+**Rule 6 - Never fake functionality.** Do not replace backend logic with frontend mock data merely to make the UI look complete.
 
-**Rule 7 — Never hardcode business metrics.** Evaluation metrics must originate from the evaluation engine. No target amounts, recovery rates, or lift values may be hardcoded.
+**Rule 7 - Never hardcode business metrics.** Evaluation metrics must originate from the evaluation engine. No target amounts, recovery rates, or lift values may be hardcoded.
 
-**Rule 8 — Never bypass Policy Guard.** No code path may directly execute an LLM-proposed action without passing through the Policy Guard.
+**Rule 8 - Never bypass Policy Guard.** No code path may directly execute an LLM-proposed action without passing through the Policy Guard.
 
-**Rule 9 — Never expose simulator secrets.** Hidden state (`CustomerLatentState`) and potential outcomes (`P(payment|action)`, `P(churn|action)`) must remain strictly inside the simulator. They must never appear in any interface visible to the agent.
+**Rule 9 - Never expose simulator secrets.** Hidden state (`CustomerLatentState`) and potential outcomes (`P(payment|action)`, `P(churn|action)`) must remain strictly inside the simulator. They must never appear in any interface visible to the agent.
 
-**Rule 10 — Do not expand MVP scope.** If a feature is not required by the architectural contract, do not introduce it.
+**Rule 10 - Do not expand MVP scope.** If a feature is not required by the architectural contract, do not introduce it.
 
-**Rule 11 — Configuration-driven policy constants.** All policy thresholds (contact limits, cooldown hours, amount thresholds) must come from environment configuration, not hardcoded in application logic.
+**Rule 11 - Configuration-driven policy constants.** All policy thresholds (contact limits, cooldown hours, amount thresholds) must come from environment configuration, not hardcoded in application logic.
 
-**Rule 12 — Optimize for correctness, explainability, bounded execution, evaluation integrity, demo reliability, and visual quality.** Do not optimize for maximum number of agents, maximum LLM usage, maximum dashboard complexity, maximum model complexity, or maximum number of integrations.
+**Rule 12 - Optimize for correctness, explainability, bounded execution, evaluation integrity, demo reliability, and visual quality.** Do not optimize for maximum number of agents, maximum LLM usage, maximum dashboard complexity, maximum model complexity, or maximum number of integrations.
 
 ---
 
@@ -782,13 +782,13 @@ The MVP is complete only when all of the following are true:
 The project is implemented through controlled Claude Code phases. Do not prematurely implement later phases.
 
 ```
-Phase 0  — Engineering Contract + Repository Foundation       ← CURRENT
-Phase 1  — Simulator + Database Foundation
-Phase 2  — Risk Sieve + LangGraph + LLM
-Phase 3  — Economic Optimizer + Policy Guard + Actions + Audit
-Phase 4  — Evaluation Engine + Multi-Seed Validation
-Phase 5  — Frontend Command Center
-Phase 6  — Integration + Demo Mode + Final Polish
+Phase 0  - Engineering Contract + Repository Foundation       ← CURRENT
+Phase 1  - Simulator + Database Foundation
+Phase 2  - Risk Sieve + LangGraph + LLM
+Phase 3  - Economic Optimizer + Policy Guard + Actions + Audit
+Phase 4  - Evaluation Engine + Multi-Seed Validation
+Phase 5  - Frontend Command Center
+Phase 6  - Integration + Demo Mode + Final Polish
 ```
 
 Each phase has intentional boundaries. When starting a phase, read this contract first, inspect existing code second, then implement the phase scope only.
@@ -821,7 +821,7 @@ Completed:
       backend/app/main.py                    FastAPI app
       backend/alembic/                       Alembic migrations (001_initial_schema,
                                              002_phase3_recovery_audit)
-      backend/tests/                         63 tests — 63 passed (0 failures)
+      backend/tests/                         63 tests - 63 passed (0 failures)
         tests/simulator/test_simulator.py    Determinism, cohort size, isolation, events
         tests/db/test_models.py              ORM, referential integrity, constraints
       backend/pytest.ini                     Test configuration
@@ -839,7 +839,7 @@ Completed:
                                           AnthropicReasoningModel, ReasoningContext
       backend/app/agent/fallback.py       smart_retry_proposal (deterministic LLM fallback)
       backend/app/api/routes/risk.py      POST /risk/predict, POST /risk/reason
-      backend/tests/                      155 tests — 155 passed (0 failures)
+      backend/tests/                      155 tests - 155 passed (0 failures)
         tests/risk/test_features.py       Feature engineering, isolation, array contract
         tests/risk/test_model.py          Model training, reproducibility, routing, explainability
         tests/agent/test_graph.py         Node ordering, structured output, validation,
@@ -848,34 +848,34 @@ Completed:
       backend/app/optimizer/eligibility.py  cause → eligible action types mapping
       backend/app/optimizer/enr.py          ENR formula, estimated probability tables,
                                             ActionRanking frozen dataclass
-      backend/app/optimizer/ranker.py       rank_eligible_actions() — deterministic by ENR
-      backend/app/policy/guard.py           PolicyGuard — pure deterministic, all rules:
+      backend/app/optimizer/ranker.py       rank_eligible_actions() - deterministic by ENR
+      backend/app/policy/guard.py           PolicyGuard - pure deterministic, all rules:
                                             kill_switch, dispute_hold, legal_hold, opt_out,
                                             idempotency, contact_limit (3/7d), cooldown (24h),
                                             amount_threshold (≥₹10k → ESCALATED)
                                             PolicyDecision(APPROVED|BLOCKED|ESCALATED, checks)
-      backend/app/actions/service.py        ActionService — typed, idempotent simulated gateway
+      backend/app/actions/service.py        ActionService - typed, idempotent simulated gateway
                                             ActionRequest, ActionResult, duplicate rejection
-      backend/app/audit/service.py          AuditService — append-only log_audit_event()
+      backend/app/audit/service.py          AuditService - append-only log_audit_event()
                                             All 8 required event types supported
-      backend/app/agent/state.py            RecoveryReasoningState — added Phase 3 fields:
+      backend/app/agent/state.py            RecoveryReasoningState - added Phase 3 fields:
                                             ltv, dispute_hold, legal_hold, opt_out,
                                             eligible_actions, action_rankings, selected_action,
                                             policy_decision, execution_result, recorded_outcome,
                                             case_id
       backend/app/agent/nodes.py            All 9 nodes fully implemented:
-                                            make_rank_actions() — economic optimizer
-                                            make_policy_check(db) — policy guard
-                                            make_execute_action(db) — action service
-                                            make_record_outcome(db) — audit + case closure
+                                            make_rank_actions() - economic optimizer
+                                            make_policy_check(db) - policy guard
+                                            make_execute_action(db) - action service
+                                            make_record_outcome(db) - audit + case closure
       backend/app/agent/graph.py            build_recovery_graph(reasoning_model, db)
-                                            make_initial_state() — includes Phase 3 fields
+                                            make_initial_state() - includes Phase 3 fields
       backend/app/core/config.py            Added action costs (config-driven):
                                             action_cost_silent_retry/smart_link/grace_period/
                                             human_escalation
       backend/alembic/versions/002_...      Migration: recovery_cases, actions, audit_events,
                                             + customer hold flags (dispute_hold, legal_hold, opt_out)
-      backend/tests/                        212 tests — 212 passed (0 failures)
+      backend/tests/                        212 tests - 212 passed (0 failures)
         tests/optimizer/test_enr.py         ENR formula, probability estimation, eligibility,
                                             ranking determinism, action cost effects
         tests/policy/test_guard.py          All Policy Guard rules independently tested:
@@ -888,15 +888,15 @@ Completed:
       backend/app/db/models/evaluation.py   EvaluationRun + EvaluationResult ORM models
       backend/app/evaluation/__init__.py    Package init
       backend/app/evaluation/metrics.py     PolicyEvaluationResult, EvaluationRunResult
-                                            dataclasses — all fields dynamic (no hardcoded values)
+                                            dataclasses - all fields dynamic (no hardcoded values)
       backend/app/evaluation/policies.py    RecoveryPolicy ABC + three implementations:
-                                            StaticDunningPolicy — failure count → action
-                                            SmartRetryPolicy   — failure code → action
-                                            KhaataPulsePolicy  — Risk Sieve → Stub LLM →
+                                            StaticDunningPolicy - failure count → action
+                                            SmartRetryPolicy   - failure code → action
+                                            KhaataPulsePolicy  - Risk Sieve → Stub LLM →
                                               Optimizer → Policy Guard (no-db mode)
       backend/app/evaluation/evaluator.py   EvaluationWorld (isolates PotentialOutcomes),
                                             evaluate_policy_on_world(),
-                                            run_same_cohort_evaluation() — world generated
+                                            run_same_cohort_evaluation() - world generated
                                             ONCE, all three policies see same world, same
                                             potential outcomes (CLAUDE.md §17 invariant)
       backend/app/evaluation/runner.py      run_evaluation(), run_multi_seed_evaluation(),
@@ -909,7 +909,7 @@ Completed:
       backend/app/main.py                   Evaluation router registered
       backend/app/db/models/__init__.py     EvaluationRun, EvaluationResult exported
       backend/alembic/versions/003_...      Migration: evaluation_runs, evaluation_results
-      backend/tests/                        267 tests — 267 passed, 6 skipped (0 failures)
+      backend/tests/                        267 tests - 267 passed, 6 skipped (0 failures)
         tests/evaluation/test_evaluator.py  Same-cohort invariant, EvaluationWorld isolation,
                                             false positives, incremental recovery, reproducibility,
                                             recovery rate bounds
@@ -925,16 +925,16 @@ Completed:
       frontend/tailwind.config.ts           All CLAUDE.md §29 design tokens
       frontend/app/globals.css              CSS custom properties, animation keyframes
       frontend/app/layout.tsx              Root layout, Google Fonts (Inter + JetBrains Mono)
-      frontend/app/page.tsx                Command Center — HeroKPI, PolicyMatrix,
+      frontend/app/page.tsx                Command Center - HeroKPI, PolicyMatrix,
                                             RevenueDelta, HeroCasePanel, LiveEventStream
-      frontend/app/evaluation/page.tsx      Evaluation page — EvaluationRunner, EvaluationResults,
+      frontend/app/evaluation/page.tsx      Evaluation page - EvaluationRunner, EvaluationResults,
                                             MultiSeedMatrix
-      frontend/app/cases/page.tsx           Risk Queue — RiskQueue + CaseDetailDrawer
+      frontend/app/cases/page.tsx           Risk Queue - RiskQueue + CaseDetailDrawer
       frontend/lib/types/index.ts           Full TypeScript types matching backend schemas
       frontend/lib/api/client.ts            ApiError, api.get(), api.post() via /api/* proxy
-      frontend/lib/api/evaluation.ts        evaluationApi — runEvaluation, runMultiSeed, getRun
-      frontend/lib/api/demo.ts              demoApi — getHeroCase, runSimulation
-      frontend/lib/api/cases.ts             casesApi — listCases, getCase
+      frontend/lib/api/evaluation.ts        evaluationApi - runEvaluation, runMultiSeed, getRun
+      frontend/lib/api/demo.ts              demoApi - getHeroCase, runSimulation
+      frontend/lib/api/cases.ts             casesApi - listCases, getCase
       frontend/lib/utils/format.ts          formatINR (L/Cr), formatPct, formatPP, formatCause,
                                             formatAction, formatDateTime
       frontend/components/ui/              MetricCard, PolicyBadge, RiskIndicator, StatusBadge,
@@ -957,7 +957,7 @@ Status:         Complete
 
   - Phase 6: Integration + Demo Mode + Final Polish
       backend/tests/integration/               Phase 6 end-to-end integration tests
-        test_e2e_pipeline.py                   18 tests — 18 passed (0 failures)
+        test_e2e_pipeline.py                   18 tests - 18 passed (0 failures)
           TestGoldenPath (4 tests)             Full 9-node pipeline: all outputs verified,
                                                no hidden state in agent state,
                                                optimizer descending ENR order,

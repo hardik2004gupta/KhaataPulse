@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { demoApi } from "@/lib/api/demo";
@@ -41,7 +41,7 @@ export default function TimeMachinePage() {
             Revenue Time Machine
           </h1>
           <p className="mt-1.5 max-w-prose text-[13px] text-text-secondary">
-            Cinematic reconstruction of one account — the observable signals the agent saw, and
+            Cinematic reconstruction of one account - the observable signals the agent saw, and
             every decision it derived from them.
           </p>
         </header>

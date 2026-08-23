@@ -1,9 +1,9 @@
-// Financial formatting utilities — INR-aware
+﻿// Financial formatting utilities - INR-aware
 
 /** Format a Decimal string (from backend) as ₹ with lakh/crore suffix */
 export function formatINR(value: string | number): string {
   const n = typeof value === "string" ? parseFloat(value) : value;
-  if (isNaN(n)) return "—";
+  if (isNaN(n)) return "-";
 
   const abs = Math.abs(n);
   const sign = n < 0 ? "-" : "";
@@ -120,7 +120,7 @@ export function formatTime(iso: string): string {
 
 /** Format ISO timestamp to readable date+time */
 export function formatDateTime(iso: string | null): string {
-  if (!iso) return "—";
+  if (!iso) return "-";
   try {
     return new Date(iso).toLocaleString("en-IN", {
       day: "2-digit",

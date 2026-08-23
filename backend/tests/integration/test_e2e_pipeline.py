@@ -1,5 +1,5 @@
-"""
-Phase 6 — End-to-End Integration Tests.
+﻿"""
+Phase 6 - End-to-End Integration Tests.
 
 Covers the full decision pipeline:
   Customer → Observable Events → Risk → LangGraph (9 nodes) → Optimizer
@@ -9,7 +9,7 @@ Uses deterministic seed + StubReasoningModel. No real LLM.
 
 All graph invocations use db=None (no-db mode) to avoid FK constraints
 on the in-memory SQLite test DB. The full 9-node pipeline still executes
-and produces all required outputs — only DB persistence is bypassed.
+and produces all required outputs - only DB persistence is bypassed.
 
 The idempotency test calls execute_action directly with a DB session,
 pre-seeding the required FK parent records first.
@@ -119,7 +119,7 @@ def _run_graph(hero_obs, *, subscription_amount=4000.0, ltv=50000.0, kill_switch
         return graph.invoke(state)
 
 
-# ── §6: Golden path — full pipeline via LangGraph ─────────────────────────────
+# ── §6: Golden path - full pipeline via LangGraph ─────────────────────────────
 
 class TestGoldenPath:
     def test_full_pipeline_produces_all_outputs(self, hero_obs):
@@ -398,7 +398,7 @@ class TestAuditIntegrity:
         assert not missing, f"recorded_outcome missing fields: {missing}"
 
     def test_audit_service_is_append_only(self):
-        """The audit service module must only export log_audit_event — no update/delete."""
+        """The audit service module must only export log_audit_event - no update/delete."""
         import inspect
         from app.audit import service as audit_service
 

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useCallback, useState } from "react";
 import type { AnimationEvent, CSSProperties } from "react";
@@ -114,8 +114,8 @@ export function LiveEventStream() {
       setRunToken((t) => t + 1);
       /* Stage reveal is owned entirely by CSS (`.pipeline-step`, 400ms apart).
          Completion is signalled by the last card's animationend rather than a
-         timer chain, so a reduced-motion reader — whose animations collapse to
-         near-zero — reaches the finished state immediately. */
+         timer chain, so a reduced-motion reader - whose animations collapse to
+         near-zero - reaches the finished state immediately. */
       setState("streaming");
     } catch (e) {
       setError(e instanceof Error ? e.message : "Simulation failed");
@@ -137,7 +137,7 @@ export function LiveEventStream() {
         <div>
           <Eyebrow>Live Webhook Simulation</Eyebrow>
           <p className="mt-1.5 max-w-prose text-[13px] text-text-secondary">
-            Replays a payment failure through the full pipeline — risk sieve, diagnosis,
+            Replays a payment failure through the full pipeline - risk sieve, diagnosis,
             optimizer, policy guard, gateway.
           </p>
         </div>
@@ -220,7 +220,7 @@ export function LiveEventStream() {
               <StageRail steps={simulation.steps} />
             </div>
 
-            {/* Stages reveal in sequence — see `.pipeline-step` in globals.css */}
+            {/* Stages reveal in sequence - see `.pipeline-step` in globals.css */}
             <ol className="space-y-2" key={`steps-${runToken}`}>
               {simulation.steps.map((step, i) => (
                 <StepCard

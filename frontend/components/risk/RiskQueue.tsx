@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useCallback, useEffect, useState } from "react";
 import { casesApi } from "@/lib/api/cases";
@@ -29,7 +29,7 @@ const COLUMNS = ["Customer", "Risk", "Amount", "Diagnosis", "Action", "Policy", 
 
 /**
  * Colour tracks the score against the sieve's own thresholds, and the level is
- * always spelled out beside it — the strip colour never carries meaning alone.
+ * always spelled out beside it - the strip colour never carries meaning alone.
  */
 function RiskCell({ score, level }: { score: number; level: string }) {
   const pct = Math.round(score * 100);
@@ -144,7 +144,7 @@ export function RiskQueue({
                     tabIndex={0}
                     role="button"
                     aria-label={`Open case ${c.id}${
-                      c.customer_name ? ` — ${c.customer_name}` : ""
+                      c.customer_name ? ` - ${c.customer_name}` : ""
                     }`}
                     aria-pressed={selected}
                     onKeyDown={(e) => {
@@ -179,11 +179,11 @@ export function RiskQueue({
                     </td>
 
                     <td className="tabular px-4 text-right text-[13px] text-text-secondary">
-                      {c.subscription_amount ? formatINR(c.subscription_amount) : "—"}
+                      {c.subscription_amount ? formatINR(c.subscription_amount) : "-"}
                     </td>
 
                     <td className="px-4 text-[12px] text-text-secondary">
-                      {c.diagnosis ? formatCause(c.diagnosis) : "—"}
+                      {c.diagnosis ? formatCause(c.diagnosis) : "-"}
                     </td>
 
                     <td className="px-4 text-[12px] text-ai-text">
@@ -191,7 +191,7 @@ export function RiskQueue({
                         ? formatAction(c.selected_action)
                         : c.proposed_action
                           ? formatAction(c.proposed_action)
-                          : "—"}
+                          : "-"}
                     </td>
 
                     <td className="px-4">
@@ -200,7 +200,7 @@ export function RiskQueue({
                           status={c.policy_status as "APPROVED" | "BLOCKED" | "ESCALATED"}
                         />
                       ) : (
-                        <span className="text-xs text-text-faint">—</span>
+                        <span className="text-xs text-text-faint">-</span>
                       )}
                     </td>
 
@@ -221,7 +221,7 @@ export function RiskQueue({
                   type="button"
                   onClick={() => onSelect(c)}
                   aria-label={`Open case ${c.id}${
-                    c.customer_name ? ` — ${c.customer_name}` : ""
+                    c.customer_name ? ` - ${c.customer_name}` : ""
                   }`}
                   className="relative w-full px-4 py-3 text-left transition-colors duration-base hover:bg-surface-elevated/60"
                 >
@@ -234,7 +234,7 @@ export function RiskQueue({
                       {c.customer_name ?? `Case #${c.id}`}
                     </span>
                     <span className="tabular shrink-0 text-[13px] text-text-secondary">
-                      {c.subscription_amount ? formatINR(c.subscription_amount) : "—"}
+                      {c.subscription_amount ? formatINR(c.subscription_amount) : "-"}
                     </span>
                   </div>
                   <div className="mt-2 flex flex-wrap items-center gap-3">

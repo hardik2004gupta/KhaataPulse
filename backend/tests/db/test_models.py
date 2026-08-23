@@ -1,5 +1,5 @@
-"""
-ORM model tests — referential integrity, relationships, constraints.
+﻿"""
+ORM model tests - referential integrity, relationships, constraints.
 
 Uses SQLite in-memory (see tests/conftest.py). FK enforcement enabled via PRAGMA.
 The circular FK (customers.subscription_id ↔ subscriptions.customer_id) is handled
@@ -126,7 +126,7 @@ class TestCustomerModel:
     def test_customer_created_at_not_null(self, db):
         c = _make_customer(db)
         db.refresh(c)
-        # server_default — after refresh it should be populated
+        # server_default - after refresh it should be populated
         # (SQLite sets it via default, not server expression, so we check it's set)
         assert c.created_at is not None or True  # server_default is DB-side; just verify no error
 

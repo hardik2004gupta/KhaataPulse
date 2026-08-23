@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import type { HeroCase } from "@/lib/types";
@@ -21,7 +21,7 @@ export interface TimelineEntry {
   headline: string;
   detail?: string;
   tone: Tone;
-  /** Phase separator label — pipeline entries are derived, not observed. */
+  /** Phase separator label - pipeline entries are derived, not observed. */
   stage: "OBSERVED" | "PIPELINE";
   payload: Record<string, unknown>;
   badge?: React.ReactNode;
@@ -76,7 +76,7 @@ const OBSERVABLE_TONE: Record<string, Tone> = {
 /**
  * Reconstructs one customer's story: the observable event stream the agent was
  * allowed to see, followed by the decisions the pipeline derived from it.
- * Hidden simulator state and ground-truth outcome probabilities never appear —
+ * Hidden simulator state and ground-truth outcome probabilities never appear -
  * every entry originates from the observable feed or the recorded audit trail.
  */
 export function buildTimeline(hero: HeroCase): TimelineEntry[] {
@@ -107,7 +107,7 @@ export function buildTimeline(hero: HeroCase): TimelineEntry[] {
       headline: "Risk Detected",
       detail: `Logistic regression scored ${Math.round(
         hero.risk.risk_score * 100,
-      )}% failure probability — routed to the reasoning graph.`,
+      )}% failure probability - routed to the reasoning graph.`,
       tone: "warning",
       stage: "PIPELINE",
       payload: {

@@ -1,4 +1,4 @@
-interface TimelineEvent {
+﻿interface TimelineEvent {
   time: string;
   event: string;
   detail: string;
@@ -15,7 +15,7 @@ const TIMELINE: readonly TimelineEvent[] = [
   {
     time: "11:01",
     event: "Risk Detected",
-    detail: "Risk score: HIGH — routed to KhaataPulse",
+    detail: "Risk score: HIGH - routed to KhaataPulse",
     risk: true,
   },
 ];
@@ -32,7 +32,7 @@ export function TimeMachinePreview() {
           </h2>
           <p className="mt-3 max-w-prose text-[15px] leading-relaxed text-text-secondary">
             Every observable customer signal, in context. The agent sees only what the customer
-            world emits — never hidden state, never counterfactual outcomes.
+            world emits - never hidden state, never counterfactual outcomes.
           </p>
         </header>
 

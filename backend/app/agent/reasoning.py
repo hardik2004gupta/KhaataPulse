@@ -1,13 +1,13 @@
-"""
-LLM provider abstraction — CLAUDE.md §22, §18, §19.
+﻿"""
+LLM provider abstraction - CLAUDE.md §22, §18, §19.
 
 BaseReasoningModel is the interface the LangGraph graph depends on.
 Two implementations:
-  - AnthropicReasoningModel  — real Anthropic API (production)
-  - StubReasoningModel       — deterministic fake (tests, demo, CI)
+  - AnthropicReasoningModel  - real Anthropic API (production)
+  - StubReasoningModel       - deterministic fake (tests, demo, CI)
 
 The graph never depends on provider-specific code.
-The LLM input (ReasoningContext) contains ONLY observable fields —
+The LLM input (ReasoningContext) contains ONLY observable fields -
 no latent state, no potential outcomes, no hidden probabilities.
 """
 from __future__ import annotations
@@ -126,7 +126,7 @@ class AnthropicReasoningModel(BaseReasoningModel):
 
     Sends only observable context to the LLM (CLAUDE.md §18).
     Uses tool_use to enforce structured output (CLAUDE.md §19).
-    Raises on any failure — the graph node handles fallback.
+    Raises on any failure - the graph node handles fallback.
     """
 
     def __init__(self, api_key: str, model: str) -> None:

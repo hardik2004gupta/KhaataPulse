@@ -1,5 +1,5 @@
-"""
-LLM Fallback Policy — CLAUDE.md §12.
+﻿"""
+LLM Fallback Policy - CLAUDE.md §12.
 
 When the LLM fails (timeout, provider error, schema validation failure,
 malformed JSON, invalid enum, missing field), the recovery pipeline must
@@ -50,28 +50,28 @@ def smart_retry_proposal(
         cause = "card_expired"
         action = "smart_link"
         rationale = (
-            f"[smart_retry fallback — LLM unavailable: {failure_reason}] "
+            f"[smart_retry fallback - LLM unavailable: {failure_reason}] "
             "Payment method change observed. Sending smart payment link."
         )
     elif context.risk_score >= 0.70:
         cause = "temporary_cash_flow"
         action = "human_escalation"
         rationale = (
-            f"[smart_retry fallback — LLM unavailable: {failure_reason}] "
+            f"[smart_retry fallback - LLM unavailable: {failure_reason}] "
             "High risk score. Escalating to human agent."
         )
     elif "support_message" in event_types:
         cause = "temporary_cash_flow"
         action = "grace_period"
         rationale = (
-            f"[smart_retry fallback — LLM unavailable: {failure_reason}] "
+            f"[smart_retry fallback - LLM unavailable: {failure_reason}] "
             "Support contact detected. Offering grace period."
         )
     else:
         cause = "temporary_cash_flow"
         action = "silent_retry"
         rationale = (
-            f"[smart_retry fallback — LLM unavailable: {failure_reason}] "
+            f"[smart_retry fallback - LLM unavailable: {failure_reason}] "
             "Transient payment difficulty assumed. Initiating silent retry."
         )
 

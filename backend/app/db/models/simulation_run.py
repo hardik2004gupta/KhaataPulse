@@ -1,8 +1,8 @@
-"""
+﻿"""
 Simulator-internal tables.
 
-SimulationRun  — tracks a world generation run for reproducibility.
-SimulatorOutcome — stores P(payment|action) and P(churn|action) per customer.
+SimulationRun  - tracks a world generation run for reproducibility.
+SimulatorOutcome - stores P(payment|action) and P(churn|action) per customer.
 
 ARCHITECTURE BOUNDARY: These tables are owned exclusively by the simulator module.
 No other module (agent, API, frontend) may read from SimulatorOutcome directly.
@@ -31,7 +31,7 @@ class SimulationRun(Base):
 
 class SimulatorOutcome(Base):
     """
-    Hidden potential outcomes — NEVER exposed to the agent or observable API.
+    Hidden potential outcomes - NEVER exposed to the agent or observable API.
     Used only by the evaluation harness to compute policy performance.
 
     Stores P(payment | action) and P(churn | action) for each customer × action pair.

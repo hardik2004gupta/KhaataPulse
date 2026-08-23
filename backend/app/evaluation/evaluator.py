@@ -1,5 +1,5 @@
-"""
-Same-cohort evaluation engine — CLAUDE.md §17, §32 (§58 final invariant).
+﻿"""
+Same-cohort evaluation engine - CLAUDE.md §17, §32 (§58 final invariant).
 
 ARCHITECTURE:
   1. World is generated ONCE per evaluation run.
@@ -11,7 +11,7 @@ ARCHITECTURE:
 OUTCOME SEMANTICS:
   PotentialOutcomes stores P(payment|action) and P(churn|action).
   recovered_amount = Σ P(payment|action) × subscription_amount (expected value, deterministic).
-  This is equivalent to sampling with the world seed — but deterministic and without noise.
+  This is equivalent to sampling with the world seed - but deterministic and without noise.
 
 FALSE POSITIVE DEFINITION:
   A KhaataPulse intervention is a false positive if:
@@ -169,7 +169,7 @@ def evaluate_policy_on_world(
         amount = obs.subscription.amount
         total_at_risk += amount
 
-        # Policy decision — receives observable data only
+        # Policy decision - receives observable data only
         try:
             action = policy.decide(obs)
         except Exception as e:

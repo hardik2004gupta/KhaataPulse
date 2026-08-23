@@ -1,5 +1,5 @@
-"""
-SIMULATOR INTERNAL — PotentialOutcomes
+﻿"""
+SIMULATOR INTERNAL - PotentialOutcomes
 
 Stores P(payment | action) and P(churn | action) for each customer × action pair.
 These values are generated independently of any policy or agent decision.
@@ -48,7 +48,7 @@ class PotentialOutcomes:
 _CAUSE_PAYMENT_MULTIPLIERS: dict[str, dict[str, float]] = {
     "card_expired": {
         "silent_retry": 0.85,   # retry won't fix an expired card
-        "smart_link":   1.75,   # payment link lets them update card — very effective
+        "smart_link":   1.75,   # payment link lets them update card - very effective
         "grace_period": 1.10,
         "human_escalation": 1.55,
     },

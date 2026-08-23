@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState } from "react";
 
@@ -10,7 +10,7 @@ const NODE_R = 26;
 const LINK_GAP = 6;
 
 /* ── Accents ──────────────────────────────────────────────────────────────
-   Colours come from the design tokens in globals.css — never literal hex.
+   Colours come from the design tokens in globals.css - never literal hex.
    ─────────────────────────────────────────────────────────────────────── */
 
 type Accent = "warning" | "ai" | "critical" | "recovery";
@@ -129,7 +129,7 @@ function PipelineNode({ index, active }: { index: number; active: boolean }) {
         className="transition-all duration-base"
       />
 
-      {/* Label — sized for the ~0.6 downscale this SVG renders at in the hero */}
+      {/* Label - sized for the ~0.6 downscale this SVG renders at in the hero */}
       <text
         x={cx}
         y={NODE_Y + NODE_R + 24}
@@ -191,7 +191,7 @@ export function HeroVisualization() {
 
   return (
     <div className="w-full">
-      {/* The diagram has a legibility floor — below it, scroll rather than
+      {/* The diagram has a legibility floor - below it, scroll rather than
           shrink the labels into illegibility. */}
       <div className="overflow-x-auto pb-2">
         <svg

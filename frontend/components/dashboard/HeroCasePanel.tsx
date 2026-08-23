@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import type { HeroCase } from "@/lib/types";
@@ -80,7 +80,7 @@ export function HeroCasePanel({ hero }: HeroCasePanelProps) {
                   ) : null}
                 </span>
               ) : (
-                "—"
+                "-"
               )
             }
           />

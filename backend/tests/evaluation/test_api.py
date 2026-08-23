@@ -1,5 +1,5 @@
-"""
-Tests for the evaluation API endpoints — CLAUDE.md §20, §30.
+﻿"""
+Tests for the evaluation API endpoints - CLAUDE.md §20, §30.
 
 POST /evaluation/run         → trigger single-seed evaluation
 POST /evaluation/run/multi-seed → trigger multi-seed

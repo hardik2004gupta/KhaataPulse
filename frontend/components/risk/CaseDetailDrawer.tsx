@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState } from "react";
 import type {
@@ -149,7 +149,7 @@ export function CaseDetailDrawer({ case_, onClose }: CaseDetailDrawerProps) {
       {open && <div className="drawer-overlay" onClick={onClose} aria-hidden="true" />}
 
       {/* `invisible` while closed keeps the drawer's controls out of the tab
-         order — an aria-hidden container must never hold focusable children. */}
+         order - an aria-hidden container must never hold focusable children. */}
       <aside
         role="dialog"
         aria-modal={open}
@@ -170,7 +170,7 @@ export function CaseDetailDrawer({ case_, onClose }: CaseDetailDrawerProps) {
                     {data.customer_name ?? "Unknown customer"}
                   </p>
                   <p className="mono mt-0.5 truncate text-[10px] uppercase tracking-eyebrow text-text-muted">
-                    {data.customer_segment ?? "—"} · case #{data.id}
+                    {data.customer_segment ?? "-"} · case #{data.id}
                   </p>
                 </div>
 
@@ -191,12 +191,12 @@ export function CaseDetailDrawer({ case_, onClose }: CaseDetailDrawerProps) {
               <section>
                 <Eyebrow>Customer</Eyebrow>
                 <dl className="mt-3 grid grid-cols-2 gap-4">
-                  <Stat label="Plan" value={data.subscription_plan ?? "—"} />
+                  <Stat label="Plan" value={data.subscription_plan ?? "-"} />
                   <Stat
                     label="Renewal Amount"
                     value={
                       <span className="tabular font-semibold text-text-primary">
-                        {data.subscription_amount ? formatINR(data.subscription_amount) : "—"}
+                        {data.subscription_amount ? formatINR(data.subscription_amount) : "-"}
                       </span>
                     }
                   />
@@ -206,7 +206,7 @@ export function CaseDetailDrawer({ case_, onClose }: CaseDetailDrawerProps) {
                       detail?.customer_ltv ? (
                         <span className="tabular">{formatINR(detail.customer_ltv)}</span>
                       ) : (
-                        "—"
+                        "-"
                       )
                     }
                   />
@@ -243,7 +243,7 @@ export function CaseDetailDrawer({ case_, onClose }: CaseDetailDrawerProps) {
               <section className="rounded-panel border-l-2 border-ai bg-ai-dim/20 p-4">
                 <Eyebrow tone="ai">AI Diagnosis</Eyebrow>
                 <p className="mt-2.5 text-base font-semibold text-text-primary">
-                  {data.diagnosis ? formatCause(data.diagnosis) : "—"}
+                  {data.diagnosis ? formatCause(data.diagnosis) : "-"}
                 </p>
 
                 {confidence !== null && (
@@ -260,7 +260,7 @@ export function CaseDetailDrawer({ case_, onClose }: CaseDetailDrawerProps) {
                     label="Proposed"
                     value={
                       <span className="text-ai-text">
-                        {data.proposed_action ? formatAction(data.proposed_action) : "—"}
+                        {data.proposed_action ? formatAction(data.proposed_action) : "-"}
                       </span>
                     }
                   />
@@ -268,14 +268,14 @@ export function CaseDetailDrawer({ case_, onClose }: CaseDetailDrawerProps) {
                     label="Selected"
                     value={
                       <span className="text-text-primary">
-                        {data.selected_action ? formatAction(data.selected_action) : "—"}
+                        {data.selected_action ? formatAction(data.selected_action) : "-"}
                       </span>
                     }
                   />
                 </dl>
               </section>
 
-              {/* Intervention — from the action_proposed audit payload */}
+              {/* Intervention - from the action_proposed audit payload */}
               {rankings.length > 0 && (
                 <section className="border-t border-border-subtle pt-5">
                   <div className="flex items-baseline justify-between gap-3">
@@ -340,7 +340,7 @@ export function CaseDetailDrawer({ case_, onClose }: CaseDetailDrawerProps) {
                           status={data.policy_status as "APPROVED" | "BLOCKED" | "ESCALATED"}
                         />
                       ) : (
-                        <span className="text-xs text-text-faint">—</span>
+                        <span className="text-xs text-text-faint">-</span>
                       )}
                     </div>
                     <p className="mono mt-2 text-[10px] uppercase tracking-eyebrow text-text-faint">

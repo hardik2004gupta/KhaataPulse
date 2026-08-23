@@ -1,5 +1,5 @@
-"""
-Structured output contract — CLAUDE.md §11.
+﻿"""
+Structured output contract - CLAUDE.md §11.
 
 RecoveryProposal is the ONLY representation of an LLM-generated recovery
 recommendation. Every LLM response must validate against this schema before

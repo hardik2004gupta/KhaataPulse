@@ -1,5 +1,5 @@
-"""
-Payment Risk Sieve — CLAUDE.md §8.
+﻿"""
+Payment Risk Sieve - CLAUDE.md §8.
 
 Logistic Regression model trained on observable customer features only.
 Produces payment_failure_probability in [0.0, 1.0].
@@ -8,9 +8,9 @@ Observable-only invariant: training data comes from extract_observable(),
 not from CustomerLatentState or PotentialOutcomes.
 
 Model lifecycle:
-  1. RiskPredictor.build() — train on synthetic observable data (seed=42, 3000 cohort)
-  2. RiskPredictor.predict(obs, reference_date) — score a customer
-  3. RiskPredictor.explain(features) — top 3 observable signals
+  1. RiskPredictor.build() - train on synthetic observable data (seed=42, 3000 cohort)
+  2. RiskPredictor.predict(obs, reference_date) - score a customer
+  3. RiskPredictor.explain(features) - top 3 observable signals
 """
 from __future__ import annotations
 

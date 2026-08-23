@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+﻿import type { ReactNode } from "react";
 
 /* ── Card shell ───────────────────────────────────────────────────────────── */
 
@@ -216,7 +216,7 @@ export function ProductPreview() {
           Every layer, visible.
         </h2>
         <p className="mt-3 text-[15px] leading-relaxed text-text-secondary">
-          From risk signal to audit trail — the full pipeline in view.
+          From risk signal to audit trail - the full pipeline in view.
         </p>
       </header>
 

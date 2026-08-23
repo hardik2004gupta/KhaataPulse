@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import type { EvaluationRunResult } from "@/lib/types";
 import { formatINR, formatPct, formatCount } from "@/lib/utils/format";
 import { Skeleton } from "@/components/ui/Skeleton";
@@ -36,7 +36,7 @@ export function EvaluationResults({ result, loading }: EvaluationResultsProps) {
 
   return (
     <div className="space-y-6">
-      {/* Headline incremental recovery — the primary KPI of the run. */}
+      {/* Headline incremental recovery - the primary KPI of the run. */}
       <div
         className={`relative overflow-hidden rounded-panel border p-6 text-center ${
           positive

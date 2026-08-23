@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { riskBarClass, riskTextClass } from "@/lib/utils/format";
 
@@ -19,7 +19,7 @@ interface RiskIndicatorProps {
 /**
  * Colour is driven by the score itself (riskTone thresholds), not the label,
  * so the same number always reads the same way. The level is always spelled
- * out in text as well — colour never carries meaning on its own.
+ * out in text as well - colour never carries meaning on its own.
  */
 export function RiskIndicator({ score, level, compact = false }: RiskIndicatorProps) {
   const bar = riskBarClass(score);

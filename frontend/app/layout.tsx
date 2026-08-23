@@ -1,4 +1,4 @@
-import type { Metadata, Viewport } from "next";
+﻿import type { Metadata, Viewport } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 
@@ -18,7 +18,7 @@ const jetbrainsMono = JetBrains_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "KhaataPulse — Revenue Intelligence Engine",
+    default: "KhaataPulse - Revenue Intelligence Engine",
     template: "%s · KhaataPulse",
   },
   description:

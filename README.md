@@ -1,4 +1,4 @@
-<div align="center">
+﻿<div align="center">
 
 <img src="media/01_khaatapulse_brand_identity_mark.png" alt="KhaataPulse" width="700" />
 
@@ -20,18 +20,18 @@
 </div>
 
 <div align="center">
-  <img src="media/02_khaatapulse_flagship_hero_revenue_recovery.png" alt="KhaataPulse — Revenue Recovery Command Center" width="100%" />
+  <img src="media/02_khaatapulse_flagship_hero_revenue_recovery.png" alt="KhaataPulse - Revenue Recovery Command Center" width="100%" />
 </div>
 
 ---
 
 Payment failures are not all the same.
 
-A card expiry, a billing migration, temporary cash flow pressure, price friction, and genuine churn intent each demand a different response — a different intervention, at a different cost, with a different expected return. A static retry schedule treats them identically.
+A card expiry, a billing migration, temporary cash flow pressure, price friction, and genuine churn intent each demand a different response - a different intervention, at a different cost, with a different expected return. A static retry schedule treats them identically.
 
 **KhaataPulse does not.**
 
-It diagnoses the failure context, ranks recovery interventions by expected net revenue, enforces deterministic policy constraints, and measures outcomes — all in a fully observable, auditable pipeline.
+It diagnoses the failure context, ranks recovery interventions by expected net revenue, enforces deterministic policy constraints, and measures outcomes - all in a fully observable, auditable pipeline.
 
 > **AI proposes. Economics ranks. Policy authorizes. Actions execute. Outcomes are measured.**
 
@@ -53,10 +53,10 @@ It diagnoses the failure context, ranks recovery interventions by expected net r
 ## See KhaataPulse in Action
 
 <div align="center">
-  <img src="media/command_center.gif" alt="KhaataPulse Command Center — Revenue Recovery in Action" width="100%" />
+  <img src="media/command_center.gif" alt="KhaataPulse Command Center - Revenue Recovery in Action" width="100%" />
 </div>
 
-> The Command Center turns revenue recovery into an observable decision system — from risk detection and AI diagnosis to action ranking, policy enforcement, and outcome measurement. Every number originates from a live evaluation run. Nothing is authored.
+> The Command Center turns revenue recovery into an observable decision system - from risk detection and AI diagnosis to action ranking, policy enforcement, and outcome measurement. Every number originates from a live evaluation run. Nothing is authored.
 
 <br/>
 
@@ -65,11 +65,11 @@ It diagnoses the failure context, ranks recovery interventions by expected net r
 </div>
 
 **What you're looking at:**
-- Live incremental recovery — KhaataPulse vs. Smart Retry, computed dynamically
+- Live incremental recovery - KhaataPulse vs. Smart Retry, computed dynamically
 - Three-policy comparison: Static Dunning / Smart Retry / KhaataPulse against the same cohort
 - Hero case: full pipeline trace from risk signal to executed action
-- Policy Guard visualization — sequential checkpoint with per-rule pass/fail
-- Immutable audit trail — every decision recorded and expandable
+- Policy Guard visualization - sequential checkpoint with per-rule pass/fail
+- Immutable audit trail - every decision recorded and expandable
 
 ---
 
@@ -79,7 +79,7 @@ It diagnoses the failure context, ranks recovery interventions by expected net r
 git clone <repository-url>
 cd khaata-pulse
 
-cp .env.example .env        # add LLM_API_KEY if available (optional — demo works without it)
+cp .env.example .env        # add LLM_API_KEY if available (optional - demo works without it)
 
 docker compose up --build   # starts postgres + backend (migrations run automatically)
 ```
@@ -107,7 +107,7 @@ npm run dev
 ## Watch a Recovery Decision Happen
 
 <div align="center">
-  <img src="media/command_center_Live_Webhook_Simulation.gif" alt="Live Webhook Simulation — Full Pipeline in Real Time" width="100%" />
+  <img src="media/command_center_Live_Webhook_Simulation.gif" alt="Live Webhook Simulation - Full Pipeline in Real Time" width="100%" />
 </div>
 
 > One webhook. One decision. A fully traceable recovery path.
@@ -116,12 +116,12 @@ A simulated payment failure enters the system. In real time, you watch:
 
 ```
 Payment Signal
-    → Risk Detection       — Logistic Regression scores the account
-    → Diagnosis            — LLM classifies cause and proposes action
-    → Economic Ranking     — ENR selects the highest-value eligible action
-    → Policy Guard         — deterministic authorization check
-    → Action               — executed or blocked, with reason
-    → Audit                — every step recorded, immutable
+    → Risk Detection       - Logistic Regression scores the account
+    → Diagnosis            - LLM classifies cause and proposes action
+    → Economic Ranking     - ENR selects the highest-value eligible action
+    → Policy Guard         - deterministic authorization check
+    → Action               - executed or blocked, with reason
+    → Audit                - every step recorded, immutable
 ```
 
 Every stage is visible. Every decision is explained. Nothing is a black box.
@@ -130,17 +130,17 @@ Every stage is visible. Every decision is explained. Nothing is a black box.
 
 ## Why This Is Different
 
-### 01 — Reasoning, Not Rules
+### 01 - Reasoning, Not Rules
 
-The system does not route every failed payment through the same retry schedule. It first classifies the failure cause — card expiry, billing migration, temporary cash flow, price friction, or churn intent — then selects a recovery strategy appropriate to that context.
+The system does not route every failed payment through the same retry schedule. It first classifies the failure cause - card expiry, billing migration, temporary cash flow, price friction, or churn intent - then selects a recovery strategy appropriate to that context.
 
-### 02 — Economics, Not Confidence
+### 02 - Economics, Not Confidence
 
 Recovery actions are ranked by **Expected Net Revenue** rather than model confidence alone. The optimizer considers the probability of payment, the risk of churn, and the cost of contact. A high-confidence recommendation with poor economics does not get selected.
 
-### 03 — Policy, Not Probability
+### 03 - Policy, Not Probability
 
-AI does not authorize execution. A deterministic Policy Guard — not a model, not a threshold, not a heuristic — is the only component with execution authority. A valid, high-confidence AI proposal can still be blocked.
+AI does not authorize execution. A deterministic Policy Guard - not a model, not a threshold, not a heuristic - is the only component with execution authority. A valid, high-confidence AI proposal can still be blocked.
 
 ---
 
@@ -172,7 +172,7 @@ APPROVED / BLOCKED / ESCALATED
  AUDIT LOG
 ```
 
-This is intentional architecture. An LLM with a hallucinated confidence score, a poorly calibrated output, or a malformed response cannot reach the execution layer. The guard is pure deterministic code — independently unit-tested, configuration-driven, with no side effects.
+This is intentional architecture. An LLM with a hallucinated confidence score, a poorly calibrated output, or a malformed response cannot reach the execution layer. The guard is pure deterministic code - independently unit-tested, configuration-driven, with no side effects.
 
 ---
 
@@ -192,21 +192,21 @@ ENR(action) = P(payment | action) × Amount
             − Action Cost
 ```
 
-The AI diagnosis determines which actions are **eligible**. The optimizer ranks only the eligible set. Action costs are configuration-driven — never scattered as constants in code.
+The AI diagnosis determines which actions are **eligible**. The optimizer ranks only the eligible set. Action costs are configuration-driven - never scattered as constants in code.
 
-The optimizer uses **estimated** probabilities derived from observable features (cause + action type). It does not receive the simulator's ground-truth potential outcomes — that architectural boundary is maintained by type isolation in the codebase.
+The optimizer uses **estimated** probabilities derived from observable features (cause + action type). It does not receive the simulator's ground-truth potential outcomes - that architectural boundary is maintained by type isolation in the codebase.
 
 ---
 
 ## The Model Proposes. Policy Decides.
 
 <div align="center">
-  <img src="media/04_khaatapulse_policy_guard.png" alt="Policy Guard — Deterministic Authorization" width="100%" />
+  <img src="media/04_khaatapulse_policy_guard.png" alt="Policy Guard - Deterministic Authorization" width="100%" />
 </div>
 
 A high-confidence AI recommendation is still only a proposal.
 
-The deterministic Policy Guard evaluates eight authorization rules — in strict order, all thresholds from environment configuration — before any action proceeds:
+The deterministic Policy Guard evaluates eight authorization rules - in strict order, all thresholds from environment configuration - before any action proceeds:
 
 **kill switch · dispute hold · legal hold · opt-out · idempotency · contact frequency · cooldown · amount threshold**
 
@@ -234,14 +234,14 @@ kp_result     = evaluate(world, KhaataPulsePolicy())
 
 **One cohort. One event history. One set of potential outcomes.**
 
-Three policies evaluated against the same world. Only the recovery logic changes. This is the only valid basis for measuring policy lift — and it is enforced by the evaluation engine, not by convention.
+Three policies evaluated against the same world. Only the recovery logic changes. This is the only valid basis for measuring policy lift - and it is enforced by the evaluation engine, not by convention.
 
 ---
 
 ## Prove It Across Seeds
 
 <div align="center">
-  <img src="media/policy_test_seed_and_multi-seed_validation.gif" alt="Policy Evaluation — Seed Selection and Multi-Seed Validation" width="100%" />
+  <img src="media/policy_test_seed_and_multi-seed_validation.gif" alt="Policy Evaluation - Seed Selection and Multi-Seed Validation" width="100%" />
 </div>
 
 A single-seed result could be peculiar to one random world. KhaataPulse validates policy performance across three independent seeds:
@@ -252,21 +252,21 @@ A single-seed result could be peculiar to one random world. KhaataPulse validate
 | `123` | Independent world validation |
 | `456` | Third independent world validation |
 
-`POST /evaluation/run/multi-seed` runs all three in a single request and returns per-seed metrics alongside cross-seed consistency analysis. The evaluation page lets you run any seed or cohort size — and watch the results compute in real time.
+`POST /evaluation/run/multi-seed` runs all three in a single request and returns per-seed metrics alongside cross-seed consistency analysis. The evaluation page lets you run any seed or cohort size - and watch the results compute in real time.
 
 ### Policy Comparison
 
 | Metric | Static Dunning | Smart Retry | KhaataPulse |
 |---|---|---|---|
-| Recovered (₹) | — | — | — |
-| Recovery Rate | — | — | — |
-| Contacts Sent | — | — | — |
-| Contacts Avoided | — | — | — |
-| Human Escalations | — | — | — |
-| Policy Blocks | — | — | — |
+| Recovered (₹) | - | - | - |
+| Recovery Rate | - | - | - |
+| Contacts Sent | - | - | - |
+| Contacts Avoided | - | - | - |
+| Human Escalations | - | - | - |
+| Policy Blocks | - | - | - |
 | **Incremental Recovery** | **baseline** | **baseline** | **+₹ vs Smart Retry** |
 
-> Results are generated dynamically by the evaluation engine. Run the Seed 42 evaluation to reproduce the comparison — no values are authored in the codebase.
+> Results are generated dynamically by the evaluation engine. Run the Seed 42 evaluation to reproduce the comparison - no values are authored in the codebase.
 
 ### The KPI That Matters
 
@@ -274,7 +274,7 @@ A single-seed result could be peculiar to one random world. KhaataPulse validate
 Incremental Recovery = KhaataPulse Recovered − Smart Retry Recovered
 ```
 
-Smart Retry is the primary comparison baseline — not Static Dunning — because it already applies failure-code logic and deterministic retry timing. KhaataPulse must demonstrate lift above an intelligent baseline, not a naive one.
+Smart Retry is the primary comparison baseline - not Static Dunning - because it already applies failure-code logic and deterministic retry timing. KhaataPulse must demonstrate lift above an intelligent baseline, not a naive one.
 
 ---
 
@@ -292,7 +292,7 @@ policy_check → action_executed / blocked / escalated →
 case_closed
 ```
 
-LLM fallback events are also recorded — with reason and fallback policy — so no failure is invisible.
+LLM fallback events are also recorded - with reason and fallback policy - so no failure is invisible.
 
 The audit drawer in the frontend renders the full decision lifecycle in chronological order, with expandable raw JSON payloads in monospace. The service is append-only: no update or delete paths exist.
 
@@ -335,21 +335,21 @@ Evaluation Engine (same-cohort · 3 policies · multi-seed)
 | Action Service | Executes only what Policy Guard approved. Enforces idempotency. |
 | Audit Service | Records every decision. Append-only. |
 | Evaluator | Measures outcomes. Only layer with ground-truth access. |
-| Kill Switch | Global STOP — checked first in Policy Guard, before all other rules. |
+| Kill Switch | Global STOP - checked first in Policy Guard, before all other rules. |
 
 <details>
 <summary><strong>Simulator Isolation & Evaluation Integrity</strong></summary>
 
 The simulator is the only component with access to hidden state and potential outcomes.
 
-**Hidden state** (`CustomerLatentState`) — the actual ground truth:
+**Hidden state** (`CustomerLatentState`) - the actual ground truth:
 `payment_intent`, `cash_flow_health`, `payment_rail_health`, `churn_sensitivity`, `customer_ltv`.
 
-**The agent never receives this.** It is enforced by type isolation — `CustomerLatentState` and `PotentialOutcomes` are Python types that exist exclusively inside the simulator package. No API route, no agent node, and no frontend component ever touches them. A dedicated test in the integration suite verifies this.
+**The agent never receives this.** It is enforced by type isolation - `CustomerLatentState` and `PotentialOutcomes` are Python types that exist exclusively inside the simulator package. No API route, no agent node, and no frontend component ever touches them. A dedicated test in the integration suite verifies this.
 
 The agent only receives observable events: `payment_failed`, `invoice_viewed`, `checkout_reopened`, `payment_method_changed`, `support_message`, `payment_delayed`, `renewal_approaching`, `subscription_changed`.
 
-The optimizer uses **estimated** probabilities derived from observable features — not the simulator's ground-truth `PotentialOutcomes`. Only the evaluation harness accesses those, to compute expected recovered amounts per policy.
+The optimizer uses **estimated** probabilities derived from observable features - not the simulator's ground-truth `PotentialOutcomes`. Only the evaluation harness accesses those, to compute expected recovered amounts per policy.
 
 </details>
 
@@ -383,14 +383,14 @@ pytest -v
 
 Critical invariants tested:
 
-- Simulator isolation — hidden state never enters agent context
-- LLM schema validation — `RecoveryProposal` Pydantic enforcement
-- LLM fallback — all failure types: timeout, malformed JSON, invalid enum, missing field, provider error, schema failure
-- Policy Guard — each of the 8 rules independently (APPROVED, BLOCKED ×5, ESCALATED)
-- Action idempotency — duplicate key rejection
-- Same-cohort evaluation invariant — all three policies against one world
-- Multi-seed stability — seeds 42, 123, 456
-- Incremental recovery — dynamically computed, never authored
+- Simulator isolation - hidden state never enters agent context
+- LLM schema validation - `RecoveryProposal` Pydantic enforcement
+- LLM fallback - all failure types: timeout, malformed JSON, invalid enum, missing field, provider error, schema failure
+- Policy Guard - each of the 8 rules independently (APPROVED, BLOCKED ×5, ESCALATED)
+- Action idempotency - duplicate key rejection
+- Same-cohort evaluation invariant - all three policies against one world
+- Multi-seed stability - seeds 42, 123, 456
+- Incremental recovery - dynamically computed, never authored
 
 ---
 
@@ -429,12 +429,12 @@ Full file-by-file reference: [`PROJECT_STRUCTURE.md`](PROJECT_STRUCTURE.md)
 
 ```env
 DATABASE_URL=postgresql://khaatapulse:khaatapulse@localhost:5432/khaatapulse
-LLM_API_KEY=                    # Optional — demo works without it
+LLM_API_KEY=                    # Optional - demo works without it
 LLM_MODEL=claude-sonnet-5
 
 APP_ENV=development
 
-# Policy thresholds — all configuration-driven
+# Policy thresholds - all configuration-driven
 AUTO_ACTION_LIMIT=10000         # ₹ below which actions auto-execute
 MAX_CONTACTS_7D=3               # Contact frequency cap per 7 days
 CONTACT_COOLDOWN_HOURS=24       # Minimum hours between contacts

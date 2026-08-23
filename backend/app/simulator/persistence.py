@@ -1,4 +1,4 @@
-"""
+﻿"""
 Simulator persistence service.
 
 Writes the generated world to PostgreSQL.
@@ -7,7 +7,7 @@ customers.subscription_id and subscriptions.customer_id.
 
 ARCHITECTURE:
   SimulatorOutcome rows are written here and are ONLY readable by the
-  evaluation harness (Phase 4) via this module — never by agent code.
+  evaluation harness (Phase 4) via this module - never by agent code.
 """
 import logging
 import time
@@ -31,7 +31,7 @@ def persist_world(db: Session, world: WorldInternal) -> SimulationRun:
     Persist a generated world to PostgreSQL.
 
     Returns the SimulationRun record for the caller to track the run.
-    Writes SimulatorOutcome rows — these are simulator-internal and
+    Writes SimulatorOutcome rows - these are simulator-internal and
     must not be exposed to observable APIs.
     """
     t_start = time.time()
@@ -135,7 +135,7 @@ def persist_world(db: Session, world: WorldInternal) -> SimulationRun:
 
     db.flush()
 
-    # 7. Insert simulator outcomes — HIDDEN from observable APIs
+    # 7. Insert simulator outcomes - HIDDEN from observable APIs
     outcome_count = 0
     for rec in world.records:
         db_customer_id = gen_id_to_db_id[rec.customer_id]

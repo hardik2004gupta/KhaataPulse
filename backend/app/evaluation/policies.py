@@ -1,5 +1,5 @@
-"""
-Recovery policy implementations — CLAUDE.md §18, §32.
+﻿"""
+Recovery policy implementations - CLAUDE.md §18, §32.
 
 Three policies all implement the same RecoveryPolicy interface so the evaluator
 can swap them against the same world without changing evaluation logic.
@@ -27,7 +27,7 @@ KHAATAPULSE_VERSION = "khaatapulse-v1"
 
 class RecoveryPolicy(ABC):
     """
-    Policy interface — receives observable data, returns action type.
+    Policy interface - receives observable data, returns action type.
     No policy may receive latent state or potential outcomes.
     """
 
@@ -53,7 +53,7 @@ class RecoveryPolicy(ABC):
         pass
 
 
-# ── Static Dunning — CLAUDE.md §18 ───────────────────────────────────────────
+# ── Static Dunning - CLAUDE.md §18 ───────────────────────────────────────────
 
 class StaticDunningPolicy(RecoveryPolicy):
     """
@@ -85,7 +85,7 @@ class StaticDunningPolicy(RecoveryPolicy):
         return "silent_retry"
 
 
-# ── Smart Retry — CLAUDE.md §18 ──────────────────────────────────────────────
+# ── Smart Retry - CLAUDE.md §18 ──────────────────────────────────────────────
 
 class SmartRetryPolicy(RecoveryPolicy):
     """
@@ -135,7 +135,7 @@ class SmartRetryPolicy(RecoveryPolicy):
         return "silent_retry"
 
 
-# ── KhaataPulse — CLAUDE.md §18 ──────────────────────────────────────────────
+# ── KhaataPulse - CLAUDE.md §18 ──────────────────────────────────────────────
 
 class KhaataPulsePolicy(RecoveryPolicy):
     """

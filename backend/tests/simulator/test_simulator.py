@@ -1,5 +1,5 @@
-"""
-Simulator tests — CLAUDE.md §32 requirements.
+﻿"""
+Simulator tests - CLAUDE.md §32 requirements.
 
 Tests the generator, isolation boundary, determinism, and observable data contract.
 No database required for these tests.
@@ -141,7 +141,7 @@ class TestLatentStateIsolation:
             assert obs.subscription.currency == "INR"
 
     def test_raw_record_keys_include_hidden_fields(self):
-        """Raw records have hidden fields — verify they exist for internal use."""
+        """Raw records have hidden fields - verify they exist for internal use."""
         raw, _ = _build_world(cohort_size=3)
         for r in raw:
             assert "_latent" in r

@@ -1,8 +1,8 @@
-"""
-Recovery Cases API — list and detail views for the risk queue.
+﻿"""
+Recovery Cases API - list and detail views for the risk queue.
 
 CLAUDE.md §30: Customer, Risk, Cause, Action, Policy, Status.
-Observable data only — no hidden simulator state.
+Observable data only - no hidden simulator state.
 """
 from __future__ import annotations
 
@@ -30,7 +30,7 @@ def list_cases(
     GET /cases/
 
     List recovery cases for the risk queue.
-    Returns observable data only — no hidden simulator state.
+    Returns observable data only - no hidden simulator state.
     """
     cases = (
         db.query(RecoveryCase)

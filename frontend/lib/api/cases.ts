@@ -1,9 +1,9 @@
-import { api } from "./client";
+﻿import { api } from "./client";
 import type { CasesListResponse } from "../types";
 
 export const casesApi = {
   /**
-   * GET /cases/ — requested without the trailing slash so it matches the
+   * GET /cases/ - requested without the trailing slash so it matches the
    * dedicated `/api/cases` rewrite, which restores the slash the backend needs.
    */
   listCases(limit = 50, offset = 0): Promise<CasesListResponse> {

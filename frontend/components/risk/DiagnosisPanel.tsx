@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import type { CSSProperties } from "react";
 import type { DiagnosisInfo, RiskInfo, ActionRanking } from "@/lib/types";
@@ -14,7 +14,7 @@ interface DiagnosisPanelProps {
   risk: RiskInfo;
   diagnosis: DiagnosisInfo;
   actionRankings: ActionRanking[];
-  /** Set while the reasoner is still working — the bar breathes until it settles. */
+  /** Set while the reasoner is still working - the bar breathes until it settles. */
   isLoading?: boolean;
 }
 
@@ -37,7 +37,7 @@ function RiskLevelBadge({ level }: { level: string }) {
 }
 
 /**
- * Animated fill — communicates model certainty, settles once and stays.
+ * Animated fill - communicates model certainty, settles once and stays.
  * The fill is a CSS animation keyed off --bar-width rather than a JS-driven
  * width change, so reduced-motion readers see the final value immediately.
  */
@@ -212,7 +212,7 @@ export function DiagnosisPanel({
 
           <p className="mono mt-2.5 text-[10px] uppercase tracking-eyebrow text-recovery-text">
             Selected · {formatAction(actionRankings[0].action_type)}
-            <span className="text-text-faint"> — highest expected net revenue</span>
+            <span className="text-text-faint"> - highest expected net revenue</span>
           </p>
         </section>
       )}

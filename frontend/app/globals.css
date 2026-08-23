@@ -1,9 +1,9 @@
-@tailwind base;
+﻿@tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   KhaataPulse — Design System
+   KhaataPulse - Design System
    Dark financial terminal. Colour communicates semantic state, not decoration.
    CLAUDE.md §29
    ═══════════════════════════════════════════════════════════════════════════ */
@@ -101,7 +101,7 @@ body {
   font-feature-settings: "tnum";
 }
 
-/* ── Monospace — audit ids, timestamps, technical metadata ───────────────── */
+/* ── Monospace - audit ids, timestamps, technical metadata ───────────────── */
 .mono {
   font-family: var(--font-jetbrains-mono), "JetBrains Mono", "Fira Code", ui-monospace, monospace;
 }
@@ -123,7 +123,7 @@ body {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   Ambient background — CSS only, no canvas, no JS animation loops.
+   Ambient background - CSS only, no canvas, no JS animation loops.
    Fixed behind all content, never interactive.
    ═══════════════════════════════════════════════════════════════════════════ */
 
@@ -141,14 +141,14 @@ body {
   inset: 0;
 }
 
-/* ── Layer 1 — base wash ─────────────────────────────────────────────────── */
+/* ── Layer 1 - base wash ─────────────────────────────────────────────────── */
 .ambient-base {
   background:
     radial-gradient(120% 80% at 50% 0%, rgba(12, 16, 23, 0.9) 0%, transparent 60%),
     var(--bg-primary);
 }
 
-/* ── Layer 2 — structural grid ───────────────────────────────────────────── */
+/* ── Layer 2 - structural grid ───────────────────────────────────────────── */
 .ambient-grid {
   background-image:
     repeating-linear-gradient(
@@ -169,7 +169,7 @@ body {
   -webkit-mask-image: radial-gradient(100% 70% at 50% 30%, #000 0%, transparent 85%);
 }
 
-/* ── Layer 3 — atmospheric light ─────────────────────────────────────────── */
+/* ── Layer 3 - atmospheric light ─────────────────────────────────────────── */
 .ambient-blob {
   will-change: transform;
 }
@@ -234,12 +234,12 @@ body {
   }
 }
 
-/* ── Layer 4 — horizon edge ──────────────────────────────────────────────── */
+/* ── Layer 4 - horizon edge ──────────────────────────────────────────────── */
 .ambient-horizon {
   background: linear-gradient(180deg, transparent 0%, transparent 78%, rgba(7, 9, 13, 0.85) 100%);
 }
 
-/* ── Layer 5 — scan ──────────────────────────────────────────────────────── */
+/* ── Layer 5 - scan ──────────────────────────────────────────────────────── */
 .ambient-scan {
   inset: auto 0 auto 0;
   height: 1px;
@@ -275,7 +275,7 @@ body {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   Motion — communicates system state, never decoration
+   Motion - communicates system state, never decoration
    ═══════════════════════════════════════════════════════════════════════════ */
 
 @keyframes fade-in {
@@ -406,7 +406,7 @@ body {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   Semantic surfaces — every colour value lives here, never in a component.
+   Semantic surfaces - every colour value lives here, never in a component.
    ═══════════════════════════════════════════════════════════════════════════ */
 
 /* Translucent chrome for the sticky telemetry bar. */
@@ -429,7 +429,7 @@ body {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   Policy Guard — a security checkpoint, evaluated as a sequence.
+   Policy Guard - a security checkpoint, evaluated as a sequence.
    Stagger is expressed as a CSS delay driven by --gate-index, so the
    reduced-motion block below neutralises it without any JS involvement.
    ═══════════════════════════════════════════════════════════════════════════ */
@@ -445,7 +445,7 @@ body {
   }
 }
 
-/* Approved gate — a green glow that swells once, then settles. */
+/* Approved gate - a green glow that swells once, then settles. */
 @keyframes gate-pass-glow {
   0% {
     box-shadow: inset 1px 0 0 0 rgba(16, 185, 129, 0);
@@ -458,7 +458,7 @@ body {
   }
 }
 
-/* Failed gate — a short, sharp red interruption. */
+/* Failed gate - a short, sharp red interruption. */
 @keyframes gate-fail-pulse {
   0% {
     background-color: rgba(239, 68, 68, 0);
@@ -503,7 +503,7 @@ body {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   Proportional bars — confidence, exposure decomposition, risk strips.
+   Proportional bars - confidence, exposure decomposition, risk strips.
    The bar grows to its measured value (--bar-width) as a CSS animation, so a
    reduced-motion reader is shown the final proportion on first paint.
    ═══════════════════════════════════════════════════════════════════════════ */
@@ -532,7 +532,7 @@ body {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   Live pipeline — six stages activate in sequence, 400ms apart.
+   Live pipeline - six stages activate in sequence, 400ms apart.
    ═══════════════════════════════════════════════════════════════════════════ */
 
 @keyframes step-activate {
@@ -573,7 +573,7 @@ body {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   Outcome — the terminal state of one recovery case.
+   Outcome - the terminal state of one recovery case.
    ═══════════════════════════════════════════════════════════════════════════ */
 
 @keyframes outcome-sweep {
@@ -608,7 +608,7 @@ body {
   }
 }
 
-/* Recovery confirmed — a single glow sweeps left to right. */
+/* Recovery confirmed - a single glow sweeps left to right. */
 .outcome-executed::after {
   content: "";
   position: absolute;
@@ -625,12 +625,12 @@ body {
   animation: outcome-sweep 800ms var(--ease-out) 1 both;
 }
 
-/* Blocked — a brief critical interruption. */
+/* Blocked - a brief critical interruption. */
 .outcome-blocked {
   animation: outcome-interrupt 520ms var(--ease-in-out) 1 both;
 }
 
-/* Escalated — a steady amber hold, awaiting a human. */
+/* Escalated - a steady amber hold, awaiting a human. */
 .outcome-escalated {
   box-shadow: 0 0 18px -6px rgba(245, 158, 11, 0.45);
 }
@@ -680,7 +680,7 @@ body {
 }
 
 /* Slide state is owned by the component (Tailwind translate utilities) so the
-   drawer can animate both directions — this rule intentionally sets no
+   drawer can animate both directions - this rule intentionally sets no
    `transform`, which would otherwise win on specificity order. */
 .drawer {
   position: fixed;
@@ -705,7 +705,7 @@ body {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   Reduced motion — disable all animation, keep the static atmospheric colour
+   Reduced motion - disable all animation, keep the static atmospheric colour
    ═══════════════════════════════════════════════════════════════════════════ */
 
 @media (prefers-reduced-motion: reduce) {

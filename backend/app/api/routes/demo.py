@@ -1,5 +1,5 @@
-"""
-Demo API — deterministic hero case and live simulation for frontend.
+﻿"""
+Demo API - deterministic hero case and live simulation for frontend.
 
 These endpoints work WITHOUT a database connection (no-db mode),
 using the in-memory evaluation pipeline from Phase 4.
@@ -329,7 +329,7 @@ def simulate_pipeline():
         {
             "step": "payment_failed",
             "label": "Payment Failed",
-            "description": f"Renewal payment declined — {hero['payments'][-1]['failure_code'] or 'bank_declined'}",
+            "description": f"Renewal payment declined - {hero['payments'][-1]['failure_code'] or 'bank_declined'}",
             "actor": "payment_gateway",
             "data": {
                 "amount": hero["subscription"]["amount"],
@@ -341,14 +341,14 @@ def simulate_pipeline():
         {
             "step": "risk_detected",
             "label": "Risk Detected",
-            "description": f"Risk score: {int(hero['risk']['risk_score'] * 100)}% — routed to KhaataPulse",
+            "description": f"Risk score: {int(hero['risk']['risk_score'] * 100)}% - routed to KhaataPulse",
             "actor": "risk_sieve",
             "data": hero["risk"],
         },
         {
             "step": "diagnosis_generated",
             "label": "AI Diagnosis",
-            "description": f"Cause: {hero['diagnosis']['cause'].replace('_', ' ').title()} — {int(hero['diagnosis']['confidence'] * 100)}% confidence",
+            "description": f"Cause: {hero['diagnosis']['cause'].replace('_', ' ').title()} - {int(hero['diagnosis']['confidence'] * 100)}% confidence",
             "actor": "langgraph_agent",
             "data": hero["diagnosis"],
         },
@@ -369,7 +369,7 @@ def simulate_pipeline():
         {
             "step": "action_executed",
             "label": "Action Executed" if hero["execution"]["status"] == "executed" else "Action " + hero["execution"]["status"].title(),
-            "description": f"Simulated gateway: {hero['execution']['action_type'].replace('_', ' ').title()} — {hero['execution']['status']}",
+            "description": f"Simulated gateway: {hero['execution']['action_type'].replace('_', ' ').title()} - {hero['execution']['status']}",
             "actor": "action_service",
             "data": hero["execution"],
         },

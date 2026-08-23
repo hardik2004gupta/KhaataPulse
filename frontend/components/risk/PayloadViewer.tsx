@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React, { useMemo, useState } from "react";
 
@@ -13,7 +13,7 @@ type Token = { text: string; kind: "key" | "string" | "number" | "bool" | "plain
 
 /**
  * Tokenise pretty-printed JSON line-by-line for syntax colouring.
- * Deliberately simple — payloads are structured audit records, not arbitrary code.
+ * Deliberately simple - payloads are structured audit records, not arbitrary code.
  */
 function tokenizeLine(line: string): Token[] {
   const tokens: Token[] = [];
@@ -75,7 +75,7 @@ export function PayloadViewer({ payload, defaultOpen = false, label }: PayloadVi
       setCopied(true);
       window.setTimeout(() => setCopied(false), 1400);
     } catch {
-      // Clipboard unavailable — silently ignore, the payload stays selectable.
+      // Clipboard unavailable - silently ignore, the payload stays selectable.
     }
   };
 

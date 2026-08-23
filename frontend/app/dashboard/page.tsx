@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useCallback, useEffect, useState } from "react";
 import { evaluationApi } from "@/lib/api/evaluation";
@@ -36,7 +36,7 @@ export default function CommandCenter() {
       const response = await evaluationApi.runEvaluation(DASHBOARD_SEED, DASHBOARD_COHORT);
       setRunId(response.run_id);
 
-      // The backend may complete synchronously — use the POST body when it does.
+      // The backend may complete synchronously - use the POST body when it does.
       if (response.status === "completed" && response.results) {
         setEvalResult(response.results);
         setEvalState("success");
@@ -99,7 +99,7 @@ export default function CommandCenter() {
             title="Running Same-Cohort Evaluation"
             detail={`Evaluating ${DASHBOARD_COHORT.toLocaleString(
               "en-IN",
-            )} accounts across 3 recovery policies — static dunning, smart retry, and KhaataPulse — against one shared world (seed ${DASHBOARD_SEED}).`}
+            )} accounts across 3 recovery policies - static dunning, smart retry, and KhaataPulse - against one shared world (seed ${DASHBOARD_SEED}).`}
           />
         ) : (
           <>

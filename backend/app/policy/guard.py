@@ -1,5 +1,5 @@
-"""
-Policy Guard — CLAUDE.md §14.
+﻿"""
+Policy Guard - CLAUDE.md §14.
 
 Pure, deterministic, independently testable. No side effects.
 All thresholds from environment config. Non-bypassable.
@@ -77,7 +77,7 @@ def policy_guard(
     db: Optional[Session] = None,
 ) -> PolicyDecision:
     """
-    Pure deterministic policy check — CLAUDE.md §14.
+    Pure deterministic policy check - CLAUDE.md §14.
 
     Args:
         customer_id:    Target customer.
@@ -107,7 +107,7 @@ def policy_guard(
             idempotency_key=idempotency_key,
         )
 
-    # 1. Kill switch — CLAUDE.md §23
+    # 1. Kill switch - CLAUDE.md §23
     checks["kill_switch"] = not settings.kill_switch
     if settings.kill_switch:
         return _block("kill_switch_active")
@@ -127,7 +127,7 @@ def policy_guard(
     if opt_out:
         return _block("opt_out")
 
-    # 5. Idempotency — reject if same key already executed
+    # 5. Idempotency - reject if same key already executed
     if db is not None:
         from app.db.models.action import RecoveryAction
         existing = db.query(RecoveryAction).filter_by(idempotency_key=idempotency_key).first()
@@ -137,7 +137,7 @@ def policy_guard(
     else:
         checks["idempotency"] = True  # skip in no-db mode
 
-    # 6. Contact limit (3 per 7 days) — CLAUDE.md §14
+    # 6. Contact limit (3 per 7 days) - CLAUDE.md §14
     if db is not None:
         from app.db.models.action import RecoveryAction
         from sqlalchemy import func
@@ -176,7 +176,7 @@ def policy_guard(
     else:
         checks["cooldown"] = True
 
-    # 8. Amount threshold — auto vs. human approval
+    # 8. Amount threshold - auto vs. human approval
     auto_limit = Decimal(str(settings.auto_action_limit))
     if amount >= auto_limit:
         checks["amount_threshold"] = True  # rule passed but requires escalation

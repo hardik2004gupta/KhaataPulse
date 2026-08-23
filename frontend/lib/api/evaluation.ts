@@ -1,4 +1,4 @@
-import { api } from "./client";
+﻿import { api } from "./client";
 import type {
   EvaluationRunResponse,
   EvaluationRunRecord,
@@ -6,7 +6,7 @@ import type {
 } from "../types";
 
 export const evaluationApi = {
-  /** POST /evaluation/run — trigger one evaluation run */
+  /** POST /evaluation/run - trigger one evaluation run */
   runEvaluation(seed: number, cohortSize: number): Promise<EvaluationRunResponse> {
     return api.post<EvaluationRunResponse>("/evaluation/run", {
       seed,

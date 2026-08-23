@@ -1,4 +1,4 @@
-// Typed API client base — all backend calls go through here.
+﻿// Typed API client base - all backend calls go through here.
 // Calls /api/* which Next.js rewrites to the backend (next.config.ts).
 
 export class ApiError extends Error {

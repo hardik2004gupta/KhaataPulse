@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import type { EvaluationRunResult } from "@/lib/types";
@@ -23,7 +23,7 @@ export default function EvaluationPage() {
             Policy Stress Test
           </h1>
           <p className="mt-1.5 max-w-prose text-[13px] text-text-secondary">
-            Same cohort · same world · same potential outcomes — only the recovery policy
+            Same cohort · same world · same potential outcomes - only the recovery policy
             changes.
           </p>
         </header>

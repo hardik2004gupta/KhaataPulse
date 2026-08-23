@@ -1,7 +1,7 @@
-import type { Config } from "tailwindcss";
+﻿import type { Config } from "tailwindcss";
 
 /**
- * KhaataPulse design tokens — CLAUDE.md §29.
+ * KhaataPulse design tokens - CLAUDE.md §29.
  * Every colour carries semantic meaning. No decorative palette entries.
  */
 const config: Config = {

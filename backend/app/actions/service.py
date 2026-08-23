@@ -1,5 +1,5 @@
-"""
-Action Service — CLAUDE.md §15.
+﻿"""
+Action Service - CLAUDE.md §15.
 
 Executes typed, idempotent simulated gateway actions.
 All actions are simulated (no real payment processing in MVP).
@@ -25,7 +25,7 @@ logger = get_logger(__name__)
 
 @dataclass
 class ActionRequest:
-    """Typed action contract — CLAUDE.md §15."""
+    """Typed action contract - CLAUDE.md §15."""
     case_id: int
     customer_id: int
     action_type: str          # silent_retry | smart_link | grace_period | human_escalation | suppress

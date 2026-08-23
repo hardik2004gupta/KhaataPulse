@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import type { EvaluationRunResult } from "@/lib/types";
 import { Eyebrow } from "@/components/ui/StateViews";
@@ -11,7 +11,7 @@ interface IncrementalHeroProps {
 }
 
 /**
- * The primary KPI surface — Incremental Recovery = KhaataPulse − Smart Retry.
+ * The primary KPI surface - Incremental Recovery = KhaataPulse − Smart Retry.
  * Every figure is derived from the evaluation run; nothing is authored here.
  */
 export function IncrementalHero({ result, loading }: IncrementalHeroProps) {
@@ -50,7 +50,7 @@ export function IncrementalHero({ result, loading }: IncrementalHeroProps) {
     <div
       className={`relative flex h-full flex-col justify-center overflow-hidden rounded-panel border ${accentBorder} bg-surface p-6 ${accentGlow} sm:p-8`}
     >
-      {/* Directional wash — reinforces sign without decorating. */}
+      {/* Directional wash - reinforces sign without decorating. */}
       <div
         aria-hidden="true"
         className={`pointer-events-none absolute inset-0 ${

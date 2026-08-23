@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import type { CSSProperties } from "react";
 import type { PolicyDecision } from "@/lib/types";
@@ -16,7 +16,7 @@ const CHECK_LABELS: Record<string, string> = {
   amount_threshold: "Amount Threshold",
 };
 
-/** Canonical gate order — the guard is evaluated as a sequence, not a set. */
+/** Canonical gate order - the guard is evaluated as a sequence, not a set. */
 const CHECK_ORDER = [
   "kill_switch",
   "dispute_hold",
@@ -66,7 +66,7 @@ export function PolicyGuardViz({ decision }: PolicyGuardVizProps) {
 
   /* The checkpoint sequence is expressed entirely as CSS animation-delay
      (--gate-index / --gate-count). No JS timers are involved, so a reader who
-     asked for reduced motion gets the full result immediately — see the
+     asked for reduced motion gets the full result immediately - see the
      prefers-reduced-motion block in globals.css. Remounting on the decision
      identity replays the sequence when a different case is opened. */
   const runKey = `${decision.status}-${decision.action_type}-${ordered.length}`;
@@ -136,7 +136,7 @@ export function PolicyGuardViz({ decision }: PolicyGuardVizProps) {
         )}
         {decision.status === "ESCALATED" && !decision.block_reason && (
           <p className="mono mt-2 text-[10px] uppercase tracking-eyebrow text-warning-text">
-            Amount threshold — human approval required
+            Amount threshold - human approval required
           </p>
         )}
       </div>

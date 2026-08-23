@@ -1,8 +1,8 @@
-"""
+﻿"""
 Simulator API routes.
 
-POST /simulation/generate — trigger world generation and persistence.
-GET  /simulation/runs     — list completed simulation runs.
+POST /simulation/generate - trigger world generation and persistence.
+GET  /simulation/runs     - list completed simulation runs.
 
 IMPORTANT: Responses MUST NOT contain latent state or potential outcomes.
 """
@@ -36,7 +36,7 @@ def generate_simulation(
     """
     Generate and persist a synthetic customer world.
 
-    The response contains only run metadata — no customer data, no hidden outcomes.
+    The response contains only run metadata - no customer data, no hidden outcomes.
     """
     t_start = time.time()
 

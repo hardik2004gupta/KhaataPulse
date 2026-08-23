@@ -1,6 +1,6 @@
-# KhaataPulse — Application Walkthrough & Functionality Reference
+﻿# KhaataPulse - Application Walkthrough & Functionality Reference
 
-> **KhaataPulse** is an AI-powered revenue recovery policy engine designed for subscription businesses. It detects payment friction before failure, diagnoses the underlying cause, proposes the financially optimal recovery intervention, enforces deterministic policy constraints, and measures outcomes — all in a controlled, fully auditable environment.
+> **KhaataPulse** is an AI-powered revenue recovery policy engine designed for subscription businesses. It detects payment friction before failure, diagnoses the underlying cause, proposes the financially optimal recovery intervention, enforces deterministic policy constraints, and measures outcomes - all in a controlled, fully auditable environment.
 
 ---
 
@@ -11,11 +11,11 @@
 3. [The Intelligence Pipeline](#3-the-intelligence-pipeline)
 4. [Technology Stack](#4-technology-stack)
 5. [Application Surfaces](#5-application-surfaces)
-   - 5.1 [Landing Page — Overview (`/`)](#51-landing-page--overview)
-   - 5.2 [Command Center — Dashboard (`/dashboard`)](#52-command-center--dashboard)
+   - 5.1 [Landing Page - Overview (`/`)](#51-landing-page--overview)
+   - 5.2 [Command Center - Dashboard (`/dashboard`)](#52-command-center--dashboard)
    - 5.3 [Revenue Time Machine (`/dashboard/time-machine`)](#53-revenue-time-machine)
-   - 5.4 [Risk Queue — Cases (`/cases`)](#54-risk-queue--cases)
-   - 5.5 [Policy Stress Test — Evaluation (`/evaluation`)](#55-policy-stress-test--evaluation)
+   - 5.4 [Risk Queue - Cases (`/cases`)](#54-risk-queue--cases)
+   - 5.5 [Policy Stress Test - Evaluation (`/evaluation`)](#55-policy-stress-test--evaluation)
 6. [Backend Architecture](#6-backend-architecture)
    - 6.1 [Simulator](#61-simulator)
    - 6.2 [Risk Sieve](#62-risk-sieve)
@@ -35,7 +35,7 @@
 
 ## 1. Product Overview
 
-KhaataPulse solves a specific, high-value problem: **subscription businesses lose revenue not because customers intend to churn, but because payment friction — expired cards, temporary cash flow issues, failed retries — goes undiagnosed and unresolved at the right moment.**
+KhaataPulse solves a specific, high-value problem: **subscription businesses lose revenue not because customers intend to churn, but because payment friction - expired cards, temporary cash flow issues, failed retries - goes undiagnosed and unresolved at the right moment.**
 
 Traditional dunning strategies (retry after N hours, send a reminder, escalate) treat all payment failures identically. KhaataPulse treats them as a reasoning problem: _why_ did this payment fail, _what_ is the best recovery action for this specific customer's situation, and _is the expected financial return_ worth the cost of contact?
 
@@ -43,11 +43,11 @@ The system operates on three levels simultaneously:
 
 | Level | Mechanism | Output |
 |---|---|---|
-| Detection | Logistic Regression risk model | `P(failure)` — which accounts need attention |
+| Detection | Logistic Regression risk model | `P(failure)` - which accounts need attention |
 | Diagnosis | LangGraph + LLM reasoning | Cause, confidence, proposed action |
 | Evaluation | Same-cohort policy comparison | Incremental recovery vs. baseline policies |
 
-KhaataPulse is **not** a payment processor, collections platform, or autonomous financial system. It is a **controlled revenue-recovery policy evaluation environment** — every action is proposed, guard-checked, and audited before execution.
+KhaataPulse is **not** a payment processor, collections platform, or autonomous financial system. It is a **controlled revenue-recovery policy evaluation environment** - every action is proposed, guard-checked, and audited before execution.
 
 ---
 
@@ -55,7 +55,7 @@ KhaataPulse is **not** a payment processor, collections platform, or autonomous 
 
 > KhaataPulse can identify payment friction before failure and evaluate whether its recovery policy produces better expected revenue outcomes than existing dunning policies, without exceeding predefined customer-contact and escalation boundaries.
 
-This claim is verified end-to-end within the application: the same 3,000-customer cohort is evaluated against three policies simultaneously, and the incremental recovery delta is computed dynamically — never hardcoded.
+This claim is verified end-to-end within the application: the same 3,000-customer cohort is evaluated against three policies simultaneously, and the incremental recovery delta is computed dynamically - never hardcoded.
 
 ---
 
@@ -67,10 +67,10 @@ Every account processed by KhaataPulse travels through seven deterministic stage
 DETECT → DIAGNOSE → OPTIMIZE → GUARD → ACT → MEASURE → AUDIT
 ```
 
-### Stage 1 — Detect
+### Stage 1 - Detect
 The **Risk Sieve** (Logistic Regression) scores every account against 12 observable features derived from payment history and behavioural signals. Accounts with `P(failure) ≥ 0.30` are routed into the full KhaataPulse pipeline (~350 of 3,000 accounts). The rest follow the standard flow.
 
-### Stage 2 — Diagnose
+### Stage 2 - Diagnose
 The **LangGraph Agent** receives only observable data (event history, payment context, support messages, subscription info). It calls an LLM with a structured-output contract to produce a `RecoveryProposal`:
 - **Cause**: `billing_migration | temporary_cash_flow | card_expired | price_friction | churn_intent`
 - **Confidence**: 0.0 – 1.0
@@ -80,7 +80,7 @@ The **LangGraph Agent** receives only observable data (event history, payment co
 
 If the LLM fails (timeout, invalid schema, provider error), a deterministic Smart Retry fallback activates automatically.
 
-### Stage 3 — Optimize
+### Stage 3 - Optimize
 The **Economic Optimizer** computes Expected Net Revenue (ENR) for every eligible action:
 
 ```
@@ -91,8 +91,8 @@ ENR = P(payment | action) × Amount
 
 The cause diagnosis narrows the eligible action set. The optimizer ranks survivors by ENR and selects the highest-value option.
 
-### Stage 4 — Guard
-The **Policy Guard** — pure deterministic code, no ML, no LLM — applies all authorization rules before any action proceeds:
+### Stage 4 - Guard
+The **Policy Guard** - pure deterministic code, no ML, no LLM - applies all authorization rules before any action proceeds:
 
 | Rule | Threshold |
 |---|---|
@@ -108,18 +108,18 @@ The **Policy Guard** — pure deterministic code, no ML, no LLM — applies all 
 
 Every action produces a `PolicyDecision` with status `APPROVED`, `BLOCKED`, or `ESCALATED`, and a `checks` object showing exactly which rules passed or failed.
 
-### Stage 5 — Act
+### Stage 5 - Act
 The **Action Service** executes the approved action through a simulated (but structurally real) gateway. Every action carries an idempotency key (`rec_CASE_{id}`). Duplicate execution of the same key is rejected. Valid action types: `silent_retry`, `smart_link`, `grace_period`, `human_escalation`, `suppress`.
 
-### Stage 6 — Measure
-The **Evaluation Engine** computes policy performance across the full cohort. Three policies operate against the **same world** (same customers, same events, same potential outcomes — only the recovery logic changes):
+### Stage 6 - Measure
+The **Evaluation Engine** computes policy performance across the full cohort. Three policies operate against the **same world** (same customers, same events, same potential outcomes - only the recovery logic changes):
 - **Static Dunning**: failure → 24h retry → reminder → escalation
 - **Smart Retry**: failure code → deterministic timing → payment link → escalation
 - **KhaataPulse**: risk detection → AI diagnosis → ENR optimization → policy guard → action
 
 The primary KPI is **Incremental Recovery** = KhaataPulse recovery − Smart Retry recovery.
 
-### Stage 7 — Audit
+### Stage 7 - Audit
 Every meaningful decision at every stage produces an immutable `AuditEvent`:
 - `risk_detected`, `diagnosis_generated`, `action_proposed`, `policy_check`
 - `action_executed`, `payment_received`, `case_closed`, `llm_fallback`
@@ -153,7 +153,7 @@ PostgreSQL: `localhost:5432` (Docker internal) / `5435` (host, configurable)
 
 ## 5. Application Surfaces
 
-### 5.1 Landing Page — Overview (`/`)
+### 5.1 Landing Page - Overview (`/`)
 
 The entry point for first-time visitors. Seven sections communicate the product's purpose and architecture:
 
@@ -167,10 +167,10 @@ The entry point for first-time visitors. Seven sections communicate the product'
 - Signal dots travel between nodes; connections energise as signals pass through
 - Nodes: classify_context → generate_diagnosis → generate_action_proposal → validate_proposal → rank_actions → policy_check → execute_action → record_outcome
 
-**Pipeline Section — "The Intelligence Pipeline"**
+**Pipeline Section - "The Intelligence Pipeline"**
 Seven numbered pipeline stages, each with a title, description, and the specific technology responsible. Communicates that every stage has a defined role and none exceeds its authority.
 
-**Architecture Story — "Intelligence without autonomy"**
+**Architecture Story - "Intelligence without autonomy"**
 Five architectural boundaries explained:
 1. Simulation World (hidden states + potential outcomes)
 2. Core Agent (risk → diagnosis → proposal → optimization)
@@ -178,7 +178,7 @@ Five architectural boundaries explained:
 4. Action Layer (typed, idempotent gateway operations)
 5. Evaluation (baselines → outcomes → incremental recovery)
 
-**Product Preview — "Every layer, visible"**
+**Product Preview - "Every layer, visible"**
 Four illustrative panels previewing key UI surfaces:
 - Risk Intelligence (logistic regression score + signals)
 - AI Diagnosis (cause classification + confidence)
@@ -186,16 +186,16 @@ Four illustrative panels previewing key UI surfaces:
 - Policy Guard (sequential checkpoint visualization)
 
 **Time Machine Preview**
-An illustrative customer journey timeline showing the observable event stream KhaataPulse works from — payment failures, invoice views, support messages, renewal signals.
+An illustrative customer journey timeline showing the observable event stream KhaataPulse works from - payment failures, invoice views, support messages, renewal signals.
 
-**Final CTA — "Revenue recovery, under control"**
+**Final CTA - "Revenue recovery, under control"**
 Closing statement with direct links to the Command Center and Evaluation surface.
 
 ---
 
-### 5.2 Command Center — Dashboard (`/dashboard`)
+### 5.2 Command Center - Dashboard (`/dashboard`)
 
-The primary operational surface for a merchant. All metrics originate from a live evaluation run against the backend — nothing is authored or hardcoded.
+The primary operational surface for a merchant. All metrics originate from a live evaluation run against the backend - nothing is authored or hardcoded.
 
 **On load:** The dashboard immediately fires `POST /evaluation/run` (seed=42, cohort=3,000) and `GET /demo/hero` in parallel. The evaluation may take 5–30 seconds; a loading panel describes what is happening ("Evaluating 3,000 accounts across 3 recovery policies…"). The hero case resolves quickly from the demo endpoint.
 
@@ -220,7 +220,7 @@ All values in Indian Rupee format (L/Cr for large numbers, tabular numerals).
 A proportional horizontal bar chart comparing the at-risk revenue across the three policies. Bar widths are computed from the actual evaluation data, not authored.
 
 #### Incremental Hero Panel
-The **dominant KPI panel** — visually larger than the rest. Shows:
+The **dominant KPI panel** - visually larger than the rest. Shows:
 - `+₹X` Incremental Recovery (KhaataPulse − Smart Retry)
 - Recovery rate lift in percentage points (pp)
 - Contacts saved count
@@ -236,13 +236,13 @@ Three-column table comparing Static Dunning / Smart Retry / KhaataPulse across a
 #### Hero Case Panel
 A full pipeline narrative for the demo customer (deterministic, always the same account):
 
-1. **Customer header** — name, segment, LTV, subscription ID, renewal amount
-2. **Subscription fields** — plan, renewal date, last payment status and failure code
-3. **Risk Assessment** — risk score (colour-coded by threshold), risk level badge, model version, top 3 feature signals with impact bars
-4. **AI Diagnosis** — cause label, confidence bar (fills via CSS transition; ai-violet above 50%, warning-amber below), rationale text
-5. **Intervention Optimizer** — ranked action table showing ENR for each eligible action; selected action highlighted
-6. **Policy Guard** — sequential checkpoint visualization: each rule animates in with a 60ms stagger; APPROVED rules show a brief green pulse then settle; BLOCKED rules trigger a sharp red interruption
-7. **Outcome** — action type, execution status (executed/escalated/blocked) with colour, idempotency key in monospace
+1. **Customer header** - name, segment, LTV, subscription ID, renewal amount
+2. **Subscription fields** - plan, renewal date, last payment status and failure code
+3. **Risk Assessment** - risk score (colour-coded by threshold), risk level badge, model version, top 3 feature signals with impact bars
+4. **AI Diagnosis** - cause label, confidence bar (fills via CSS transition; ai-violet above 50%, warning-amber below), rationale text
+5. **Intervention Optimizer** - ranked action table showing ENR for each eligible action; selected action highlighted
+6. **Policy Guard** - sequential checkpoint visualization: each rule animates in with a 60ms stagger; APPROVED rules show a brief green pulse then settle; BLOCKED rules trigger a sharp red interruption
+7. **Outcome** - action type, execution status (executed/escalated/blocked) with colour, idempotency key in monospace
 8. Link: "Replay in Time Machine →"
 
 #### Live Activity Feed
@@ -251,11 +251,11 @@ Chronological list of the hero customer's audit events pulled from `GET /demo/he
 #### Live Webhook Simulation
 A `SIMULATE PAYMENT WEBHOOK` button triggers a visual walk-through of the full pipeline:
 1. Webhook Received
-2. Risk Sieve — score computed
-3. AI Reasoning — LLM diagnosis
-4. Policy Guard — authorization
-5. Action Executed — gateway call
-6. Outcome Recorded — audit sealed
+2. Risk Sieve - score computed
+3. AI Reasoning - LLM diagnosis
+4. Policy Guard - authorization
+5. Action Executed - gateway call
+6. Outcome Recorded - audit sealed
 
 Each stage activates sequentially with a 400ms CSS-staggered delay. Completion triggers a summary of the simulated result. The animation uses CSS `animation-delay` (not JS timers), so it fully respects `prefers-reduced-motion`.
 
@@ -266,7 +266,7 @@ The full audit event stream for the hero case, rendered below the webhook simula
 
 ### 5.3 Revenue Time Machine (`/dashboard/time-machine`)
 
-A cinematic account-level reconstruction showing the exact observable signals the agent worked from — and the pipeline decisions derived from them.
+A cinematic account-level reconstruction showing the exact observable signals the agent worked from - and the pipeline decisions derived from them.
 
 **Subject panel:**
 - Customer name, ID, segment, plan
@@ -274,7 +274,7 @@ A cinematic account-level reconstruction showing the exact observable signals th
 - Risk score (colour-coded) and level
 - Lifetime value
 
-**Reconstruction timeline — 11 entries:**
+**Reconstruction timeline - 11 entries:**
 Two groups render side-by-side:
 
 | Observable Event Stream | Pipeline Decision Log |
@@ -292,7 +292,7 @@ The design communicates a critical architectural invariant: **the agent sees onl
 
 ---
 
-### 5.4 Risk Queue — Cases (`/cases`)
+### 5.4 Risk Queue - Cases (`/cases`)
 
 The operational queue of accounts that the risk sieve routed into the KhaataPulse pipeline.
 
@@ -301,22 +301,22 @@ The operational queue of accounts that the risk sieve routed into the KhaataPuls
 **Case list:** Each row/card shows:
 - Customer name
 - Risk score with colour-coded indicator bar (green < 0.30, amber 0.30–0.70, red ≥ 0.70)
-- Risk level text label (LOW / MEDIUM / HIGH — colour never the only indicator)
+- Risk level text label (LOW / MEDIUM / HIGH - colour never the only indicator)
 - Case status badge (open / in-progress / closed)
 - Proposed action
 - Renewal amount
 
-**Empty state:** When no cases are in the database, renders: "No high-risk accounts in current cohort — The risk sieve routed no accounts into the recovery pipeline for this run."
+**Empty state:** When no cases are in the database, renders: "No high-risk accounts in current cohort - The risk sieve routed no accounts into the recovery pipeline for this run."
 
 **Case Detail Drawer:** Clicking any case slides in a full-width detail panel (right-to-left) with:
 - Customer profile
 - Full pipeline trace: diagnosis → action rankings → policy decision → outcome
-- Audit event list with expandable raw JSON payloads (PayloadViewer — JetBrains Mono, syntax-coloured)
+- Audit event list with expandable raw JSON payloads (PayloadViewer - JetBrains Mono, syntax-coloured)
 - Escape key closes the drawer; focus is trapped inside while open
 
 ---
 
-### 5.5 Policy Stress Test — Evaluation (`/evaluation`)
+### 5.5 Policy Stress Test - Evaluation (`/evaluation`)
 
 The evaluation control surface for running custom cohort experiments.
 
@@ -327,7 +327,7 @@ The evaluation control surface for running custom cohort experiments.
 
 On submit: `POST /evaluation/run` is called. The UI polls `GET /evaluation/run/{id}` every 2 seconds (max 120 attempts). A progress indicator shows elapsed time.
 
-**Results — when completed:**
+**Results - when completed:**
 - Three-column comparison matrix: Static Dunning / Smart Retry / KhaataPulse
 - All metrics: recovered amount, recovery rate, contacts sent/avoided, escalations, blocks, false positives
 - Incremental recovery highlighted with sign-appropriate colour
@@ -335,7 +335,7 @@ On submit: `POST /evaluation/run` is called. The UI polls `GET /evaluation/run/{
 
 **Multi-Seed Validation panel:**
 - Cohort size selector: 500 / 1,000
-- `RUN MULTI-SEED` button — runs seeds 42, 123, 456 in a single request
+- `RUN MULTI-SEED` button - runs seeds 42, 123, 456 in a single request
 - Results matrix shows per-seed results plus cross-seed stability analysis (mean, variance, consistency)
 - Validates that KhaataPulse's incremental lift is consistent across independent random worlds
 
@@ -347,7 +347,7 @@ On submit: `POST /evaluation/run` is called. The UI polls `GET /evaluation/run/{
 
 The simulator generates a synthetic 3,000-customer world. It is the only component with access to ground truth.
 
-**Hidden state** (`CustomerLatentState`) — never exposed to the agent:
+**Hidden state** (`CustomerLatentState`) - never exposed to the agent:
 - `payment_intent`: genuine willingness to pay
 - `cash_flow_health`: temporary liquidity position
 - `payment_rail_health`: technical payment infrastructure quality
@@ -358,14 +358,14 @@ The simulator generates a synthetic 3,000-customer world. It is the only compone
 `invoice_viewed`, `checkout_reopened`, `payment_method_changed`, `payment_failed`, `subscription_changed`, `support_message`, `payment_delayed`, `renewal_approaching`
 
 **Potential outcomes** (used only by the evaluation harness):
-- `P(payment | action)` — probability of successful payment given each action
-- `P(churn | action)` — probability of churn given each action
+- `P(payment | action)` - probability of successful payment given each action
+- `P(churn | action)` - probability of churn given each action
 
-The simulator generates the world deterministically from a seed. Same seed always produces the same cohort — enabling reproducible experiments and the same-cohort evaluation invariant.
+The simulator generates the world deterministically from a seed. Same seed always produces the same cohort - enabling reproducible experiments and the same-cohort evaluation invariant.
 
 **API:**
-- `POST /simulation/generate` — generate and persist a new world
-- `GET /simulation/runs` — list previous simulation runs
+- `POST /simulation/generate` - generate and persist a new world
+- `GET /simulation/runs` - list previous simulation runs
 
 ### 6.2 Risk Sieve
 
@@ -388,8 +388,8 @@ renewal_amount
 - `P(failure) ≥ 0.30` → KhaataPulse pipeline (~350 of 3,000 accounts)
 
 **API:**
-- `POST /risk/predict` — score one or many accounts
-- `POST /risk/reason` — run full LangGraph pipeline on a scored account
+- `POST /risk/predict` - score one or many accounts
+- `POST /risk/reason` - run full LangGraph pipeline on a scored account
 
 ### 6.3 LangGraph Agent
 
@@ -415,14 +415,14 @@ ENR = P(payment | action) × Amount
     − ActionCost
 ```
 
-- `P(payment | action)` and `P(churn | action)` are **estimated** from the action type and cause diagnosis — the agent's own estimates, not the simulator's ground truth
+- `P(payment | action)` and `P(churn | action)` are **estimated** from the action type and cause diagnosis - the agent's own estimates, not the simulator's ground truth
 - `ActionCost` is configuration-driven (env variable per action type)
 - Eligibility mapping: the LLM's diagnosed cause narrows which actions are eligible before ENR ranking
 - Output: `ActionRanking` list sorted descending by ENR; the top-ranked eligible action is proposed to Policy Guard
 
 ### 6.5 Policy Guard
 
-Pure deterministic function — same inputs always produce the same output, no side effects, independently unit-tested:
+Pure deterministic function - same inputs always produce the same output, no side effects, independently unit-tested:
 
 ```python
 policy_check(action, customer, case) -> PolicyDecision
@@ -444,7 +444,7 @@ Typed, idempotent simulated gateway operations. Every action carries:
 - `action_id`, `case_id`, `customer_id`, `action_type`
 - `amount`, `currency`, `idempotency_key`, `timestamp`, `policy_result`
 
-The service rejects duplicate idempotency keys — re-submitting the same key returns the original result without side effects.
+The service rejects duplicate idempotency keys - re-submitting the same key returns the original result without side effects.
 
 ### 6.7 Audit Service
 
@@ -480,10 +480,10 @@ false_positives, policy_blocks
 **Multi-seed validation:** Seeds 42, 123, 456 (minimum). Results are stored per run with full metadata: `run_id`, `seed`, `cohort_size`, `timestamp`, `model_version`, `policy_version`, `simulator_version`.
 
 **API:**
-- `POST /evaluation/run` — start evaluation (async; returns run_id immediately)
-- `GET /evaluation/run/{run_id}` — poll for results
-- `POST /evaluation/run/multi-seed` — run seeds 42/123/456 in one request
-- `GET /evaluation/runs` — list all past runs
+- `POST /evaluation/run` - start evaluation (async; returns run_id immediately)
+- `GET /evaluation/run/{run_id}` - poll for results
+- `POST /evaluation/run/multi-seed` - run seeds 42/123/456 in one request
+- `GET /evaluation/runs` - list all past runs
 
 ---
 
@@ -533,7 +533,7 @@ Five hard boundaries that no code may cross in either direction:
 
 ## 8. Design System
 
-KhaataPulse uses a bespoke dark financial terminal design system. Colour communicates semantic state — never decoration.
+KhaataPulse uses a bespoke dark financial terminal design system. Colour communicates semantic state - never decoration.
 
 ### Colour Palette
 
@@ -551,16 +551,16 @@ KhaataPulse uses a bespoke dark financial terminal design system. Colour communi
 ### Typography
 
 - **UI text:** Inter (self-hosted via `next/font`)
-- **Financial metrics:** `.tabular` class — `font-variant-numeric: tabular-nums` ensures digits align in tables
-- **Technical text** (IDs, timestamps, event names, payloads, policy decisions): `.mono` class — JetBrains Mono
+- **Financial metrics:** `.tabular` class - `font-variant-numeric: tabular-nums` ensures digits align in tables
+- **Technical text** (IDs, timestamps, event names, payloads, policy decisions): `.mono` class - JetBrains Mono
 
 ### Risk Score → Colour Mapping
 
 | Score range | Colour | Meaning |
 |---|---|---|
-| < 0.30 | Recovery green | Low risk — standard flow |
-| 0.30 – 0.70 | Warning amber | Medium risk — KhaataPulse pipeline |
-| ≥ 0.70 | Critical red | High risk — immediate attention |
+| < 0.30 | Recovery green | Low risk - standard flow |
+| 0.30 – 0.70 | Warning amber | Medium risk - KhaataPulse pipeline |
+| ≥ 0.70 | Critical red | High risk - immediate attention |
 
 ### Motion
 
@@ -576,7 +576,7 @@ Motion communicates system state, not decoration:
 | Payment recovered | Metric counter rises |
 | Pipeline stages | 400ms CSS-staggered step activation |
 
-All animations respect `prefers-reduced-motion` — the CSS reduced-motion block zeroes both duration and delay for all animations.
+All animations respect `prefers-reduced-motion` - the CSS reduced-motion block zeroes both duration and delay for all animations.
 
 ---
 
@@ -593,8 +593,8 @@ docker compose up
 ```
 
 This starts:
-- `postgres` — PostgreSQL 16 with all migrations applied (Alembic runs on startup)
-- `backend` — FastAPI on port 8000
+- `postgres` - PostgreSQL 16 with all migrations applied (Alembic runs on startup)
+- `backend` - FastAPI on port 8000
 
 ### Start the frontend dev server
 
@@ -612,7 +612,7 @@ Copy `.env.example` to `.env` and adjust:
 
 ```env
 DATABASE_URL=postgresql://khaatapulse:khaatapulse@localhost:5432/khaatapulse
-LLM_API_KEY=           # Optional — demo mode works without it
+LLM_API_KEY=           # Optional - demo mode works without it
 LLM_MODEL=claude-sonnet-5
 
 APP_ENV=development
@@ -661,7 +661,7 @@ All endpoints are served from the backend at `http://localhost:8000`. The fronte
 | GET | `/cases/` | List recovery cases from DB |
 | GET | `/cases/{case_id}` | Get full case detail with audit events |
 
-**Security note:** `BACKEND_URL` is server-side only. The Next.js rewrite proxies all `/api/*` requests — the browser never sees the internal backend origin. API keys are never exposed to the frontend.
+**Security note:** `BACKEND_URL` is server-side only. The Next.js rewrite proxies all `/api/*` requests - the browser never sees the internal backend origin. API keys are never exposed to the frontend.
 
 ---
 
@@ -680,8 +680,8 @@ Demo mode is a first-class requirement. The 3-minute demo must work even when:
 - All 8 audit event types are generated and returned
 - Gateway actions simulate success/escalation/block status correctly
 
-**The `SIMULATE PAYMENT WEBHOOK` button** on the dashboard uses `/demo/simulate` — it runs the full pipeline end-to-end in ~100ms and animates the result without requiring any external dependency.
+**The `SIMULATE PAYMENT WEBHOOK` button** on the dashboard uses `/demo/simulate` - it runs the full pipeline end-to-end in ~100ms and animates the result without requiring any external dependency.
 
 ---
 
-*Built with KhaataPulse Architectural MVP Engineering Contract v1.0 · All evaluation metrics are dynamically computed — no values are authored or hardcoded.*
+*Built with KhaataPulse Architectural MVP Engineering Contract v1.0 · All evaluation metrics are dynamically computed - no values are authored or hardcoded.*

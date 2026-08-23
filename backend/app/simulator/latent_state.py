@@ -1,5 +1,5 @@
-"""
-SIMULATOR INTERNAL — CustomerLatentState
+﻿"""
+SIMULATOR INTERNAL - CustomerLatentState
 
 This module is owned exclusively by the simulator.
 

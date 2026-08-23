@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+﻿from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.config import get_settings
@@ -14,7 +14,7 @@ configure_logging()
 
 app = FastAPI(
     title="KhaataPulse",
-    description="AI Revenue Recovery Policy Engine — Backend API",
+    description="AI Revenue Recovery Policy Engine - Backend API",
     version="1.0.0",
 )
 

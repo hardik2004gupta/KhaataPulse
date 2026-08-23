@@ -1,5 +1,5 @@
-"""
-LangGraph state definition — CLAUDE.md §9, §17.
+﻿"""
+LangGraph state definition - CLAUDE.md §9, §17.
 
 RecoveryReasoningState contains ONLY information the agent is permitted to see.
 Hidden simulator state (CustomerLatentState, PotentialOutcomes, p_payment,
@@ -30,7 +30,7 @@ class RecoveryReasoningState(TypedDict):
     # Support message text
     support_context: str
 
-    # Customer LTV (observable business metric — known to the agent)
+    # Customer LTV (observable business metric - known to the agent)
     ltv: float
 
     # Customer hold flags (observable from CRM)

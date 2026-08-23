@@ -1,5 +1,5 @@
-"""
-Tests for the evaluation runner — multi-seed, persistence, reproducibility.
+﻿"""
+Tests for the evaluation runner - multi-seed, persistence, reproducibility.
 
 CLAUDE.md §17: minimum required seeds: 42, 123, 456.
 """
@@ -94,7 +94,7 @@ def test_multi_seed_each_run_is_independent():
     results = run_multi_seed_evaluation(cohort_size=_FAST_COHORT, seeds=[42, 123], db=None)
     r42 = next(r for r in results if r.seed == 42)
     r123 = next(r for r in results if r.seed == 123)
-    # Recovered amounts may differ (different worlds) — verify seeds differ at minimum
+    # Recovered amounts may differ (different worlds) - verify seeds differ at minimum
     assert r42.seed != r123.seed
     assert r42.run_id != r123.run_id
 
@@ -126,7 +126,7 @@ def test_multi_seed_summary_seed_entries():
 
 
 def test_multi_seed_summary_values_are_dynamic():
-    """Verify summary values are not hardcoded (types only — not specific numbers)."""
+    """Verify summary values are not hardcoded (types only - not specific numbers)."""
     results = run_multi_seed_evaluation(cohort_size=_FAST_COHORT, seeds=[42], db=None)
     summary = get_multi_seed_summary(results)
     for entry in summary["seeds"]:
@@ -188,7 +188,7 @@ def test_run_evaluation_re_run_overwrites_old_results(db_session):
     run_evaluation(seed=seed, cohort_size=_FAST_COHORT, db=db_session)
     db_session.flush()
 
-    # Second run (re-run) — should delete old results and create fresh ones
+    # Second run (re-run) - should delete old results and create fresh ones
     run_evaluation(seed=seed, cohort_size=_FAST_COHORT, db=db_session)
     db_session.flush()
 
@@ -218,7 +218,7 @@ def test_get_run_from_db_nonexistent_returns_none(db_session):
 
 
 def test_run_evaluation_db_persisted_metrics_match_in_memory(db_session):
-    """Persisted metrics must exactly match in-memory result — no transformation errors."""
+    """Persisted metrics must exactly match in-memory result - no transformation errors."""
     seed = 9905
     result = run_evaluation(seed=seed, cohort_size=_FAST_COHORT, db=db_session)
     db_session.flush()

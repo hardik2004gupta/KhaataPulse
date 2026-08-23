@@ -1,8 +1,8 @@
-"""
-Evaluation persistence models — CLAUDE.md §17, §19.
+﻿"""
+Evaluation persistence models - CLAUDE.md §17, §19.
 
-EvaluationRun    — one run = one world generation + all three policy evaluations.
-EvaluationResult — per-policy metrics within a run.
+EvaluationRun    - one run = one world generation + all three policy evaluations.
+EvaluationResult - per-policy metrics within a run.
 
 Every run stores: run_id, seed, cohort_size, simulator_version, model_version,
 policy_version, and all required metrics.

@@ -1,11 +1,11 @@
-"""
-Tests for the same-cohort evaluation engine — CLAUDE.md §17, §32.
+﻿"""
+Tests for the same-cohort evaluation engine - CLAUDE.md §17, §32.
 
 Critical invariants:
-  1. World is generated ONCE — all three policies evaluate the same world.
+  1. World is generated ONCE - all three policies evaluate the same world.
   2. Policies receive ObservableCustomerData only (no hidden state).
   3. PotentialOutcomes accessed only by evaluator (via EvaluationWorld).
-  4. Metrics are dynamically generated — no hardcoded values.
+  4. Metrics are dynamically generated - no hardcoded values.
   5. incremental_recovery = khaatapulse.recovered - smart_retry.recovered.
   6. False positive: KP triggered AND P(payment|no_action) >= 0.70.
 """
@@ -308,5 +308,5 @@ def test_evaluation_run_result_as_dict_structure():
     assert "static_dunning" in d
     assert "smart_retry" in d
     assert "khaatapulse" in d
-    # Verify no hardcoded values — just check they are strings/floats/ints
+    # Verify no hardcoded values - just check they are strings/floats/ints
     assert isinstance(d["incremental_recovery"], str)

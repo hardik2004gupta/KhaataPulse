@@ -1,8 +1,8 @@
-"""
-Evaluation result models — CLAUDE.md §17, §32.
+﻿"""
+Evaluation result models - CLAUDE.md §17, §32.
 
-PolicyEvaluationResult  — metrics for one policy in one evaluation run.
-EvaluationRunResult     — all three policies + incremental recovery for one run.
+PolicyEvaluationResult  - metrics for one policy in one evaluation run.
+EvaluationRunResult     - all three policies + incremental recovery for one run.
 
 No values may be hardcoded. All fields originate from actual evaluator output.
 """
@@ -19,11 +19,11 @@ class PolicyEvaluationResult:
     policy_name: str
     policy_version: str
 
-    # Monetary — using Decimal for precision
+    # Monetary - using Decimal for precision
     recovered_amount: Decimal          # Σ P(payment|action) × subscription_amount
     total_at_risk_amount: Decimal      # Σ subscription_amount for entire cohort
 
-    # Rate — recovered_amount / total_at_risk_amount
+    # Rate - recovered_amount / total_at_risk_amount
     recovery_rate: float               # in [0.0, 1.0]
 
     # Contact metrics
@@ -61,7 +61,7 @@ class PolicyEvaluationResult:
 @dataclass
 class EvaluationRunResult:
     """
-    Complete evaluation run result — one world, three policies.
+    Complete evaluation run result - one world, three policies.
     Primary KPI: incremental_recovery = khaatapulse - smart_retry.
     """
     run_id: str
@@ -75,7 +75,7 @@ class EvaluationRunResult:
     smart_retry: PolicyEvaluationResult
     khaatapulse: PolicyEvaluationResult
 
-    # Primary KPI — CLAUDE.md §18
+    # Primary KPI - CLAUDE.md §18
     incremental_recovery: Decimal      # khaatapulse.recovered - smart_retry.recovered
 
     def as_dict(self) -> dict:

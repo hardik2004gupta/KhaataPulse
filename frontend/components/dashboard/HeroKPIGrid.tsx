@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import type { EvaluationRunResult } from "@/lib/types";
 import { MetricCard } from "@/components/ui/MetricCard";
@@ -39,7 +39,7 @@ export function HeroKPIGrid({ result, loading }: HeroKPIGridProps) {
 
   return (
     <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-      {/* Incremental recovery is deliberately absent here — it owns the
+      {/* Incremental recovery is deliberately absent here - it owns the
           dominant hero panel below and must not compete with itself. */}
       <MetricCard
         label="Recovered · KhaataPulse"

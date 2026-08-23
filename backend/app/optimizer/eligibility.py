@@ -1,5 +1,5 @@
-"""
-Action eligibility per diagnosis cause — CLAUDE.md §13.
+﻿"""
+Action eligibility per diagnosis cause - CLAUDE.md §13.
 
 The LLM's diagnosis narrows the eligible action space. This mapping determines
 which actions are financially rational candidates given the root cause.

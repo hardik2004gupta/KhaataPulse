@@ -1,11 +1,11 @@
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, JSON
+﻿from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, JSON
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
 from app.db.base import Base
 
 
-# Observable event types — the only simulator data the agent may ever see.
+# Observable event types - the only simulator data the agent may ever see.
 OBSERVABLE_EVENT_TYPES = frozenset({
     "invoice_viewed",
     "checkout_reopened",
@@ -25,7 +25,7 @@ class Event(Base):
     customer_id = Column(Integer, ForeignKey("customers.id"), nullable=False, index=True)
     event_type = Column(String(100), nullable=False)
     timestamp = Column(DateTime(timezone=True), nullable=False, index=True)
-    # payload contains ONLY observable information — never latent state or outcome probabilities
+    # payload contains ONLY observable information - never latent state or outcome probabilities
     payload = Column(JSON, nullable=False, default=dict)
 
     customer = relationship("Customer", back_populates="events")

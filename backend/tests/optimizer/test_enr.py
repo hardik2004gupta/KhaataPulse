@@ -1,5 +1,5 @@
-"""
-Economic Optimizer tests — CLAUDE.md §32.
+﻿"""
+Economic Optimizer tests - CLAUDE.md §32.
 
 Verifies:
   - ENR formula is correct: P(payment|a) × Amount - P(churn|a) × LTV - Cost

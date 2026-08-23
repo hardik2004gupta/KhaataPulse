@@ -1,4 +1,4 @@
-"""
+﻿"""
 Deterministic customer world generator.
 
 Accepts a seed + cohort_size and produces a fully reproducible synthetic world.
@@ -137,8 +137,8 @@ def generate_customer_record(
     Generate one complete customer record (internal representation).
     Returns a dict with:
       - observable: data safe to expose outside the simulator
-      - _latent: CustomerLatentState — NEVER expose
-      - _outcomes: PotentialOutcomes — NEVER expose
+      - _latent: CustomerLatentState - NEVER expose
+      - _outcomes: PotentialOutcomes - NEVER expose
     """
     # Segment and plan
     segments = [s for s, _ in _SEGMENT_WEIGHTS]
@@ -203,7 +203,7 @@ def generate_customer_record(
         "subscription": subscription,
         "payments": payments,
         "events": events,
-        # ── HIDDEN — never cross the observable boundary ───────────────────────
+        # ── HIDDEN - never cross the observable boundary ───────────────────────
         "_latent": latent,
         "_outcomes": outcomes,
     }
@@ -219,7 +219,7 @@ def generate_world(
     Generate a deterministic synthetic world.
 
     Args:
-        seed:             RNG seed — same seed + version always produces same world.
+        seed:             RNG seed - same seed + version always produces same world.
         cohort_size:      Number of customers to generate.
         simulator_version: Version string for reproducibility tracking.
         reference_date:   "today" anchor for renewal dates. Defaults to UTC now.

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import type { CSSProperties } from "react";
 import { useRouter } from "next/navigation";
@@ -26,7 +26,7 @@ interface Segment {
 /**
  * Proportional decomposition of the at-risk revenue pool for this run:
  *   baseline recovered · incremental delta · still exposed
- * Widths are computed from the evaluation figures — nothing is authored.
+ * Widths are computed from the evaluation figures - nothing is authored.
  */
 export function RevenueExposure({ result, loading }: RevenueExposureProps) {
   const router = useRouter();
@@ -127,8 +127,8 @@ export function RevenueExposure({ result, loading }: RevenueExposureProps) {
                   }
                 : undefined
             }
-            title={`${s.label} — ${formatINR(s.amount)}`}
-            aria-label={s.onClick ? `${s.label} — ${formatINR(s.amount)}` : undefined}
+            title={`${s.label} - ${formatINR(s.amount)}`}
+            aria-label={s.onClick ? `${s.label} - ${formatINR(s.amount)}` : undefined}
             className={`bar-grow ${s.bar} h-full ${
               s.onClick ? "cursor-pointer hover:brightness-125" : ""
             }`}

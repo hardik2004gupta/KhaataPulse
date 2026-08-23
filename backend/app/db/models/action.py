@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Numeric, DateTime, ForeignKey, JSON
+﻿from sqlalchemy import Column, Integer, String, Numeric, DateTime, ForeignKey, JSON
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
@@ -6,7 +6,7 @@ from app.db.base import Base
 
 
 class RecoveryAction(Base):
-    """Typed, idempotent simulated gateway action — CLAUDE.md §15."""
+    """Typed, idempotent simulated gateway action - CLAUDE.md §15."""
     __tablename__ = "actions"
 
     id = Column(Integer, primary_key=True, autoincrement=True)

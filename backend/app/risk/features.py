@@ -1,9 +1,9 @@
-"""
-Observable feature engineering — CLAUDE.md §8, §4 (Risk Sieve).
+﻿"""
+Observable feature engineering - CLAUDE.md §8, §4 (Risk Sieve).
 
 ARCHITECTURE BOUNDARY:
   Input:  ObservableCustomerData (never latent state, never potential outcomes)
-  Output: RiskFeatures (typed feature vector — all values traceable to observable data)
+  Output: RiskFeatures (typed feature vector - all values traceable to observable data)
 
 Every feature here must be derivable from observable events, payment history,
 and subscription data. No hidden simulator state may enter this module.
@@ -40,7 +40,7 @@ _SEGMENT_ENCODING = {"consumer": 0, "smb": 1, "enterprise": 2}
 @dataclass(frozen=True)
 class RiskFeatures:
     """
-    Typed feature vector — observable data only.
+    Typed feature vector - observable data only.
 
     All fields derive exclusively from ObservableCustomerData.
     This class intentionally has no latent_state, payment_intent,
