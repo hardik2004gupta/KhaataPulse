@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 
-const API_URL = process.env.BACKEND_URL ?? "http://localhost:8000";
+const API_URL = (process.env.BACKEND_URL ?? "http://localhost:8000").replace(/\/$/, "");
 
 // standalone output is required for Docker/Render self-hosting.
 // On Vercel, VERCEL=1 is set automatically — use Vercel's native build instead.
