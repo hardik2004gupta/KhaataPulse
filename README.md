@@ -6,8 +6,14 @@
 
 ---
 
-> **BUILT FOR RAZORPAY AI BUILDTHON 2026** 
-> **TRACK: AI REVENUE RECOVERY** 
+<table align="center">
+  <tr>
+    <td align="center">
+      <strong>⚡ BUILT FOR RAZORPAY AI BUILDTHON 2026</strong><br>
+      <sub>TRACK: AI REVENUE RECOVERY</sub>
+    </td>
+  </tr>
+</table>
 
 ---
 
