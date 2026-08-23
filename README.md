@@ -372,7 +372,7 @@ The optimizer uses **estimated** probabilities derived from observable features 
 
 ```bash
 cd backend
-pip install -r requirements.txt
+pip install -r requirements-dev.txt
 pytest -v
 ```
 
